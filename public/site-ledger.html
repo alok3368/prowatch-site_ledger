@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>साइट लेजर — सिविल कॉन्ट्रैक्टर अकाउंटिंग</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EAE6DC;
+    --panel:#FFFFFF;
+    --panel-2:#F5F1E8;
+    --ink:#211E1A;
+    --ink-soft:#6B655A;
+    --line:#D3CCBB;
+    --amber:#C1791F;
+    --amber-dark:#96590F;
+    --rust:#9C3B26;
+    --rust-bg:#F3E3DD;
+    --green:#35633A;
+    --green-bg:#E2ECDF;
+    --steel:#34506B;
+    --steel-bg:#E4E9EE;
+    --radius:3px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Hind',sans-serif;
+    font-size:15px;
+    line-height:1.45;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:28px 28px;
+    background-attachment:fixed;
+    min-height:100vh;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  #app{display:flex;min-height:100vh;}
+
+  /* ---------- Sidebar ---------- */
+  .rail{
+    width:236px;
+    flex-shrink:0;
+    background:var(--ink);
+    color:#EFEAE0;
+    display:flex;
+    flex-direction:column;
+    position:sticky;
+    top:0;
+    height:100vh;
+  }
+  .brand{
+    padding:22px 20px 16px 20px;
+    border-bottom:2px solid var(--amber);
+  }
+  .brand .mark{
+    font-weight:700;
+    font-size:20px;
+    letter-spacing:0.5px;
+  }
+  .brand .mark span{color:var(--amber);}
+  .brand .sub{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:#B7AF9E;
+    margin-top:4px;
+    letter-spacing:0.5px;
+  }
+  nav{padding:14px 10px;flex:1;}
+  nav button{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    width:100%;
+    text-align:right;
+    background:none;
+    border:none;
+    color:#D8D2C4;
+    font-family:'Hind',sans-serif;
+    font-size:15.5px;
+    font-weight:500;
+    padding:11px 12px;
+    border-radius:var(--radius);
+    cursor:pointer;
+    margin-bottom:2px;
+    flex-direction:row-reverse;
+    justify-content:flex-end;
+  }
+  nav button .num{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:#8D8676;
+    margin-left:auto;
+  }
+  nav button:hover{background:#2E2A24;color:#fff;}
+  nav button.active{background:var(--amber);color:#211E1A;font-weight:700;}
+  nav button.active .num{color:#4A2E0A;}
+  .rail-foot{
+    padding:14px 20px 18px 20px;
+    border-top:1px solid #35312A;
+    font-size:11.5px;
+    color:#8D8676;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .lang-toggle{display:flex;gap:4px;padding:0 20px 14px 20px;}
+  .lang-btn{
+    flex:1;font-family:'Hind',sans-serif;font-weight:600;font-size:12px;
+    padding:6px 0;border-radius:var(--radius);border:1px solid #4A4539;
+    background:transparent;color:#B7AF9E;cursor:pointer;
+  }
+  .lang-btn.active{background:var(--amber);color:#211E1A;border-color:var(--amber);}
+
+  /* ---------- Main ---------- */
+  main{flex:1;padding:26px 32px 60px 32px;max-width:1180px;}
+  .page-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
+  .page-head h1{font-size:24px;margin:0;font-weight:700;}
+  .page-head p{margin:4px 0 0 0;color:var(--ink-soft);font-size:13.5px;}
+  .btn{
+    font-family:'Hind',sans-serif;
+    font-weight:600;
+    font-size:14px;
+    padding:9px 16px;
+    border-radius:var(--radius);
+    border:1.5px solid var(--ink);
+    background:var(--ink);
+    color:#EFEAE0;
+    cursor:pointer;
+  }
+  .btn:hover{background:#3A352C;}
+  .btn.amber{background:var(--amber);border-color:var(--amber-dark);color:#211E1A;}
+  .btn.amber:hover{background:#B06E1C;}
+  .btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line);}
+  .btn.ghost:hover{border-color:var(--ink);}
+  .btn.sm{padding:5px 10px;font-size:12.5px;}
+  .btn.danger{background:var(--rust-bg);color:var(--rust);border-color:var(--rust);}
+
+  /* Insight banners */
+  .insights{display:flex;flex-direction:column;gap:8px;margin-bottom:22px;}
+  .insight{
+    display:flex;align-items:center;gap:10px;
+    padding:11px 14px;border-radius:var(--radius);
+    font-size:13.5px;border:1px solid;
+  }
+  .insight.warn{background:var(--rust-bg);border-color:#D8B6A9;color:var(--rust);}
+  .insight.info{background:var(--steel-bg);border-color:#BFCBD8;color:var(--steel);}
+  .insight.ok{background:var(--green-bg);border-color:#BFD1BC;color:var(--green);}
+  .insight b{font-weight:700;}
+  .insight .dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0;}
+
+  /* KPI cards */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:24px;}
+  .kpi{
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:14px 16px;
+  }
+  .kpi .label{font-size:12px;color:var(--ink-soft);margin-bottom:6px;}
+  .kpi .value{font-family:'IBM Plex Mono',monospace;font-size:21px;font-weight:600;}
+  .kpi.income .value{color:var(--green);}
+  .kpi.expense .value{color:var(--rust);}
+  .kpi.profit .value.pos{color:var(--green);}
+  .kpi.profit .value.neg{color:var(--rust);}
+
+  /* Panels/cards */
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin-bottom:20px;}
+  .panel h2{font-size:15.5px;margin:0 0 14px 0;font-weight:700;border-bottom:1px solid var(--line);padding-bottom:10px;}
+  .grid-2{display:grid;grid-template-columns:1.3fr 1fr;gap:20px;align-items:start;}
+  @media(max-width:900px){.grid-2{grid-template-columns:1fr;}}
+
+  /* Tables */
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  th{
+    text-align:right;font-size:11.5px;text-transform:none;color:var(--ink-soft);
+    border-bottom:1.5px solid var(--ink);padding:7px 8px;font-weight:600;
+  }
+  td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top;}
+  tr:hover td{background:var(--panel-2);}
+  td.num, th.num{font-family:'IBM Plex Mono',monospace;text-align:left;white-space:nowrap;}
+  .tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;}
+  .tag.paid{background:var(--green-bg);color:var(--green);}
+  .tag.due{background:var(--rust-bg);color:var(--rust);}
+  .tag.income{background:var(--green-bg);color:var(--green);}
+  .tag.expense{background:var(--rust-bg);color:var(--rust);}
+  .row-actions{display:flex;gap:6px;}
+  .row-actions button{
+    background:none;border:1px solid var(--line);border-radius:var(--radius);
+    cursor:pointer;font-size:12px;padding:3px 8px;color:var(--ink-soft);font-family:'Hind',sans-serif;
+  }
+  .row-actions button:hover{border-color:var(--ink);color:var(--ink);}
+
+  /* Bars for category breakdown */
+  .barrow{margin-bottom:11px;}
+  .barrow .top{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px;}
+  .barrow .top .amt{font-family:'IBM Plex Mono',monospace;color:var(--ink-soft);}
+  .bartrack{background:var(--panel-2);border-radius:20px;height:8px;overflow:hidden;}
+  .barfill{height:100%;background:var(--amber);border-radius:20px;}
+
+  /* Filters bar */
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+  select, input[type=text], input[type=date], input[type=number]{
+    font-family:'Hind',sans-serif;font-size:13.5px;padding:7px 10px;
+    border:1.5px solid var(--line);border-radius:var(--radius);background:#fff;color:var(--ink);
+  }
+  input.mono, select.mono{font-family:'IBM Plex Mono',monospace;}
+
+  /* Modal */
+  .overlay{
+    position:fixed;inset:0;background:rgba(33,30,26,0.55);
+    display:flex;align-items:center;justify-content:center;z-index:50;padding:20px;
+  }
+  .modal{
+    background:var(--panel);border-radius:var(--radius);width:100%;max-width:560px;
+    max-height:90vh;overflow-y:auto;padding:22px 26px 26px 26px;border-top:4px solid var(--amber);
+  }
+  .modal h3{margin:0 0 16px 0;font-size:18px;}
+  .field{margin-bottom:13px;}
+  .field label{display:block;font-size:12.5px;color:var(--ink-soft);margin-bottom:5px;font-weight:600;}
+  .field input, .field select, .field textarea{width:100%;}
+  .field textarea{font-family:'Hind',sans-serif;font-size:13.5px;padding:7px 10px;border:1.5px solid var(--line);border-radius:var(--radius);resize:vertical;min-height:50px;}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;}
+  .toggle-row{display:flex;align-items:center;gap:8px;margin-bottom:13px;}
+
+  .empty{text-align:center;padding:40px 20px;color:var(--ink-soft);}
+  .empty .big{font-size:30px;margin-bottom:8px;}
+
+  .party-list{display:flex;flex-direction:column;gap:0;}
+  .party-item{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:11px 4px;border-bottom:1px solid var(--line);cursor:pointer;
+  }
+  .party-item:hover{background:var(--panel-2);}
+  .party-item .pname{font-weight:600;font-size:14px;}
+  .party-item .ptype{font-size:11.5px;color:var(--ink-soft);}
+  .party-item .pbal{font-family:'IBM Plex Mono',monospace;font-size:13.5px;font-weight:600;}
+
+  .proj-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px 18px;margin-bottom:14px;
+  }
+  .proj-card .ptop{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+  .proj-card h3{margin:0;font-size:16px;}
+  .proj-card .client{font-size:12.5px;color:var(--ink-soft);margin-top:2px;}
+  .proj-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px;}
+  .proj-stats .s{background:var(--panel-2);padding:8px 10px;border-radius:var(--radius);}
+  .proj-stats .s .l{font-size:10.5px;color:var(--ink-soft);}
+  .proj-stats .s .v{font-family:'IBM Plex Mono',monospace;font-size:13.5px;font-weight:600;}
+  .status-pill{font-size:11px;padding:2px 9px;border-radius:20px;font-weight:600;}
+  .status-pill.चालू{background:var(--steel-bg);color:var(--steel);}
+  .status-pill.पूर्ण{background:var(--green-bg);color:var(--green);}
+  .status-pill.रुका{background:var(--rust-bg);color:var(--rust);}
+
+  ::-webkit-scrollbar{width:9px;height:9px;}
+  ::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px;}
+
+  .loading-screen{display:flex;align-items:center;justify-content:center;height:100vh;width:100%;color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;font-size:13px;}
+</style>
+</head>
+<body>
+<div id="app"><div class="loading-screen">लोड हो रहा है… / Loading…</div></div>
+
+<script>
+const STORE_KEY = 'contractor_ledger_hi_v2';
+let state = null;
+
+/* ---------------- i18n ---------------- */
+let lang = localStorage.getItem('siteledger_lang') || 'hi';
+function setLang(l){ lang = l; localStorage.setItem('siteledger_lang', l); render(); }
+function tr(key){
+  const v = (T[lang] && T[lang][key]);
+  if(v!==undefined) return v;
+  return (T.hi[key]!==undefined) ? T.hi[key] : key;
+}
+// L() translates a *display* value drawn from a fixed set of Hindi data vocabulary
+// (status, pay mode, party type, project status, default category names) without
+// touching the underlying stored value used for filtering/matching.
+function L(val){
+  if(lang!=='en') return val;
+  return DATA_EN[val] || val;
+}
+
+const T = {
+  hi:{
+    navDashboard:'डैशबोर्ड', navTransactions:'लेन-देन', navProjects:'प्रोजेक्ट्स', navParties:'पार्टियां',
+    navReports:'रिपोर्ट्स', navSettings:'श्रेणियां',
+    loggedInAs:'लॉगिन', lastEdit:'आख़िरी बदलाव', logout:'लॉगआउट',
+    loginPrompt:'जारी रखने के लिए अपने ऑफिस Gmail से लॉगिन करें', loginBtn:'Google से लॉगिन करें',
+    loginDenied:'यह ईमेल इस ऐप के लिए अधिकृत नहीं है। ऑफिस से संपर्क करें।', loadingText:'लोड हो रहा है…',
+    dashboardTitle:'डैशबोर्ड', dashboardSub:'सभी प्रोजेक्ट्स का समेकित लेखा-जोखा', newTxBtn:'+ नया लेन-देन',
+    kpiIncome:'कुल आय', kpiExpense:'कुल खर्च', kpiProfit:'शुद्ध लाभ', kpiCash:'नकद बैलेंस',
+    kpiReceivable:'प्राप्य (बकाया आय)', kpiPayable:'देय (बकाया खर्च)',
+    recentTx:'हाल के लेन-देन', thDate:'तारीख', thDesc:'विवरण', thProject:'प्रोजेक्ट', thAmount:'राशि', thStatus:'स्थिति',
+    expenseByCategory:'खर्च श्रेणी अनुसार', noExpenseYet:'अभी कोई खर्च दर्ज नहीं',
+    txTitle:'लेन-देन', exportCsvBtn:'CSV एक्सपोर्ट', allProjects:'सभी प्रोजेक्ट', allTypes:'सभी प्रकार', allStatus:'सभी स्थिति',
+    typeIncome:'आय', typeExpense:'खर्च', searchPlaceholder:'विवरण, पार्टी या रेफ. खोजें…',
+    thCategory:'श्रेणी', thParty:'पार्टी', thPayment:'भुगतान', noTxFound:'कोई लेन-देन नहीं मिला', addedBy:'जोड़ा',
+    editBtn:'बदलें', deleteBtn:'मिटाएं',
+    projTitle:'प्रोजेक्ट्स', newProjBtn:'+ नया प्रोजेक्ट', noProjYet:'अभी कोई प्रोजेक्ट नहीं जोड़ा गया', startedOn:'शुरुआत',
+    contractValue:'कॉन्ट्रैक्ट वैल्यू', incomeReceived:'प्राप्त आय', profitMargin:'लाभ (मार्जिन)',
+    partiesTitle:'पार्टियां', partiesSub:'क्लाइंट, सप्लायर व सबकॉन्ट्रैक्टर', newPartyBtn:'+ नई पार्टी',
+    noPartyYet:'कोई पार्टी नहीं जोड़ी गई', cleared:'क्लियर', backToParties:'← सभी पार्टियां',
+    totalTx:'कुल लेन-देन', dueAmount:'बकाया राशि', addTxBtn:'+ लेन-देन जोड़ें', noTx:'कोई लेन-देन नहीं',
+    reportsTitle:'रिपोर्ट्स', reportsSub:'ट्रेंड, GST सारांश व प्रोजेक्ट तुलना',
+    monthlyTrend:'मासिक आय बनाम खर्च (पिछले 6 महीने)', legendIncome:'आय', legendExpense:'खर्च',
+    gstSummary:'GST सारांश', outputGst:'आउटपुट GST (आय पर)', inputGst:'इनपुट GST (खर्च पर)', netGstPayable:'नेट GST देय',
+    projComparison:'प्रोजेक्ट-वार तुलना', thMargin:'मार्जिन', thProfit:'लाभ',
+    settingsTitle:'श्रेणियां', settingsSub:'अपनी जरूरत के अनुसार आय व खर्च की श्रेणियां जोड़ें या हटाएं',
+    incomeCats:'आय श्रेणियां', expenseCats:'खर्च श्रेणियां', newIncomeCatPh:'नई आय श्रेणी का नाम',
+    newExpenseCatPh:'नई खर्च श्रेणी का नाम', addBtn:'+ जोड़ें', cannotDeleteUsed:'इस्तेमाल हो रही श्रेणी नहीं हटाई जा सकती',
+    noCategory:'कोई श्रेणी नहीं',
+    editTx:'लेन-देन बदलें', newTx:'नया लेन-देन', fieldType:'प्रकार', fieldDate:'तारीख', fieldProject:'प्रोजेक्ट',
+    fieldCategory:'श्रेणी', newCatBtn:'+ नई', newCatTitle:'नई श्रेणी जोड़ें', newCatPh:'नई श्रेणी का नाम',
+    fieldParty:'पार्टी (वैकल्पिक)', fieldDesc:'विवरण', fieldAmount:'राशि (₹, बिना GST)', fieldGst:'GST %',
+    fieldPayMode:'भुगतान माध्यम', fieldStatus:'स्थिति', fieldRef:'रेफरेंस / इनवॉइस नं. (वैकल्पिक)',
+    cancelBtn:'रद्द करें', saveChangesBtn:'बदलाव सहेजें', addBtnModal:'जोड़ें',
+    editProj:'प्रोजेक्ट बदलें', newProj:'नया प्रोजेक्ट', fieldProjName:'प्रोजेक्ट का नाम', fieldClientName:'क्लाइंट का नाम',
+    fieldLocation:'लोकेशन', fieldStartDate:'शुरुआत की तारीख', fieldContractValue:'कॉन्ट्रैक्ट वैल्यू (₹)',
+    editParty:'पार्टी बदलें', newParty:'नई पार्टी', fieldName:'नाम', fieldContact:'संपर्क',
+    confirmDelTx:'क्या आप वाकई इस लेन-देन को मिटाना चाहते हैं?',
+    projInUse:'इस प्रोजेक्ट से जुड़े लेन-देन मौजूद हैं, पहले उन्हें हटाएं या बदलें।',
+    confirmDelProj:'क्या आप वाकई इस प्रोजेक्ट को मिटाना चाहते हैं?',
+    catExists:'यह श्रेणी पहले से मौजूद है।',
+    saveError:'सेव करने में समस्या हुई — इंटरनेट कनेक्शन जांचें।',
+  },
+  en:{
+    navDashboard:'Dashboard', navTransactions:'Transactions', navProjects:'Projects', navParties:'Parties',
+    navReports:'Reports', navSettings:'Categories',
+    loggedInAs:'Logged in', lastEdit:'Last updated', logout:'Logout',
+    loginPrompt:'Sign in with your office Gmail to continue', loginBtn:'Sign in with Google',
+    loginDenied:"This email isn't authorized for this app. Contact your office admin.", loadingText:'Loading…',
+    dashboardTitle:'Dashboard', dashboardSub:'Consolidated accounts across all projects', newTxBtn:'+ New Transaction',
+    kpiIncome:'Total Income', kpiExpense:'Total Expense', kpiProfit:'Net Profit', kpiCash:'Cash Balance',
+    kpiReceivable:'Receivable (Due Income)', kpiPayable:'Payable (Due Expense)',
+    recentTx:'Recent Transactions', thDate:'Date', thDesc:'Description', thProject:'Project', thAmount:'Amount', thStatus:'Status',
+    expenseByCategory:'Expenses by Category', noExpenseYet:'No expenses recorded yet',
+    txTitle:'Transactions', exportCsvBtn:'Export CSV', allProjects:'All Projects', allTypes:'All Types', allStatus:'All Status',
+    typeIncome:'Income', typeExpense:'Expense', searchPlaceholder:'Search description, party or ref…',
+    thCategory:'Category', thParty:'Party', thPayment:'Payment', noTxFound:'No transactions found', addedBy:'Added by',
+    editBtn:'Edit', deleteBtn:'Delete',
+    projTitle:'Projects', newProjBtn:'+ New Project', noProjYet:'No projects added yet', startedOn:'Started',
+    contractValue:'Contract Value', incomeReceived:'Income Received', profitMargin:'Profit (Margin)',
+    partiesTitle:'Parties', partiesSub:'Clients, suppliers & subcontractors', newPartyBtn:'+ New Party',
+    noPartyYet:'No parties added yet', cleared:'Clear', backToParties:'← All Parties',
+    totalTx:'Total Transactions', dueAmount:'Due Amount', addTxBtn:'+ Add Transaction', noTx:'No transactions',
+    reportsTitle:'Reports', reportsSub:'Trends, GST summary & project comparison',
+    monthlyTrend:'Monthly Income vs Expense (Last 6 Months)', legendIncome:'Income', legendExpense:'Expense',
+    gstSummary:'GST Summary', outputGst:'Output GST (on Income)', inputGst:'Input GST (on Expense)', netGstPayable:'Net GST Payable',
+    projComparison:'Project-wise Comparison', thMargin:'Margin', thProfit:'Profit',
+    settingsTitle:'Categories', settingsSub:'Add or remove income and expense categories as needed',
+    incomeCats:'Income Categories', expenseCats:'Expense Categories', newIncomeCatPh:'New income category name',
+    newExpenseCatPh:'New expense category name', addBtn:'+ Add', cannotDeleteUsed:'A category in use cannot be deleted',
+    noCategory:'No categories',
+    editTx:'Edit Transaction', newTx:'New Transaction', fieldType:'Type', fieldDate:'Date', fieldProject:'Project',
+    fieldCategory:'Category', newCatBtn:'+ New', newCatTitle:'Add new category', newCatPh:'New category name',
+    fieldParty:'Party (optional)', fieldDesc:'Description', fieldAmount:'Amount (₹, before GST)', fieldGst:'GST %',
+    fieldPayMode:'Payment Mode', fieldStatus:'Status', fieldRef:'Reference / Invoice No. (optional)',
+    cancelBtn:'Cancel', saveChangesBtn:'Save Changes', addBtnModal:'Add',
+    editProj:'Edit Project', newProj:'New Project', fieldProjName:'Project Name', fieldClientName:'Client Name',
+    fieldLocation:'Location', fieldStartDate:'Start Date', fieldContractValue:'Contract Value (₹)',
+    editParty:'Edit Party', newParty:'New Party', fieldName:'Name', fieldContact:'Contact',
+    confirmDelTx:'Are you sure you want to delete this transaction?',
+    projInUse:'Transactions linked to this project exist — remove or reassign them first.',
+    confirmDelProj:'Are you sure you want to delete this project?',
+    catExists:'This category already exists.',
+    saveError:'Something went wrong while saving — check your internet connection.',
+  },
+};
+
+// Fixed Hindi data-vocabulary -> English, for display only (stored values never change)
+const DATA_EN = {
+  'भुगतान हो गया':'Paid', 'बकाया':'Due',
+  'नकद':'Cash', 'बैंक ट्रांसफर':'Bank Transfer', 'चेक':'Cheque', 'UPI':'UPI',
+  'क्लाइंट':'Client', 'मटेरियल सप्लायर':'Material Supplier', 'सबकॉन्ट्रैक्टर':'Subcontractor',
+  'मजदूर ठेकेदार':'Labour Contractor', 'मशीनरी/अन्य':'Machinery/Other',
+  'चालू':'Ongoing', 'पूर्ण':'Completed', 'रुका':'Stalled',
+  'एडवांस प्राप्त':'Advance Received', 'RA बिल भुगतान':'RA Bill Payment', 'रिटेंशन रिलीज़':'Retention Release', 'अन्य आय':'Other Income',
+  'मटेरियल':'Material', 'मजदूरी':'Labour', 'मशीनरी/उपकरण':'Machinery/Equipment',
+  'ट्रांसपोर्ट/ईंधन':'Transport/Fuel', 'साइट ओवरहेड':'Site Overhead', 'टैक्स/GST':'Tax/GST', 'अन्य खर्च':'Other Expense',
+};
+
+const DEFAULT_CATS_INCOME = ["एडवांस प्राप्त","RA बिल भुगतान","रिटेंशन रिलीज़","अन्य आय"];
+const DEFAULT_CATS_EXPENSE = ["मटेरियल","मजदूरी","सबकॉन्ट्रैक्टर","मशीनरी/उपकरण","ट्रांसपोर्ट/ईंधन","साइट ओवरहेड","टैक्स/GST","अन्य खर्च"];
+const PAY_MODES = ["नकद","बैंक ट्रांसफर","चेक","UPI"];
+const PARTY_TYPES = ["क्लाइंट","मटेरियल सप्लायर","सबकॉन्ट्रैक्टर","मजदूर ठेकेदार","मशीनरी/अन्य"];
+const PROJECT_STATUS = ["चालू","पूर्ण","रुका"];
+const GST_RATES = [0,5,12,18,28];
+
+function uid(p){ return p + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function fmt(n){
+  n = Math.round(n||0);
+  const neg = n<0; n=Math.abs(n);
+  let s = n.toLocaleString('en-IN');
+  return (neg?'-':'') + '₹' + s;
+}
+function fmtDate(d){
+  const dt = new Date(d);
+  return dt.toLocaleDateString(lang==='en'?'en-IN':'hi-IN',{day:'2-digit',month:'short',year:'numeric'});
+}
+function daysAgo(d){ return Math.floor((Date.now() - new Date(d).getTime())/86400000); }
+
+function seedData(){
+  const proj = [
+    {id:uid('p'), name:"ग्रीनफील्ड रेजिडेंसी - टावर B", client:"मेसर्स अग्रवाल बिल्डर्स", location:"गुरुग्राम, हरियाणा", contractValue:8500000, status:"चालू", startDate:"2026-01-15"},
+    {id:uid('p'), name:"रिवरसाइड कमर्शियल कॉम्प्लेक्स", client:"रिवरसाइड डेवलपर्स प्रा. लि.", location:"नोएडा, उत्तर प्रदेश", contractValue:15000000, status:"चालू", startDate:"2025-11-01"},
+    {id:uid('p'), name:"नगरपालिका सड़क निर्माण - सेक्टर 45", client:"गुरुग्राम नगर निगम", location:"गुरुग्राम, हरियाणा", contractValue:3200000, status:"पूर्ण", startDate:"2025-08-01"},
+  ];
+  const parties = [
+    {id:uid('pt'), name:"शर्मा स्टील ट्रेडर्स", type:"मटेरियल सप्लायर", contact:"98110-XXXXX"},
+    {id:uid('pt'), name:"रमेश सीमेंट एंड बिल्डिंग मटेरियल", type:"मटेरियल सप्लायर", contact:"98730-XXXXX"},
+    {id:uid('pt'), name:"सुरेश मजदूर ठेकेदार", type:"मजदूर ठेकेदार", contact:"99110-XXXXX"},
+    {id:uid('pt'), name:"गुप्ता इलेक्ट्रिकल वर्क्स", type:"सबकॉन्ट्रैक्टर", contact:"97290-XXXXX"},
+    {id:uid('pt'), name:"मेसर्स अग्रवाल बिल्डर्स", type:"क्लाइंट", contact:"account@agarwalbuilders.in"},
+    {id:uid('pt'), name:"रिवरसाइड डेवलपर्स प्रा. लि.", type:"क्लाइंट", contact:"finance@riverside.in"},
+    {id:uid('pt'), name:"गुरुग्राम नगर निगम", type:"क्लाइंट", contact:"mcg-works@gov.in"},
+    {id:uid('pt'), name:"सिंह JCB एंड मशीनरी रेंटल", type:"मशीनरी/अन्य", contact:"98220-XXXXX"},
+  ];
+  const P = (n) => proj[n].id;
+  const PT = (n) => parties[n].id;
+  const tx = [
+    {id:uid('t'), date:"2026-07-03", project:P(0), type:"Income", category:"एडवांस प्राप्त", party:PT(4), desc:"टावर B - एडवांस", amount:1500000, gst:0, mode:"बैंक ट्रांसफर", status:"भुगतान हो गया", ref:"ADV-001"},
+    {id:uid('t'), date:"2026-07-10", project:P(0), type:"Expense", category:"मटेरियल", party:PT(0), desc:"TMT स्टील बार - 12mm व 16mm", amount:420000, gst:18, mode:"बैंक ट्रांसफर", status:"भुगतान हो गया", ref:"INV-2201"},
+    {id:uid('t'), date:"2026-07-14", project:P(0), type:"Expense", category:"मटेरियल", party:PT(1), desc:"सीमेंट - 500 बैग OPC 43", amount:210000, gst:28, mode:"चेक", status:"भुगतान हो गया", ref:"INV-884"},
+    {id:uid('t'), date:"2026-07-20", project:P(0), type:"Expense", category:"मजदूरी", party:PT(2), desc:"जुलाई माह मजदूरी भुगतान", amount:285000, gst:0, mode:"नकद", status:"भुगतान हो गया", ref:""},
+    {id:uid('t'), date:"2026-07-28", project:P(0), type:"Expense", category:"मशीनरी/उपकरण", party:PT(7), desc:"JCB किराया - 12 दिन", amount:96000, gst:18, mode:"UPI", status:"बकाया", ref:"RENT-77"},
+    {id:uid('t'), date:"2026-08-02", project:P(0), type:"Income", category:"RA बिल भुगतान", party:PT(4), desc:"RA बिल #1 भुगतान", amount:1850000, gst:18, mode:"बैंक ट्रांसफर", status:"भुगतान हो गया", ref:"RA-001"},
+    {id:uid('t'), date:"2026-08-05", project:P(0), type:"Expense", category:"सबकॉन्ट्रैक्टर", party:PT(3), desc:"इलेक्ट्रिकल वायरिंग - ग्राउंड फ्लोर", amount:175000, gst:18, mode:"बैंक ट्रांसफर", status:"भुगतान हो गया", ref:"SC-14"},
+    {id:uid('t'), date:"2026-08-18", project:P(0), type:"Expense", category:"साइट ओवरहेड", party:null, desc:"साइट बिजली बिल + वॉचमैन", amount:38000, gst:0, mode:"नकद", status:"भुगतान हो गया", ref:""},
+
+    {id:uid('t'), date:"2025-11-10", project:P(1), type:"Income", category:"एडवांस प्राप्त", party:PT(5), desc:"मोबिलाइज़ेशन एडवांस", amount:3000000, gst:0, mode:"बैंक ट्रांसफर", status:"भुगतान हो गया", ref:"ADV-RS-1"},
+    {id:uid('t'), date:"2026-06-15", project:P(1), type:"Expense", category:"मटेरियल", party:PT(0), desc:"स्ट्रक्चरल स्टील सेक्शन", amount:920000, gst:18, mode:"बैंक ट्रांसफर", status:"भुगतान हो गया", ref:"INV-2301"},
+    {id:uid('t'), date:"2026-07-22", project:P(1), type:"Expense", category:"मजदूरी", party:PT(2), desc:"जुलाई मजदूरी - शटरिंग व कंक्रीटिंग गैंग", amount:410000, gst:0, mode:"नकद", status:"भुगतान हो गया", ref:""},
+    {id:uid('t'), date:"2026-08-01", project:P(1), type:"Income", category:"RA बिल भुगतान", party:PT(5), desc:"RA बिल #3", amount:2450000, gst:18, mode:"बैंक ट्रांसफर", status:"बकाया", ref:"RA-003"},
+    {id:uid('t'), date:"2026-08-12", project:P(1), type:"Expense", category:"मटेरियल", party:PT(1), desc:"रेडी मिक्स कंक्रीट M25", amount:560000, gst:18, mode:"चेक", status:"भुगतान हो गया", ref:"INV-902"},
+    {id:uid('t'), date:"2026-08-25", project:P(1), type:"Expense", category:"मशीनरी/उपकरण", party:PT(7), desc:"टावर क्रेन किराया - अगस्त", amount:245000, gst:18, mode:"बैंक ट्रांसफर", status:"बकाया", ref:"RENT-88"},
+    {id:uid('t'), date:"2026-08-29", project:P(1), type:"Expense", category:"सबकॉन्ट्रैक्टर", party:PT(3), desc:"प्लंबिंग रफ-इन वर्क", amount:310000, gst:18, mode:"बैंक ट्रांसफर", status:"भुगतान हो गया", ref:"SC-22"},
+
+    {id:uid('t'), date:"2025-08-05", project:P(2), type:"Income", category:"एडवांस प्राप्त", party:PT(6), desc:"वर्क ऑर्डर एडवांस", amount:480000, gst:0, mode:"बैंक ट्रांसफर", status:"भुगतान हो गया", ref:"WO-45"},
+    {id:uid('t'), date:"2025-09-10", project:P(2), type:"Expense", category:"मटेरियल", party:PT(1), desc:"डामर व बेस मटेरियल", amount:890000, gst:18, mode:"बैंक ट्रांसफर", status:"भुगतान हो गया", ref:"INV-501"},
+    {id:uid('t'), date:"2025-10-20", project:P(2), type:"Expense", category:"मजदूरी", party:PT(2), desc:"रोड लेइंग मजदूरी", amount:340000, gst:0, mode:"नकद", status:"भुगतान हो गया", ref:""},
+    {id:uid('t'), date:"2025-12-15", project:P(2), type:"Income", category:"RA बिल भुगतान", party:PT(6), desc:"अंतिम बिल भुगतान", amount:2100000, gst:12, mode:"बैंक ट्रांसफर", status:"भुगतान हो गया", ref:"RA-FIN"},
+    {id:uid('t'), date:"2025-12-20", project:P(2), type:"Expense", category:"मशीनरी/उपकरण", party:PT(7), desc:"रोलर व मिक्सर किराया", amount:145000, gst:18, mode:"चेक", status:"भुगतान हो गया", ref:"RENT-33"},
+    {id:uid('t'), date:"2026-01-05", project:P(2), type:"Income", category:"रिटेंशन रिलीज़", party:PT(6), desc:"रिटेंशन राशि रिलीज़", amount:160000, gst:0, mode:"बैंक ट्रांसफर", status:"बकाया", ref:"RET-45"},
+  ];
+  return {projects:proj, parties:parties, transactions:tx, categories:{income:[...DEFAULT_CATS_INCOME], expense:[...DEFAULT_CATS_EXPENSE]}};
+}
+
+let currentUser = null; // {email, name, picture} of the logged-in user, set by checkAuth()
+
+async function checkAuth(){
+  const res = await fetch('/api/me', {credentials:'include'});
+  if(res.status===401){ return null; }
+  return await res.json();
+}
+
+async function loadState(){
+  try{
+    const res = await fetch('/api/state', {credentials:'include'});
+    if(res.status===204){
+      // no shared data saved yet on the server -> seed it once
+      state = seedData();
+      await saveState();
+      return;
+    }
+    if(!res.ok) throw new Error('load failed: '+res.status);
+    state = await res.json();
+  }catch(e){
+    console.error('loadState failed, starting with seed data locally', e);
+    state = seedData();
+    return;
+  }
+  // migration: older saved data may not have custom categories yet
+  let changed = false;
+  if(!state.categories){ state.categories = {income:[...DEFAULT_CATS_INCOME], expense:[...DEFAULT_CATS_EXPENSE]}; changed = true; }
+  if(!state.categories.income) { state.categories.income = [...DEFAULT_CATS_INCOME]; changed = true; }
+  if(!state.categories.expense) { state.categories.expense = [...DEFAULT_CATS_EXPENSE]; changed = true; }
+  // make sure any category already used in existing transactions is present in the list
+  state.transactions.forEach(t=>{
+    const key = t.type==='Income'?'income':'expense';
+    if(t.category && !state.categories[key].includes(t.category)){ state.categories[key].push(t.category); changed = true; }
+  });
+  if(changed) await saveState();
+}
+async function saveState(){
+  try{
+    const res = await fetch('/api/state', {
+      method:'POST',
+      credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(state),
+    });
+    if(!res.ok) throw new Error('save failed: '+res.status);
+    const data = await res.json();
+    if(data.meta) state._meta = data.meta;
+  }catch(e){ console.error('save failed', e); alert(tr('saveError')); }
+}
+
+/* ---------------- derived calc helpers ---------------- */
+function txTotal(t){ return (t.amount||0) + Math.round((t.amount||0)*(t.gst||0)/100); }
+function gstAmt(t){ return Math.round((t.amount||0)*(t.gst||0)/100); }
+
+function partyName(id){
+  const p = state.parties.find(x=>x.id===id);
+  return p ? p.name : '—';
+}
+function projectName(id){
+  const p = state.projects.find(x=>x.id===id);
+  return p ? p.name : '—';
+}
+
+function overallTotals(list){
+  let income=0, expense=0, cash=0, outstandingReceivable=0, outstandingPayable=0, outputGst=0, inputGst=0;
+  list.forEach(t=>{
+    const tot = txTotal(t);
+    if(t.type==='Income'){
+      income += tot;
+      outputGst += gstAmt(t);
+      if(t.status==='बकाया') outstandingReceivable += tot;
+      if(t.mode==='नकद' && t.status==='भुगतान हो गया') cash += tot;
+    } else {
+      expense += tot;
+      inputGst += gstAmt(t);
+      if(t.status==='बकाया') outstandingPayable += tot;
+      if(t.mode==='नकद' && t.status==='भुगतान हो गया') cash -= tot;
+    }
+  });
+  return {income,expense,profit:income-expense,cash,outstandingReceivable,outstandingPayable,netGst:outputGst-inputGst};
+}
+
+function projectStats(pid){
+  const list = state.transactions.filter(t=>t.project===pid);
+  const tt = overallTotals(list);
+  const proj = state.projects.find(p=>p.id===pid);
+  const margin = tt.income>0 ? (tt.profit/tt.income*100) : 0;
+  return {...tt, margin, contractValue: proj?proj.contractValue:0};
+}
+
+/* ---------------- UI state ---------------- */
+let activeTab = 'dashboard';
+let editingTx = null;
+let editingProj = null;
+let editingParty = null;
+let activePartyId = null;
+let txFilters = {project:'all', type:'all', status:'all', q:''};
+
+const root = document.getElementById('app');
+
+function setTab(t){ activeTab = t; activePartyId=null; render(); }
+
+/* ---------------- Render root ---------------- */
+function render(){
+  root.innerHTML = `
+    <div class="rail">
+      <div class="brand">
+        <div class="mark">साइट <span>लेजर</span></div>
+        <div class="sub">CONTRACTOR ACCOUNTING</div>
+      </div>
+      <div class="lang-toggle">
+        <button class="lang-btn ${lang==='hi'?'active':''}" data-lang="hi">हिंदी</button>
+        <button class="lang-btn ${lang==='en'?'active':''}" data-lang="en">English</button>
+      </div>
+      <nav>
+        ${navBtn('dashboard',tr('navDashboard'))}
+        ${navBtn('transactions',tr('navTransactions'), state.transactions.length)}
+        ${navBtn('projects',tr('navProjects'), state.projects.length)}
+        ${navBtn('parties',tr('navParties'), state.parties.length)}
+        ${navBtn('reports',tr('navReports'))}
+        ${navBtn('settings',tr('navSettings'))}
+      </nav>
+      <div class="rail-foot">
+        ${currentUser ? `${tr('loggedInAs')}: ${currentUser.name || currentUser.email}<br>` : ''}
+        ${state._meta ? `${tr('lastEdit')}: ${state._meta.lastEditedByName || state._meta.lastEditedBy} · ${fmtDate(state._meta.lastEditedAt.slice(0,10))}<br>` : ''}
+        <a href="/auth/logout" style="color:#B7AF9E;">${tr('logout')}</a>
+      </div>
+    </div>
+    <main id="main"></main>
+  `;
+  document.documentElement.lang = lang;
+  document.title = lang==='en' ? 'Site Ledger — Contractor Accounting' : 'साइट लेजर — सिविल कॉन्ट्रैक्टर अकाउंटिंग';
+  const main = document.getElementById('main');
+  if(activeTab==='dashboard') main.innerHTML = renderDashboard();
+  else if(activeTab==='transactions') main.innerHTML = renderTransactions();
+  else if(activeTab==='projects') main.innerHTML = renderProjects();
+  else if(activeTab==='parties') main.innerHTML = renderParties();
+  else if(activeTab==='reports') main.innerHTML = renderReports();
+  else if(activeTab==='settings') main.innerHTML = renderSettings();
+  attachHandlers();
+}
+function navBtn(id,label,count){
+  return `<button class="${activeTab===id?'active':''}" data-tab="${id}">
+    <span>${label}</span>${count!==undefined?`<span class="num">${count}</span>`:''}
+  </button>`;
+}
+
+/* ---------------- Dashboard ---------------- */
+function buildInsights(tt){
+  const insights = [];
+  const overdueRecv = state.transactions.filter(t=>t.type==='Income' && t.status==='बकाया' && daysAgo(t.date)>30);
+  const overduePay = state.transactions.filter(t=>t.type==='Expense' && t.status==='बकाया' && daysAgo(t.date)>30);
+  if(overdueRecv.length){
+    const sum = overdueRecv.reduce((s,t)=>s+txTotal(t),0);
+    const html = lang==='en'
+      ? `<b>${overdueRecv.length} client payment${overdueRecv.length===1?'':'s'}</b> have been due for over 30 days — total <b>${fmt(sum)}</b>. Follow-up needed.`
+      : `<b>${overdueRecv.length} क्लाइंट भुगतान</b> 30 दिन से ज़्यादा समय से बकाया हैं — कुल <b>${fmt(sum)}</b>। फॉलो-अप जरूरी।`;
+    insights.push({level:'warn', html});
+  }
+  if(overduePay.length){
+    const sum = overduePay.reduce((s,t)=>s+txTotal(t),0);
+    const html = lang==='en'
+      ? `<b>${overduePay.length} vendor/subcontractor payment${overduePay.length===1?'':'s'}</b> have been due for 30+ days — total <b>${fmt(sum)}</b>. Late payment could disrupt supply.`
+      : `<b>${overduePay.length} वेंडर/सबकॉन्ट्रैक्टर भुगतान</b> 30 दिन से बकाया हैं — कुल <b>${fmt(sum)}</b>। समय पर भुगतान न होने से सप्लाई रुक सकती है।`;
+    insights.push({level:'warn', html});
+  }
+  if(tt.cash < 50000){
+    const html = lang==='en'
+      ? `Cash balance is low: <b>${fmt(tt.cash)}</b>. Arrange funds for the site's day-to-day expenses.`
+      : `नकद बैलेंस कम है: <b>${fmt(tt.cash)}</b>। साइट के रोज़मर्रा खर्चों के लिए फंड की व्यवस्था करें।`;
+    insights.push({level:'warn', html});
+  }
+  state.projects.filter(p=>p.status==='चालू').forEach(p=>{
+    const s = projectStats(p.id);
+    if(s.income>0 && s.margin < 8){
+      const html = lang==='en'
+        ? `<b>${p.name}</b>'s margin has dropped to <b>${s.margin.toFixed(1)}%</b> — review costs.`
+        : `<b>${p.name}</b> का मार्जिन घटकर <b>${s.margin.toFixed(1)}%</b> रह गया है — लागत की समीक्षा करें।`;
+      insights.push({level:'warn', html});
+    }
+  });
+  if(tt.netGst > 0){
+    const html = lang==='en'
+      ? `Estimated net GST liability: <b>${fmt(tt.netGst)}</b> (output − input). Keep this in mind when filing returns.`
+      : `अनुमानित नेट GST देनदारी: <b>${fmt(tt.netGst)}</b> (आउटपुट − इनपुट)। रिटर्न फाइल करते समय ध्यान रखें।`;
+    insights.push({level:'info', html});
+  }
+  if(insights.length===0){
+    const html = lang==='en'
+      ? `All payments are on time and cash balance is healthy — great work!`
+      : `सभी भुगतान समय पर हैं और नकद बैलेंस स्वस्थ है — बढ़िया काम!`;
+    insights.push({level:'ok', html});
+  }
+  return insights;
+}
+
+function renderDashboard(){
+  const tt = overallTotals(state.transactions);
+  const insights = buildInsights(tt);
+
+  // category breakdown (expenses)
+  const catMap = {};
+  state.transactions.filter(t=>t.type==='Expense').forEach(t=>{
+    catMap[t.category] = (catMap[t.category]||0) + txTotal(t);
+  });
+  const catArr = Object.entries(catMap).sort((a,b)=>b[1]-a[1]);
+  const maxCat = catArr.length ? catArr[0][1] : 1;
+
+  // recent transactions
+  const recent = [...state.transactions].sort((a,b)=> new Date(b.date)-new Date(a.date)).slice(0,7);
+
+  return `
+    <div class="page-head">
+      <div>
+        <h1>${tr('dashboardTitle')}</h1>
+        <p>${tr('dashboardSub')}</p>
+      </div>
+      <button class="btn amber" data-action="new-tx">${tr('newTxBtn')}</button>
+    </div>
+
+    <div class="insights">
+      ${insights.map(i=>`<div class="insight ${i.level}"><span class="dot"></span><span>${i.html}</span></div>`).join('')}
+    </div>
+
+    <div class="kpis">
+      <div class="kpi income"><div class="label">${tr('kpiIncome')}</div><div class="value mono">${fmt(tt.income)}</div></div>
+      <div class="kpi expense"><div class="label">${tr('kpiExpense')}</div><div class="value mono">${fmt(tt.expense)}</div></div>
+      <div class="kpi profit"><div class="label">${tr('kpiProfit')}</div><div class="value mono ${tt.profit>=0?'pos':'neg'}">${fmt(tt.profit)}</div></div>
+      <div class="kpi"><div class="label">${tr('kpiCash')}</div><div class="value mono">${fmt(tt.cash)}</div></div>
+      <div class="kpi"><div class="label">${tr('kpiReceivable')}</div><div class="value mono" style="color:var(--steel)">${fmt(tt.outstandingReceivable)}</div></div>
+      <div class="kpi"><div class="label">${tr('kpiPayable')}</div><div class="value mono" style="color:var(--rust)">${fmt(tt.outstandingPayable)}</div></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel">
+        <h2>${tr('recentTx')}</h2>
+        <table>
+          <thead><tr><th>${tr('thDate')}</th><th>${tr('thDesc')}</th><th>${tr('thProject')}</th><th class="num">${tr('thAmount')}</th><th>${tr('thStatus')}</th></tr></thead>
+          <tbody>
+          ${recent.map(t2=>`
+            <tr>
+              <td class="mono">${fmtDate(t2.date)}</td>
+              <td>${t2.desc||L(t2.category)}</td>
+              <td>${projectName(t2.project)}</td>
+              <td class="num" style="color:${t2.type==='Income'?'var(--green)':'var(--rust)'}">${t2.type==='Income'?'+':'−'} ${fmt(txTotal(t2))}</td>
+              <td><span class="tag ${t2.status==='भुगतान हो गया'?'paid':'due'}">${L(t2.status)}</span></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <h2>${tr('expenseByCategory')}</h2>
+        ${catArr.length===0 ? `<div class="empty">${tr('noExpenseYet')}</div>` : catArr.map(([cat,val])=>`
+          <div class="barrow">
+            <div class="top"><span>${L(cat)}</span><span class="amt">${fmt(val)}</span></div>
+            <div class="bartrack"><div class="barfill" style="width:${(val/maxCat*100).toFixed(0)}%"></div></div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+/* ---------------- Transactions ---------------- */
+function filteredTx(){
+  return state.transactions.filter(t=>{
+    if(txFilters.project!=='all' && t.project!==txFilters.project) return false;
+    if(txFilters.type!=='all' && t.type!==txFilters.type) return false;
+    if(txFilters.status!=='all' && t.status!==txFilters.status) return false;
+    if(txFilters.q){
+      const q = txFilters.q.toLowerCase();
+      const hay = (t.desc+' '+t.category+' '+partyName(t.party)+' '+(t.ref||'')).toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  }).sort((a,b)=> new Date(b.date)-new Date(a.date));
+}
+
+function renderTransactions(){
+  const list = filteredTx();
+  const tt = overallTotals(list);
+  return `
+    <div class="page-head">
+      <div><h1>${tr('txTitle')}</h1><p>${list.length} ${lang==='en'?'entries':'एंट्री'} • ${tr('typeIncome')} ${fmt(tt.income)} · ${tr('typeExpense')} ${fmt(tt.expense)}</p></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn ghost" data-action="export-csv">${tr('exportCsvBtn')}</button>
+        <button class="btn amber" data-action="new-tx">${tr('newTxBtn')}</button>
+      </div>
+    </div>
+    <div class="filters">
+      <select id="f-project"><option value="all">${tr('allProjects')}</option>${state.projects.map(p=>`<option value="${p.id}" ${txFilters.project===p.id?'selected':''}>${p.name}</option>`).join('')}</select>
+      <select id="f-type"><option value="all">${tr('allTypes')}</option><option value="Income" ${txFilters.type==='Income'?'selected':''}>${tr('typeIncome')}</option><option value="Expense" ${txFilters.type==='Expense'?'selected':''}>${tr('typeExpense')}</option></select>
+      <select id="f-status"><option value="all">${tr('allStatus')}</option><option value="भुगतान हो गया" ${txFilters.status==='भुगतान हो गया'?'selected':''}>${L('भुगतान हो गया')}</option><option value="बकाया" ${txFilters.status==='बकाया'?'selected':''}>${L('बकाया')}</option></select>
+      <input type="text" id="f-q" placeholder="${tr('searchPlaceholder')}" value="${txFilters.q}">
+    </div>
+    <div class="panel" style="padding:0;overflow-x:auto;">
+      <table>
+        <thead><tr>
+          <th>${tr('thDate')}</th><th>${tr('thProject')}</th><th>${tr('thCategory')}</th><th>${tr('thDesc')}</th><th>${tr('thParty')}</th>
+          <th class="num">${tr('thAmount')}</th><th>${tr('thPayment')}</th><th>${tr('thStatus')}</th><th></th>
+        </tr></thead>
+        <tbody>
+        ${list.length===0?`<tr><td colspan="9"><div class="empty"><div class="big">📋</div>${tr('noTxFound')}</div></td></tr>`:
+        list.map(t=>`
+          <tr data-txid="${t.id}">
+            <td class="mono">${fmtDate(t.date)}</td>
+            <td>${projectName(t.project)}</td>
+            <td><span class="tag ${t.type==='Income'?'income':'expense'}">${L(t.category)}</span></td>
+            <td>${t.desc||''}${t.ref?` <span class="mono" style="color:var(--ink-soft);font-size:11px;">#${t.ref}</span>`:''}${t.createdBy?`<div style="font-size:10px;color:var(--ink-soft);">${tr('addedBy')}: ${t.createdBy}</div>`:''}</td>
+            <td>${t.party?partyName(t.party):'—'}</td>
+            <td class="num" style="color:${t.type==='Income'?'var(--green)':'var(--rust)'}">${t.type==='Income'?'+':'−'} ${fmt(txTotal(t))}${t.gst?`<div style="font-size:10px;color:var(--ink-soft);">GST ${t.gst}%: ${fmt(gstAmt(t))}</div>`:''}</td>
+            <td class="mono" style="font-size:12px;">${L(t.mode)}</td>
+            <td><span class="tag ${t.status==='भुगतान हो गया'?'paid':'due'}">${L(t.status)}</span></td>
+            <td class="row-actions">
+              <button data-action="edit-tx" data-id="${t.id}">${tr('editBtn')}</button>
+              <button data-action="del-tx" data-id="${t.id}">${tr('deleteBtn')}</button>
+            </td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+/* ---------------- Projects ---------------- */
+function renderProjects(){
+  return `
+    <div class="page-head">
+      <div><h1>${tr('projTitle')}</h1><p>${state.projects.length} ${tr('projTitle')}</p></div>
+      <button class="btn amber" data-action="new-proj">${tr('newProjBtn')}</button>
+    </div>
+    ${state.projects.length===0?`<div class="panel"><div class="empty"><div class="big">🏗️</div>${tr('noProjYet')}</div></div>`:
+    state.projects.map(p=>{
+      const s = projectStats(p.id);
+      return `
+      <div class="proj-card">
+        <div class="ptop">
+          <div>
+            <h3>${p.name}</h3>
+            <div class="client">${p.client} · ${p.location} · ${tr('startedOn')} ${fmtDate(p.startDate)}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span class="status-pill ${p.status}">${L(p.status)}</span>
+            <button class="btn sm ghost" data-action="edit-proj" data-id="${p.id}">${tr('editBtn')}</button>
+            <button class="btn sm danger" data-action="del-proj" data-id="${p.id}">${tr('deleteBtn')}</button>
+          </div>
+        </div>
+        <div class="proj-stats">
+          <div class="s"><div class="l">${tr('contractValue')}</div><div class="v">${fmt(p.contractValue)}</div></div>
+          <div class="s"><div class="l">${tr('incomeReceived')}</div><div class="v" style="color:var(--green)">${fmt(s.income)}</div></div>
+          <div class="s"><div class="l">${tr('kpiExpense')}</div><div class="v" style="color:var(--rust)">${fmt(s.expense)}</div></div>
+          <div class="s"><div class="l">${tr('profitMargin')}</div><div class="v" style="color:${s.profit>=0?'var(--green)':'var(--rust)'}">${fmt(s.profit)} <span style="font-size:10.5px;color:var(--ink-soft);">(${s.income>0?s.margin.toFixed(1):'0'}%)</span></div></div>
+        </div>
+      </div>`;
+    }).join('')}
+  `;
+}
+
+/* ---------------- Parties ---------------- */
+function renderParties(){
+  if(activePartyId){
+    const p = state.parties.find(x=>x.id===activePartyId);
+    const list = state.transactions.filter(t=>t.party===activePartyId).sort((a,b)=>new Date(b.date)-new Date(a.date));
+    const due = list.filter(t=>t.status==='बकाया');
+    const dueSum = due.reduce((s,t)=>s+txTotal(t),0);
+    return `
+      <div class="page-head">
+        <div>
+          <button class="btn ghost sm" data-action="back-parties" style="margin-bottom:10px;">${tr('backToParties')}</button>
+          <h1>${p.name}</h1>
+          <p>${L(p.type)}${p.contact?' · '+p.contact:''}</p>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn ghost" data-action="edit-party" data-id="${p.id}">${tr('editBtn')}</button>
+          <button class="btn amber" data-action="new-tx" data-partyid="${p.id}">${tr('addTxBtn')}</button>
+        </div>
+      </div>
+      <div class="kpis" style="grid-template-columns:repeat(2,1fr);">
+        <div class="kpi"><div class="label">${tr('totalTx')}</div><div class="value mono">${list.length}</div></div>
+        <div class="kpi"><div class="label">${tr('dueAmount')}</div><div class="value mono" style="color:${dueSum>0?'var(--rust)':'var(--green)'}">${fmt(dueSum)}</div></div>
+      </div>
+      <div class="panel" style="padding:0;overflow-x:auto;">
+        <table>
+          <thead><tr><th>${tr('thDate')}</th><th>${tr('fieldType')}</th><th>${tr('thProject')}</th><th>${tr('thDesc')}</th><th class="num">${tr('thAmount')}</th><th>${tr('thStatus')}</th></tr></thead>
+          <tbody>
+          ${list.length===0?`<tr><td colspan="6"><div class="empty">${tr('noTx')}</div></td></tr>`:
+          list.map(t=>`
+            <tr>
+              <td class="mono">${fmtDate(t.date)}</td>
+              <td><span class="tag ${t.type==='Income'?'income':'expense'}">${L(t.category)}</span></td>
+              <td>${projectName(t.project)}</td>
+              <td>${t.desc||''}</td>
+              <td class="num" style="color:${t.type==='Income'?'var(--green)':'var(--rust)'}">${fmt(txTotal(t))}</td>
+              <td><span class="tag ${t.status==='भुगतान हो गया'?'paid':'due'}">${L(t.status)}</span></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="page-head">
+      <div><h1>${tr('partiesTitle')}</h1><p>${tr('partiesSub')}</p></div>
+      <button class="btn amber" data-action="new-party">${tr('newPartyBtn')}</button>
+    </div>
+    <div class="panel">
+      ${state.parties.length===0?`<div class="empty">${tr('noPartyYet')}</div>`:
+      `<div class="party-list">${state.parties.map(p=>{
+        const list = state.transactions.filter(t=>t.party===p.id && t.status==='बकाया');
+        const bal = list.reduce((s,t)=>s+txTotal(t),0);
+        return `<div class="party-item" data-action="open-party" data-id="${p.id}">
+          <div><div class="pname">${p.name}</div><div class="ptype">${L(p.type)}</div></div>
+          <div class="pbal" style="color:${bal>0?'var(--rust)':'var(--ink-soft)'}">${bal>0?fmt(bal)+' '+L('बकाया'):tr('cleared')}</div>
+        </div>`;
+      }).join('')}</div>`}
+    </div>
+  `;
+}
+
+/* ---------------- Reports ---------------- */
+function renderReports(){
+  const tt = overallTotals(state.transactions);
+  // monthly trend last 6 months
+  const months = [];
+  const now = new Date(2026,8,3); // fixed "today" reference
+  for(let i=5;i>=0;i--){
+    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    months.push({key: d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'), label: d.toLocaleDateString(lang==='en'?'en-IN':'hi-IN',{month:'short',year:'2-digit'})});
+  }
+  const monthData = months.map(m=>{
+    const inc = state.transactions.filter(t=>t.type==='Income' && t.date.startsWith(m.key)).reduce((s,t)=>s+txTotal(t),0);
+    const exp = state.transactions.filter(t=>t.type==='Expense' && t.date.startsWith(m.key)).reduce((s,t)=>s+txTotal(t),0);
+    return {...m, inc, exp};
+  });
+  const maxM = Math.max(1,...monthData.map(m=>Math.max(m.inc,m.exp)));
+
+  // GST summary
+  const outputGst = state.transactions.filter(t=>t.type==='Income').reduce((s,t)=>s+gstAmt(t),0);
+  const inputGst = state.transactions.filter(t=>t.type==='Expense').reduce((s,t)=>s+gstAmt(t),0);
+
+  return `
+    <div class="page-head"><div><h1>${tr('reportsTitle')}</h1><p>${tr('reportsSub')}</p></div></div>
+
+    <div class="grid-2">
+      <div class="panel">
+        <h2>${tr('monthlyTrend')}</h2>
+        ${monthData.map(m=>`
+          <div class="barrow">
+            <div class="top"><span>${m.label}</span><span class="amt">${fmt(m.inc-m.exp)}</span></div>
+            <div class="bartrack"><div class="barfill" style="width:${(m.inc/maxM*100).toFixed(0)}%;background:var(--green);"></div></div>
+            <div class="bartrack" style="margin-top:3px;"><div class="barfill" style="width:${(m.exp/maxM*100).toFixed(0)}%;background:var(--rust);"></div></div>
+          </div>
+        `).join('')}
+        <p style="font-size:11.5px;color:var(--ink-soft);margin-top:10px;"><span style="color:var(--green);">■</span> ${tr('legendIncome')} &nbsp; <span style="color:var(--rust);">■</span> ${tr('legendExpense')}</p>
+      </div>
+
+      <div class="panel">
+        <h2>${tr('gstSummary')}</h2>
+        <div class="kpis" style="grid-template-columns:1fr;">
+          <div class="kpi"><div class="label">${tr('outputGst')}</div><div class="value mono">${fmt(outputGst)}</div></div>
+          <div class="kpi"><div class="label">${tr('inputGst')}</div><div class="value mono">${fmt(inputGst)}</div></div>
+          <div class="kpi"><div class="label">${tr('netGstPayable')}</div><div class="value mono" style="color:${outputGst-inputGst>=0?'var(--rust)':'var(--green)'}">${fmt(outputGst-inputGst)}</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>${tr('projComparison')}</h2>
+      <table>
+        <thead><tr><th>${tr('thProject')}</th><th class="num">${tr('contractValue')}</th><th class="num">${tr('typeIncome')}</th><th class="num">${tr('typeExpense')}</th><th class="num">${tr('thProfit')}</th><th class="num">${tr('thMargin')}</th></tr></thead>
+        <tbody>
+        ${state.projects.map(p=>{
+          const s = projectStats(p.id);
+          return `<tr>
+            <td>${p.name}</td>
+            <td class="num">${fmt(p.contractValue)}</td>
+            <td class="num" style="color:var(--green)">${fmt(s.income)}</td>
+            <td class="num" style="color:var(--rust)">${fmt(s.expense)}</td>
+            <td class="num" style="color:${s.profit>=0?'var(--green)':'var(--rust)'}">${fmt(s.profit)}</td>
+            <td class="num">${s.income>0?s.margin.toFixed(1):'0'}%</td>
+          </tr>`;
+        }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+/* ---------------- Settings (categories) ---------------- */
+function catUsageCount(type, cat){
+  return state.transactions.filter(t=>t.type===type && t.category===cat).length;
+}
+function renderCatList(type){
+  const key = type==='Income'?'income':'expense';
+  const list = state.categories[key];
+  return list.map(c=>{
+    const used = catUsageCount(type,c);
+    const usedLabel = lang==='en' ? `used in ${used} transaction${used===1?'':'s'}` : `${used} लेन-देन में उपयोग`;
+    return `<div class="party-item" style="cursor:default;">
+      <div><div class="pname">${L(c)}</div><div class="ptype">${usedLabel}</div></div>
+      <button class="btn sm ${used>0?'ghost':'danger'}" data-action="del-cat" data-type="${type}" data-cat="${c}" ${used>0?`disabled title="${tr('cannotDeleteUsed')}"`:''}>${tr('deleteBtn')}</button>
+    </div>`;
+  }).join('') || `<div class="empty">${tr('noCategory')}</div>`;
+}
+function renderSettings(){
+  return `
+    <div class="page-head">
+      <div><h1>${tr('settingsTitle')}</h1><p>${tr('settingsSub')}</p></div>
+    </div>
+    <div class="grid-2">
+      <div class="panel">
+        <h2>${tr('incomeCats')}</h2>
+        <form id="add-cat-income" style="display:flex;gap:8px;margin-bottom:14px;">
+          <input type="text" name="cat" placeholder="${tr('newIncomeCatPh')}" style="flex:1;" required>
+          <button type="submit" class="btn amber sm">${tr('addBtn')}</button>
+        </form>
+        <div class="party-list" id="cat-list-income">${renderCatList('Income')}</div>
+      </div>
+      <div class="panel">
+        <h2>${tr('expenseCats')}</h2>
+        <form id="add-cat-expense" style="display:flex;gap:8px;margin-bottom:14px;">
+          <input type="text" name="cat" placeholder="${tr('newExpenseCatPh')}" style="flex:1;" required>
+          <button type="submit" class="btn amber sm">${tr('addBtn')}</button>
+        </form>
+        <div class="party-list" id="cat-list-expense">${renderCatList('Expense')}</div>
+      </div>
+    </div>
+  `;
+}
+async function addCategory(type, name){
+  const key = type==='Income'?'income':'expense';
+  name = (name||'').trim();
+  if(!name) return;
+  if(state.categories[key].some(c=>c.toLowerCase()===name.toLowerCase())){ alert(tr('catExists')); return; }
+  state.categories[key].push(name);
+  await saveState();
+}
+
+/* ---------------- Modals ---------------- */
+function openModal(html){
+  const div = document.createElement('div');
+  div.className = 'overlay';
+  div.id = 'modal-overlay';
+  div.innerHTML = `<div class="modal">${html}</div>`;
+  document.body.appendChild(div);
+  div.addEventListener('click', e=>{ if(e.target===div) closeModal(); });
+}
+function closeModal(){
+  const el = document.getElementById('modal-overlay');
+  if(el) el.remove();
+}
+
+function txModal(tx, presetPartyId){
+  const isEdit = !!tx;
+  const t = tx || {id:null, date:new Date().toISOString().slice(0,10), project:state.projects[0]?.id||'', type:'Expense', category:CATS_EXPENSE[0], party:presetPartyId||'', desc:'', amount:'', gst:0, mode:PAY_MODES[0], status:'भुगतान हो गया', ref:''};
+  openModal(`
+    <h3>${isEdit?tr('editTx'):tr('newTx')}</h3>
+    <form id="tx-form">
+      <div class="field-row">
+        <div class="field"><label>${tr('fieldType')}</label>
+          <select name="type" id="tx-type">
+            <option value="Expense" ${t.type==='Expense'?'selected':''}>${tr('typeExpense')}</option>
+            <option value="Income" ${t.type==='Income'?'selected':''}>${tr('typeIncome')}</option>
+          </select>
+        </div>
+        <div class="field"><label>${tr('fieldDate')}</label><input type="date" name="date" value="${t.date}" required></div>
+      </div>
+      <div class="field"><label>${tr('fieldProject')}</label>
+        <select name="project" required>${state.projects.map(p=>`<option value="${p.id}" ${t.project===p.id?'selected':''}>${p.name}</option>`).join('')}</select>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>${tr('fieldCategory')}</label>
+          <div style="display:flex;gap:6px;">
+            <select name="category" id="tx-cat" style="flex:1;"></select>
+            <button type="button" class="btn ghost sm" id="tx-cat-add-btn" title="${tr('newCatTitle')}">${tr('newCatBtn')}</button>
+          </div>
+          <div id="tx-cat-add-row" style="display:none;margin-top:7px;">
+            <div style="display:flex;gap:6px;">
+              <input type="text" id="tx-cat-new-input" placeholder="${tr('newCatPh')}" style="flex:1;">
+              <button type="button" class="btn amber sm" id="tx-cat-add-confirm">${tr('addBtnModal')}</button>
+            </div>
+          </div>
+        </div>
+        <div class="field"><label>${tr('fieldParty')}</label>
+          <select name="party"><option value="">—</option>${state.parties.map(p=>`<option value="${p.id}" ${t.party===p.id?'selected':''}>${p.name}</option>`).join('')}</select>
+        </div>
+      </div>
+      <div class="field"><label>${tr('fieldDesc')}</label><textarea name="desc">${t.desc||''}</textarea></div>
+      <div class="field-row">
+        <div class="field"><label>${tr('fieldAmount')}</label><input class="mono" type="number" name="amount" value="${t.amount}" required min="0" step="1"></div>
+        <div class="field"><label>${tr('fieldGst')}</label>
+          <select class="mono" name="gst">${GST_RATES.map(r=>`<option value="${r}" ${t.gst==r?'selected':''}>${r}%</option>`).join('')}</select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>${tr('fieldPayMode')}</label>
+          <select name="mode">${PAY_MODES.map(m=>`<option value="${m}" ${t.mode===m?'selected':''}>${L(m)}</option>`).join('')}</select>
+        </div>
+        <div class="field"><label>${tr('fieldStatus')}</label>
+          <select name="status">
+            <option value="भुगतान हो गया" ${t.status==='भुगतान हो गया'?'selected':''}>${L('भुगतान हो गया')}</option>
+            <option value="बकाया" ${t.status==='बकाया'?'selected':''}>${L('बकाया')}</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>${tr('fieldRef')}</label><input type="text" name="ref" value="${t.ref||''}"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" data-action="close-modal">${tr('cancelBtn')}</button>
+        <button type="submit" class="btn amber">${isEdit?tr('saveChangesBtn'):tr('addBtnModal')}</button>
+      </div>
+    </form>
+  `);
+  const catSelect = document.getElementById('tx-cat');
+  function fillCats(selectValue){
+    const type = document.getElementById('tx-type').value;
+    const cats = state.categories[type==='Income'?'income':'expense'];
+    const want = selectValue || t.category;
+    catSelect.innerHTML = cats.map(c=>`<option value="${c}" ${want===c?'selected':''}>${L(c)}</option>`).join('');
+    if(!cats.includes(want)) catSelect.selectedIndex = 0;
+  }
+  fillCats();
+  document.getElementById('tx-type').addEventListener('change', ()=>fillCats());
+
+  const addBtn = document.getElementById('tx-cat-add-btn');
+  const addRow = document.getElementById('tx-cat-add-row');
+  const addInput = document.getElementById('tx-cat-new-input');
+  const addConfirm = document.getElementById('tx-cat-add-confirm');
+  addBtn.addEventListener('click', ()=>{
+    addRow.style.display = addRow.style.display==='none' ? 'block' : 'none';
+    if(addRow.style.display==='block') addInput.focus();
+  });
+  async function confirmAddCat(){
+    const type = document.getElementById('tx-type').value;
+    const name = addInput.value.trim();
+    if(!name) return;
+    await addCategory(type, name);
+    fillCats(name);
+    addInput.value = '';
+    addRow.style.display = 'none';
+  }
+  addConfirm.addEventListener('click', confirmAddCat);
+  addInput.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); confirmAddCat(); } });
+  document.getElementById('tx-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const newTx = {
+      id: t.id || uid('t'),
+      date: fd.get('date'),
+      project: fd.get('project'),
+      type: fd.get('type'),
+      category: fd.get('category'),
+      party: fd.get('party') || null,
+      desc: fd.get('desc'),
+      amount: Number(fd.get('amount')),
+      gst: Number(fd.get('gst')),
+      mode: fd.get('mode'),
+      status: fd.get('status'),
+      ref: fd.get('ref'),
+      createdBy: t.createdBy || (currentUser ? currentUser.email : null),
+    };
+    if(isEdit){
+      const idx = state.transactions.findIndex(x=>x.id===t.id);
+      state.transactions[idx] = newTx;
+    } else {
+      state.transactions.push(newTx);
+    }
+    await saveState();
+    closeModal();
+    render();
+  });
+}
+
+function projModal(proj){
+  const isEdit = !!proj;
+  const p = proj || {id:null, name:'', client:'', location:'', contractValue:'', status:'चालू', startDate:new Date().toISOString().slice(0,10)};
+  openModal(`
+    <h3>${isEdit?tr('editProj'):tr('newProj')}</h3>
+    <form id="proj-form">
+      <div class="field"><label>${tr('fieldProjName')}</label><input type="text" name="name" value="${p.name}" required></div>
+      <div class="field"><label>${tr('fieldClientName')}</label><input type="text" name="client" value="${p.client}" required></div>
+      <div class="field-row">
+        <div class="field"><label>${tr('fieldLocation')}</label><input type="text" name="location" value="${p.location}"></div>
+        <div class="field"><label>${tr('fieldStartDate')}</label><input type="date" name="startDate" value="${p.startDate}"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>${tr('fieldContractValue')}</label><input class="mono" type="number" name="contractValue" value="${p.contractValue}" min="0"></div>
+        <div class="field"><label>${tr('fieldStatus')}</label><select name="status">${PROJECT_STATUS.map(s=>`<option value="${s}" ${p.status===s?'selected':''}>${L(s)}</option>`).join('')}</select></div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" data-action="close-modal">${tr('cancelBtn')}</button>
+        <button type="submit" class="btn amber">${isEdit?tr('saveChangesBtn'):tr('addBtnModal')}</button>
+      </div>
+    </form>
+  `);
+  document.getElementById('proj-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const newP = {
+      id: p.id || uid('p'),
+      name: fd.get('name'), client: fd.get('client'), location: fd.get('location'),
+      contractValue: Number(fd.get('contractValue'))||0, status: fd.get('status'), startDate: fd.get('startDate'),
+    };
+    if(isEdit){ const idx = state.projects.findIndex(x=>x.id===p.id); state.projects[idx]=newP; }
+    else state.projects.push(newP);
+    await saveState(); closeModal(); render();
+  });
+}
+
+function partyModal(party){
+  const isEdit = !!party;
+  const p = party || {id:null, name:'', type:PARTY_TYPES[0], contact:''};
+  openModal(`
+    <h3>${isEdit?tr('editParty'):tr('newParty')}</h3>
+    <form id="party-form">
+      <div class="field"><label>${tr('fieldName')}</label><input type="text" name="name" value="${p.name}" required></div>
+      <div class="field-row">
+        <div class="field"><label>${tr('fieldType')}</label><select name="type">${PARTY_TYPES.map(pt=>`<option value="${pt}" ${p.type===pt?'selected':''}>${L(pt)}</option>`).join('')}</select></div>
+        <div class="field"><label>${tr('fieldContact')}</label><input type="text" name="contact" value="${p.contact||''}"></div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" data-action="close-modal">${tr('cancelBtn')}</button>
+        <button type="submit" class="btn amber">${isEdit?tr('saveChangesBtn'):tr('addBtnModal')}</button>
+      </div>
+    </form>
+  `);
+  document.getElementById('party-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const newP = {id: p.id||uid('pt'), name:fd.get('name'), type:fd.get('type'), contact:fd.get('contact')};
+    if(isEdit){ const idx = state.parties.findIndex(x=>x.id===p.id); state.parties[idx]=newP; }
+    else state.parties.push(newP);
+    await saveState(); closeModal(); render();
+  });
+}
+
+/* ---------------- CSV export ---------------- */
+function exportCsv(){
+  const list = filteredTx();
+  const headers = lang==='en'
+    ? ['Date','Type','Project','Category','Description','Party','Amount','GST%','GST Amount','Total','Payment Mode','Status','Reference']
+    : ['तारीख','प्रकार','प्रोजेक्ट','श्रेणी','विवरण','पार्टी','राशि','GST%','GST राशि','कुल','भुगतान माध्यम','स्थिति','रेफरेंस'];
+  const rows = list.map(t=>[
+    t.date, t.type==='Income'?tr('typeIncome'):tr('typeExpense'), projectName(t.project), L(t.category), (t.desc||'').replace(/,/g,';'),
+    t.party?partyName(t.party):'', t.amount, t.gst, gstAmt(t), txTotal(t), L(t.mode), L(t.status), t.ref||''
+  ]);
+  const csv = [headers, ...rows].map(r=>r.join(',')).join('\n');
+  const blob = new Blob(["\uFEFF"+csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'lena-dena-report.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ---------------- Event delegation ---------------- */
+function attachHandlers(){
+  document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click', ()=>setTab(b.dataset.tab)));
+  document.querySelectorAll('[data-lang]').forEach(b=>b.addEventListener('click', ()=>setLang(b.dataset.lang)));
+
+  const byAction = (action, fn) => {
+    document.querySelectorAll(`[data-action="${action}"]`).forEach(el=>el.addEventListener('click', fn));
+  };
+  byAction('new-tx', (e)=> txModal(null, e.currentTarget.dataset.partyid));
+  byAction('edit-tx', e=> txModal(state.transactions.find(t=>t.id===e.currentTarget.dataset.id)));
+  byAction('del-tx', async e=>{
+    if(confirm(tr('confirmDelTx'))){
+      state.transactions = state.transactions.filter(t=>t.id!==e.currentTarget.dataset.id);
+      await saveState(); render();
+    }
+  });
+  byAction('new-proj', ()=>projModal(null));
+  byAction('edit-proj', e=>projModal(state.projects.find(p=>p.id===e.currentTarget.dataset.id)));
+  byAction('del-proj', async e=>{
+    const id = e.currentTarget.dataset.id;
+    const used = state.transactions.some(t=>t.project===id);
+    if(used){ alert(tr('projInUse')); return; }
+    if(confirm(tr('confirmDelProj'))){
+      state.projects = state.projects.filter(p=>p.id!==id);
+      await saveState(); render();
+    }
+  });
+  byAction('new-party', ()=>partyModal(null));
+  byAction('edit-party', e=>partyModal(state.parties.find(p=>p.id===e.currentTarget.dataset.id)));
+  byAction('open-party', e=>{ activePartyId = e.currentTarget.dataset.id; render(); });
+  byAction('back-parties', ()=>{ activePartyId=null; render(); });
+  byAction('close-modal', closeModal);
+  byAction('export-csv', exportCsv);
+
+  const addCatIncome = document.getElementById('add-cat-income');
+  if(addCatIncome) addCatIncome.addEventListener('submit', async e=>{
+    e.preventDefault();
+    const val = e.target.cat.value;
+    await addCategory('Income', val);
+    render();
+  });
+  const addCatExpense = document.getElementById('add-cat-expense');
+  if(addCatExpense) addCatExpense.addEventListener('submit', async e=>{
+    e.preventDefault();
+    const val = e.target.cat.value;
+    await addCategory('Expense', val);
+    render();
+  });
+  byAction('del-cat', async e=>{
+    const type = e.currentTarget.dataset.type;
+    const cat = e.currentTarget.dataset.cat;
+    if(catUsageCount(type,cat)>0) return;
+    const confirmMsg = lang==='en' ? `Delete category "${L(cat)}"?` : `क्या "${L(cat)}" श्रेणी मिटाएं?`;
+    if(confirm(confirmMsg)){
+      const key = type==='Income'?'income':'expense';
+      state.categories[key] = state.categories[key].filter(c=>c!==cat);
+      await saveState(); render();
+    }
+  });
+
+  const fp = document.getElementById('f-project'); if(fp) fp.addEventListener('change', e=>{txFilters.project=e.target.value; render();});
+  const ft = document.getElementById('f-type'); if(ft) ft.addEventListener('change', e=>{txFilters.type=e.target.value; render();});
+  const fs = document.getElementById('f-status'); if(fs) fs.addEventListener('change', e=>{txFilters.status=e.target.value; render();});
+  const fq = document.getElementById('f-q'); if(fq) fq.addEventListener('input', e=>{txFilters.q=e.target.value; render(); document.getElementById('f-q').focus(); document.getElementById('f-q').selectionStart = document.getElementById('f-q').value.length;});
+}
+
+/* ---------------- Init ---------------- */
+(async function init(){
+  currentUser = await checkAuth();
+  if(!currentUser){
+    const renderLoginGate = () => {
+      document.getElementById('app').innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;width:100%;">
+          <div style="background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:36px 40px;text-align:center;max-width:360px;">
+            <div class="lang-toggle" style="justify-content:center;margin-bottom:18px;">
+              <button class="lang-btn ${lang==='hi'?'active':''}" data-lang="hi" style="color:${lang==='hi'?'#211E1A':'var(--ink-soft)'};border-color:var(--line);">हिंदी</button>
+              <button class="lang-btn ${lang==='en'?'active':''}" data-lang="en" style="color:${lang==='en'?'#211E1A':'var(--ink-soft)'};border-color:var(--line);">English</button>
+            </div>
+            <div style="font-weight:700;font-size:22px;margin-bottom:4px;">साइट <span style="color:var(--amber);">लेजर</span></div>
+            <div style="color:var(--ink-soft);font-size:13.5px;margin-bottom:22px;">${tr('loginPrompt')}</div>
+            <a href="/auth/google" class="btn amber" style="display:inline-block;text-decoration:none;">${tr('loginBtn')}</a>
+            ${new URLSearchParams(location.search).get('login')==='denied' ? `<div style="color:var(--rust);font-size:12.5px;margin-top:14px;">${tr('loginDenied')}</div>` : ''}
+          </div>
+        </div>`;
+      document.querySelectorAll('[data-lang]').forEach(b=>b.addEventListener('click', ()=>{
+        lang = b.dataset.lang; localStorage.setItem('siteledger_lang', lang); renderLoginGate();
+      }));
+    };
+    renderLoginGate();
+    return;
+  }
+  await loadState();
+  render();
+})();
+</script>
+</body>
+</html>
