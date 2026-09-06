@@ -216,7 +216,17 @@
     background:var(--panel);border-radius:var(--radius);width:100%;max-width:560px;
     max-height:90vh;overflow-y:auto;padding:22px 26px 26px 26px;border-top:4px solid var(--amber);
   }
+  .modal.wide{max-width:760px;}
   .modal h3{margin:0 0 16px 0;font-size:18px;}
+  .items-head{display:grid;grid-template-columns:2.2fr 0.7fr 1fr 0.7fr 1fr 28px;gap:6px;font-size:11px;color:var(--ink-soft);font-weight:600;padding:0 2px 4px 2px;}
+  .item-row{display:grid;grid-template-columns:2.2fr 0.7fr 1fr 0.7fr 1fr 28px;gap:6px;margin-bottom:6px;align-items:center;}
+  .item-row input, .item-row select{width:100%;padding:6px 8px;font-size:13px;}
+  .item-amt{font-size:13px;text-align:right;padding-right:4px;}
+  .item-remove{background:none;border:1px solid var(--line);border-radius:var(--radius);cursor:pointer;color:var(--rust);font-size:12px;padding:5px 0;}
+  .item-remove:hover{border-color:var(--rust);}
+  .doc-total-row{display:flex;justify-content:flex-end;gap:8px;align-items:baseline;font-size:15px;font-weight:700;margin:12px 0 4px 0;border-top:1.5px solid var(--line);padding-top:10px;}
+  .doc-total-row .mono{font-size:17px;}
+  @media(max-width:640px){.items-head{display:none;} .item-row{grid-template-columns:1fr;background:var(--panel-2);padding:8px;border-radius:var(--radius);}}
   .field{margin-bottom:13px;}
   .field label{display:block;font-size:12.5px;color:var(--ink-soft);margin-bottom:5px;font-weight:600;}
   .field input, .field select, .field textarea{width:100%;}
@@ -325,6 +335,19 @@ const T = {
     confirmDelProj:'क्या आप वाकई इस प्रोजेक्ट को मिटाना चाहते हैं?',
     catExists:'यह श्रेणी पहले से मौजूद है।',
     saveError:'सेव करने में समस्या हुई — इंटरनेट कनेक्शन जांचें।',
+    navQuotations:'कोटेशन', navInvoices:'इनवॉइस',
+    quoteTitle:'कोटेशन', newQuoteBtn:'+ नया कोटेशन', noQuoteFound:'कोई कोटेशन नहीं मिला',
+    editQuote:'कोटेशन बदलें', newQuote:'नया कोटेशन', confirmDelQuote:'क्या आप वाकई इस कोटेशन को मिटाना चाहते हैं?',
+    invoiceTitle:'इनवॉइस', newInvoiceBtn:'+ नया इनवॉइस', noInvoiceFound:'कोई इनवॉइस नहीं मिला',
+    editInvoice:'इनवॉइस बदलें', newInvoice:'नया इनवॉइस', confirmDelInvoice:'क्या आप वाकई इस इनवॉइस को मिटाना चाहते हैं?',
+    fieldValidUntil:'वैधता तिथि (वैकल्पिक)', fieldDueDate:'देय तिथि (वैकल्पिक)',
+    fieldItems:'लाइन आइटम', itemDesc:'विवरण', itemQty:'मात्रा', itemRate:'दर (₹)', itemAmount:'राशि',
+    addItemBtn:'+ आइटम जोड़ें', needOneItem:'कम से कम एक आइटम भरें।', totalAmount:'कुल राशि',
+    thNumber:'नंबर', printBtn:'प्रिंट', convertBtn:'इनवॉइस बनाएं', markPaidBtn:'भुगतान हो गया चिह्नित करें',
+    fieldNotes:'टिप्पणी (वैकल्पिक)', createdFromQuote:'इस कोटेशन से बनाया गया',
+    bizProfileTitle:'बिजनेस प्रोफ़ाइल', bizProfileSub:'यह जानकारी कोटेशन व इनवॉइस के प्रिंट पर दिखेगी',
+    fieldBizName:'कंपनी/फर्म का नाम', fieldBizAddress:'पता', fieldGstin:'GSTIN (वैकल्पिक)',
+    fieldPhone:'फोन', fieldEmail:'ईमेल', saveBizBtn:'सहेजें',
   },
   en:{
     navDashboard:'Dashboard', navTransactions:'Transactions', navProjects:'Projects', navParties:'Parties',
@@ -367,6 +390,19 @@ const T = {
     confirmDelProj:'Are you sure you want to delete this project?',
     catExists:'This category already exists.',
     saveError:'Something went wrong while saving — check your internet connection.',
+    navQuotations:'Quotations', navInvoices:'Invoices',
+    quoteTitle:'Quotations', newQuoteBtn:'+ New Quotation', noQuoteFound:'No quotations found',
+    editQuote:'Edit Quotation', newQuote:'New Quotation', confirmDelQuote:'Are you sure you want to delete this quotation?',
+    invoiceTitle:'Invoices', newInvoiceBtn:'+ New Invoice', noInvoiceFound:'No invoices found',
+    editInvoice:'Edit Invoice', newInvoice:'New Invoice', confirmDelInvoice:'Are you sure you want to delete this invoice?',
+    fieldValidUntil:'Valid Until (optional)', fieldDueDate:'Due Date (optional)',
+    fieldItems:'Line Items', itemDesc:'Description', itemQty:'Qty', itemRate:'Rate (₹)', itemAmount:'Amount',
+    addItemBtn:'+ Add Item', needOneItem:'Please fill in at least one item.', totalAmount:'Total Amount',
+    thNumber:'Number', printBtn:'Print', convertBtn:'Create Invoice', markPaidBtn:'Mark as Paid',
+    fieldNotes:'Notes (optional)', createdFromQuote:'Created from this quotation',
+    bizProfileTitle:'Business Profile', bizProfileSub:'This information appears on printed quotations and invoices',
+    fieldBizName:'Company/Firm Name', fieldBizAddress:'Address', fieldGstin:'GSTIN (optional)',
+    fieldPhone:'Phone', fieldEmail:'Email', saveBizBtn:'Save',
   },
 };
 
@@ -380,6 +416,8 @@ const DATA_EN = {
   'एडवांस प्राप्त':'Advance Received', 'RA बिल भुगतान':'RA Bill Payment', 'रिटेंशन रिलीज़':'Retention Release', 'अन्य आय':'Other Income',
   'मटेरियल':'Material', 'मजदूरी':'Labour', 'मशीनरी/उपकरण':'Machinery/Equipment',
   'ट्रांसपोर्ट/ईंधन':'Transport/Fuel', 'साइट ओवरहेड':'Site Overhead', 'टैक्स/GST':'Tax/GST', 'अन्य खर्च':'Other Expense',
+  'ड्राफ्ट':'Draft', 'भेजा गया':'Sent', 'स्वीकृत':'Accepted', 'अस्वीकृत':'Rejected', 'इनवॉइस में बदला':'Converted to Invoice',
+  'इनवॉइस भुगतान':'Invoice Payment',
 };
 
 const DEFAULT_CATS_INCOME = ["एडवांस प्राप्त","RA बिल भुगतान","रिटेंशन रिलीज़","अन्य आय"];
@@ -388,6 +426,10 @@ const PAY_MODES = ["नकद","बैंक ट्रांसफर","चे�
 const PARTY_TYPES = ["क्लाइंट","मटेरियल सप्लायर","सबकॉन्ट्रैक्टर","मजदूर ठेकेदार","मशीनरी/अन्य"];
 const PROJECT_STATUS = ["चालू","पूर्ण","रुका"];
 const GST_RATES = [0,5,12,18,28];
+const QUOTE_STATUS = ["ड्राफ्ट","भेजा गया","स्वीकृत","अस्वीकृत","इनवॉइस में बदला"];
+const QUOTE_STATUS_SELECTABLE = QUOTE_STATUS.slice(0,4); // "converted" is system-set only
+const INVOICE_STATUS = ["ड्राफ्ट","भेजा गया","भुगतान हो गया","बकाया"];
+const INVOICE_PAYMENT_CATEGORY = "इनवॉइस भुगतान";
 
 function uid(p){ return p + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 function fmt(n){
@@ -445,7 +487,12 @@ function seedData(){
     {id:uid('t'), date:"2025-12-20", project:P(2), type:"Expense", category:"मशीनरी/उपकरण", party:PT(7), desc:"रोलर व मिक्सर किराया", amount:145000, gst:18, mode:"चेक", status:"भुगतान हो गया", ref:"RENT-33"},
     {id:uid('t'), date:"2026-01-05", project:P(2), type:"Income", category:"रिटेंशन रिलीज़", party:PT(6), desc:"रिटेंशन राशि रिलीज़", amount:160000, gst:0, mode:"बैंक ट्रांसफर", status:"बकाया", ref:"RET-45"},
   ];
-  return {projects:proj, parties:parties, transactions:tx, categories:{income:[...DEFAULT_CATS_INCOME], expense:[...DEFAULT_CATS_EXPENSE]}};
+  return {
+    projects:proj, parties:parties, transactions:tx,
+    categories:{income:[...DEFAULT_CATS_INCOME], expense:[...DEFAULT_CATS_EXPENSE]},
+    quotations:[], invoices:[], counters:{quote:1, invoice:1},
+    businessProfile:{name:'', address:'', gstin:'', phone:'', email:''},
+  };
 }
 
 let currentUser = null; // {email, name, picture} of the logged-in user, set by checkAuth()
@@ -482,6 +529,11 @@ async function loadState(){
     const key = t.type==='Income'?'income':'expense';
     if(t.category && !state.categories[key].includes(t.category)){ state.categories[key].push(t.category); changed = true; }
   });
+  // migration: quotations & invoicing feature
+  if(!state.quotations){ state.quotations = []; changed = true; }
+  if(!state.invoices){ state.invoices = []; changed = true; }
+  if(!state.counters){ state.counters = {quote:1, invoice:1}; changed = true; }
+  if(!state.businessProfile){ state.businessProfile = {name:'', address:'', gstin:'', phone:'', email:''}; changed = true; }
   if(changed) await saveState();
 }
 async function saveState(){
@@ -545,6 +597,8 @@ let editingProj = null;
 let editingParty = null;
 let activePartyId = null;
 let txFilters = {project:'all', type:'all', status:'all', q:''};
+let quoteFilters = {status:'all'};
+let invoiceFilters = {status:'all'};
 
 const root = document.getElementById('app');
 
@@ -565,6 +619,8 @@ function render(){
       <nav>
         ${navBtn('dashboard',tr('navDashboard'))}
         ${navBtn('transactions',tr('navTransactions'), state.transactions.length)}
+        ${navBtn('quotations',tr('navQuotations'), state.quotations.length)}
+        ${navBtn('invoices',tr('navInvoices'), state.invoices.length)}
         ${navBtn('projects',tr('navProjects'), state.projects.length)}
         ${navBtn('parties',tr('navParties'), state.parties.length)}
         ${navBtn('reports',tr('navReports'))}
@@ -583,6 +639,8 @@ function render(){
   const main = document.getElementById('main');
   if(activeTab==='dashboard') main.innerHTML = renderDashboard();
   else if(activeTab==='transactions') main.innerHTML = renderTransactions();
+  else if(activeTab==='quotations') main.innerHTML = renderQuotations();
+  else if(activeTab==='invoices') main.innerHTML = renderInvoices();
   else if(activeTab==='projects') main.innerHTML = renderProjects();
   else if(activeTab==='parties') main.innerHTML = renderParties();
   else if(activeTab==='reports') main.innerHTML = renderReports();
@@ -772,6 +830,369 @@ function renderTransactions(){
   `;
 }
 
+/* ---------------- Quotations & Invoicing: shared helpers ---------------- */
+function itemsTotal(items){
+  return (items||[]).reduce((s,it)=>{ const base=(it.qty||0)*(it.rate||0); return s + base + Math.round(base*(it.gst||0)/100); },0);
+}
+function itemRowHtml(it){
+  it = it || {desc:'', qty:1, rate:'', gst:0};
+  return `<div class="item-row">
+    <input type="text" class="item-desc" placeholder="${tr('itemDesc')}" value="${(it.desc||'').replace(/"/g,'&quot;')}">
+    <input type="number" class="item-qty mono" min="0" step="1" value="${it.qty!==undefined && it.qty!==''?it.qty:1}">
+    <input type="number" class="item-rate mono" min="0" step="1" value="${it.rate!==undefined?it.rate:''}">
+    <select class="item-gst mono">${GST_RATES.map(r=>`<option value="${r}" ${Number(it.gst)===r?'selected':''}>${r}%</option>`).join('')}</select>
+    <span class="item-amt mono">${fmt(0)}</span>
+    <button type="button" class="item-remove" title="remove">✕</button>
+  </div>`;
+}
+function wireItems(container, totalElId){
+  function recalc(){
+    let total = 0;
+    container.querySelectorAll('.item-row').forEach(row=>{
+      const qty = Number(row.querySelector('.item-qty').value)||0;
+      const rate = Number(row.querySelector('.item-rate').value)||0;
+      const gst = Number(row.querySelector('.item-gst').value)||0;
+      const base = qty*rate;
+      const amt = base + Math.round(base*gst/100);
+      row.querySelector('.item-amt').textContent = fmt(amt);
+      total += amt;
+    });
+    const totalEl = document.getElementById(totalElId);
+    if(totalEl) totalEl.textContent = fmt(total);
+  }
+  container.addEventListener('input', recalc);
+  container.addEventListener('change', recalc);
+  container.addEventListener('click', e=>{
+    if(e.target.classList.contains('item-remove')){
+      if(container.querySelectorAll('.item-row').length>1){ e.target.closest('.item-row').remove(); recalc(); }
+    }
+  });
+  recalc();
+  return recalc;
+}
+function readItems(container){
+  const items = [];
+  container.querySelectorAll('.item-row').forEach(row=>{
+    const desc = row.querySelector('.item-desc').value.trim();
+    const qty = Number(row.querySelector('.item-qty').value)||0;
+    const rate = Number(row.querySelector('.item-rate').value)||0;
+    const gst = Number(row.querySelector('.item-gst').value)||0;
+    if(!desc && qty===0 && rate===0) return;
+    items.push({desc, qty, rate, gst});
+  });
+  return items;
+}
+function escapeHtml(s){
+  return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function markInvoicePaidTx(inv){
+  if(inv.linkedTransactionId) return;
+  if(!state.categories.income.includes(INVOICE_PAYMENT_CATEGORY)) state.categories.income.push(INVOICE_PAYMENT_CATEGORY);
+  const total = itemsTotal(inv.items);
+  const txObj = {
+    id: uid('t'), date: inv.date, project:'', type:'Income', category: INVOICE_PAYMENT_CATEGORY,
+    party: inv.party||null, desc: (lang==='en'?'Invoice ':'इनवॉइस ') + inv.number, amount: total, gst:0,
+    mode: PAY_MODES[1], status:'भुगतान हो गया', ref: inv.number,
+    createdBy: currentUser ? currentUser.email : null,
+  };
+  state.transactions.push(txObj);
+  inv.linkedTransactionId = txObj.id;
+}
+
+/* ---------------- Quotations ---------------- */
+function renderQuotations(){
+  let list = [...state.quotations];
+  if(quoteFilters.status!=='all') list = list.filter(q=>q.status===quoteFilters.status);
+  list.sort((a,b)=> new Date(b.date)-new Date(a.date));
+  return `
+    <div class="page-head">
+      <div><h1>${tr('quoteTitle')}</h1><p>${list.length} ${tr('quoteTitle')}</p></div>
+      <button class="btn amber" data-action="new-quote">${tr('newQuoteBtn')}</button>
+    </div>
+    <div class="filters">
+      <select id="qf-status"><option value="all">${tr('allStatus')}</option>${QUOTE_STATUS.map(s=>`<option value="${s}" ${quoteFilters.status===s?'selected':''}>${L(s)}</option>`).join('')}</select>
+    </div>
+    <div class="panel" style="padding:0;overflow-x:auto;">
+      <table>
+        <thead><tr><th>${tr('thNumber')}</th><th>${tr('thDate')}</th><th>${tr('thParty')}</th><th class="num">${tr('thAmount')}</th><th>${tr('thStatus')}</th><th></th></tr></thead>
+        <tbody>
+        ${list.length===0?`<tr><td colspan="6"><div class="empty"><div class="big">🧾</div>${tr('noQuoteFound')}</div></td></tr>`:
+        list.map(q=>`
+          <tr>
+            <td class="mono">${q.number}</td>
+            <td class="mono">${fmtDate(q.date)}</td>
+            <td>${partyName(q.party)}</td>
+            <td class="num">${fmt(itemsTotal(q.items))}</td>
+            <td><span class="tag ${q.status==='स्वीकृत'?'paid':(q.status==='अस्वीकृत'?'due':'')}">${L(q.status)}</span></td>
+            <td class="row-actions">
+              <button data-action="print-quote" data-id="${q.id}">${tr('printBtn')}</button>
+              ${q.status!=='इनवॉइस में बदला'?`<button data-action="convert-quote" data-id="${q.id}">${tr('convertBtn')}</button>`:''}
+              <button data-action="edit-quote" data-id="${q.id}">${tr('editBtn')}</button>
+              <button data-action="del-quote" data-id="${q.id}">${tr('deleteBtn')}</button>
+            </td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+function quoteModal(quote, presetPartyId){
+  const isEdit = !!quote;
+  const q = quote || {id:null, number:null, date:new Date().toISOString().slice(0,10), validUntil:'', party:presetPartyId||'', items:[{}], notes:'', status:QUOTE_STATUS[0]};
+  const itemsHtml = (q.items && q.items.length ? q.items : [{}]).map(itemRowHtml).join('');
+  openModal(`
+    <h3>${isEdit?tr('editQuote'):tr('newQuote')}</h3>
+    ${isEdit?`<div class="mono" style="font-size:12px;color:var(--ink-soft);margin-bottom:12px;">${q.number}</div>`:''}
+    <form id="quote-form">
+      <div class="field-row">
+        <div class="field"><label>${tr('fieldDate')}</label><input type="date" name="date" value="${q.date}" required></div>
+        <div class="field"><label>${tr('fieldValidUntil')}</label><input type="date" name="validUntil" value="${q.validUntil||''}"></div>
+      </div>
+      <div class="field"><label>${tr('fieldParty')}</label>
+        <select name="party" required><option value="">—</option>${state.parties.map(p=>`<option value="${p.id}" ${q.party===p.id?'selected':''}>${p.name}</option>`).join('')}</select>
+      </div>
+      <div class="field">
+        <label>${tr('fieldItems')}</label>
+        <div class="items-head"><span>${tr('itemDesc')}</span><span>${tr('itemQty')}</span><span>${tr('itemRate')}</span><span>GST</span><span>${tr('itemAmount')}</span><span></span></div>
+        <div id="quote-items">${itemsHtml}</div>
+        <button type="button" class="btn ghost sm" id="quote-add-item" style="margin-top:6px;">${tr('addItemBtn')}</button>
+      </div>
+      <div class="field"><label>${tr('fieldNotes')}</label><textarea name="notes">${q.notes||''}</textarea></div>
+      <div class="field"><label>${tr('fieldStatus')}</label>
+        <select name="status">${QUOTE_STATUS_SELECTABLE.map(s=>`<option value="${s}" ${q.status===s?'selected':''}>${L(s)}</option>`).join('')}</select>
+      </div>
+      <div class="doc-total-row"><span>${tr('totalAmount')}:</span><span class="mono" id="quote-total-el">${fmt(0)}</span></div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" data-action="close-modal">${tr('cancelBtn')}</button>
+        <button type="submit" class="btn amber">${isEdit?tr('saveChangesBtn'):tr('addBtnModal')}</button>
+      </div>
+    </form>
+  `, true);
+  const container = document.getElementById('quote-items');
+  const recalc = wireItems(container, 'quote-total-el');
+  document.getElementById('quote-add-item').addEventListener('click', ()=>{
+    container.insertAdjacentHTML('beforeend', itemRowHtml());
+    recalc();
+  });
+  document.getElementById('quote-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const items = readItems(container);
+    if(items.length===0){ alert(tr('needOneItem')); return; }
+    const newQ = {
+      id: q.id || uid('q'),
+      number: q.number || ('QUO-' + String(state.counters.quote).padStart(4,'0')),
+      date: fd.get('date'),
+      validUntil: fd.get('validUntil') || '',
+      party: fd.get('party'),
+      items,
+      notes: fd.get('notes') || '',
+      status: fd.get('status') || QUOTE_STATUS[0],
+      convertedInvoiceId: q.convertedInvoiceId || null,
+      createdBy: q.createdBy || (currentUser ? currentUser.email : null),
+    };
+    if(isEdit){
+      const idx = state.quotations.findIndex(x=>x.id===q.id);
+      state.quotations[idx] = newQ;
+    } else {
+      state.quotations.push(newQ);
+      state.counters.quote++;
+    }
+    await saveState();
+    closeModal(); render();
+  });
+}
+
+/* ---------------- Invoices ---------------- */
+function renderInvoices(){
+  let list = [...state.invoices];
+  if(invoiceFilters.status!=='all') list = list.filter(i=>i.status===invoiceFilters.status);
+  list.sort((a,b)=> new Date(b.date)-new Date(a.date));
+  return `
+    <div class="page-head">
+      <div><h1>${tr('invoiceTitle')}</h1><p>${list.length} ${tr('invoiceTitle')}</p></div>
+      <button class="btn amber" data-action="new-invoice">${tr('newInvoiceBtn')}</button>
+    </div>
+    <div class="filters">
+      <select id="invf-status"><option value="all">${tr('allStatus')}</option>${INVOICE_STATUS.map(s=>`<option value="${s}" ${invoiceFilters.status===s?'selected':''}>${L(s)}</option>`).join('')}</select>
+    </div>
+    <div class="panel" style="padding:0;overflow-x:auto;">
+      <table>
+        <thead><tr><th>${tr('thNumber')}</th><th>${tr('thDate')}</th><th>${tr('thParty')}</th><th class="num">${tr('thAmount')}</th><th>${tr('thStatus')}</th><th></th></tr></thead>
+        <tbody>
+        ${list.length===0?`<tr><td colspan="6"><div class="empty"><div class="big">🧾</div>${tr('noInvoiceFound')}</div></td></tr>`:
+        list.map(i=>`
+          <tr>
+            <td class="mono">${i.number}</td>
+            <td class="mono">${fmtDate(i.date)}</td>
+            <td>${partyName(i.party)}</td>
+            <td class="num">${fmt(itemsTotal(i.items))}</td>
+            <td><span class="tag ${i.status==='भुगतान हो गया'?'paid':(i.status==='बकाया'?'due':'')}">${L(i.status)}</span></td>
+            <td class="row-actions">
+              <button data-action="print-invoice" data-id="${i.id}">${tr('printBtn')}</button>
+              ${i.status!=='भुगतान हो गया'?`<button data-action="mark-paid-invoice" data-id="${i.id}">${tr('markPaidBtn')}</button>`:''}
+              <button data-action="edit-invoice" data-id="${i.id}">${tr('editBtn')}</button>
+              <button data-action="del-invoice" data-id="${i.id}">${tr('deleteBtn')}</button>
+            </td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+function invoiceModal(invoice, opts){
+  opts = opts || {};
+  const isEdit = !!invoice;
+  const sourceQuote = opts.sourceQuote || null;
+  const inv = invoice || {
+    id:null, number:null, date:new Date().toISOString().slice(0,10),
+    dueDate:'', party: sourceQuote ? sourceQuote.party : (opts.presetPartyId||''),
+    items: sourceQuote ? sourceQuote.items.map(it=>({...it})) : [{}],
+    notes: sourceQuote ? (sourceQuote.notes||'') : '',
+    status: INVOICE_STATUS[0],
+    quotationId: sourceQuote ? sourceQuote.id : null,
+    linkedTransactionId: null,
+  };
+  const itemsHtml = (inv.items && inv.items.length ? inv.items : [{}]).map(itemRowHtml).join('');
+  openModal(`
+    <h3>${isEdit?tr('editInvoice'):tr('newInvoice')}</h3>
+    ${isEdit?`<div class="mono" style="font-size:12px;color:var(--ink-soft);margin-bottom:6px;">${inv.number}</div>`:''}
+    ${inv.quotationId?`<div style="font-size:12.5px;color:var(--ink-soft);margin-bottom:12px;">${tr('createdFromQuote')}: ${(state.quotations.find(x=>x.id===inv.quotationId)||{}).number||''}</div>`:''}
+    <form id="invoice-form">
+      <div class="field-row">
+        <div class="field"><label>${tr('fieldDate')}</label><input type="date" name="date" value="${inv.date}" required></div>
+        <div class="field"><label>${tr('fieldDueDate')}</label><input type="date" name="dueDate" value="${inv.dueDate||''}"></div>
+      </div>
+      <div class="field"><label>${tr('fieldParty')}</label>
+        <select name="party" required><option value="">—</option>${state.parties.map(p=>`<option value="${p.id}" ${inv.party===p.id?'selected':''}>${p.name}</option>`).join('')}</select>
+      </div>
+      <div class="field">
+        <label>${tr('fieldItems')}</label>
+        <div class="items-head"><span>${tr('itemDesc')}</span><span>${tr('itemQty')}</span><span>${tr('itemRate')}</span><span>GST</span><span>${tr('itemAmount')}</span><span></span></div>
+        <div id="invoice-items">${itemsHtml}</div>
+        <button type="button" class="btn ghost sm" id="invoice-add-item" style="margin-top:6px;">${tr('addItemBtn')}</button>
+      </div>
+      <div class="field"><label>${tr('fieldNotes')}</label><textarea name="notes">${inv.notes||''}</textarea></div>
+      <div class="field"><label>${tr('fieldStatus')}</label>
+        <select name="status">${INVOICE_STATUS.map(s=>`<option value="${s}" ${inv.status===s?'selected':''}>${L(s)}</option>`).join('')}</select>
+      </div>
+      <div class="doc-total-row"><span>${tr('totalAmount')}:</span><span class="mono" id="invoice-total-el">${fmt(0)}</span></div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" data-action="close-modal">${tr('cancelBtn')}</button>
+        <button type="submit" class="btn amber">${isEdit?tr('saveChangesBtn'):tr('addBtnModal')}</button>
+      </div>
+    </form>
+  `, true);
+  const container = document.getElementById('invoice-items');
+  const recalc = wireItems(container, 'invoice-total-el');
+  document.getElementById('invoice-add-item').addEventListener('click', ()=>{
+    container.insertAdjacentHTML('beforeend', itemRowHtml());
+    recalc();
+  });
+  document.getElementById('invoice-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const items = readItems(container);
+    if(items.length===0){ alert(tr('needOneItem')); return; }
+    const newInv = {
+      id: inv.id || uid('i'),
+      number: inv.number || ('INV-' + String(state.counters.invoice).padStart(4,'0')),
+      date: fd.get('date'),
+      dueDate: fd.get('dueDate') || '',
+      party: fd.get('party'),
+      items,
+      notes: fd.get('notes') || '',
+      status: fd.get('status') || INVOICE_STATUS[0],
+      quotationId: inv.quotationId || null,
+      linkedTransactionId: inv.linkedTransactionId || null,
+      createdBy: inv.createdBy || (currentUser ? currentUser.email : null),
+    };
+    if(newInv.status==='भुगतान हो गया'){
+      markInvoicePaidTx(newInv);
+    } else if(newInv.linkedTransactionId){
+      // status was changed away from Paid: remove the auto-created transaction to avoid a stale entry
+      state.transactions = state.transactions.filter(t=>t.id!==newInv.linkedTransactionId);
+      newInv.linkedTransactionId = null;
+    }
+    if(isEdit){
+      const idx = state.invoices.findIndex(x=>x.id===inv.id);
+      state.invoices[idx] = newInv;
+    } else {
+      state.invoices.push(newInv);
+      state.counters.invoice++;
+    }
+    if(sourceQuote){
+      const qIdx = state.quotations.findIndex(x=>x.id===sourceQuote.id);
+      if(qIdx>-1){ state.quotations[qIdx].status = 'इनवॉइस में बदला'; state.quotations[qIdx].convertedInvoiceId = newInv.id; }
+    }
+    await saveState();
+    closeModal(); render();
+  });
+}
+
+/* ---------------- Print / PDF ---------------- */
+function printDocument(doc, type){
+  if(!doc) return;
+  const bp = state.businessProfile || {};
+  const isInvoice = type==='invoice';
+  const title = isInvoice ? (lang==='en'?'INVOICE':'इनवॉइस') : (lang==='en'?'QUOTATION':'कोटेशन / एस्टीमेट');
+  const items = doc.items || [];
+  const rowsHtml = items.map((it,idx)=>{
+    const base = (it.qty||0)*(it.rate||0);
+    const g = Math.round(base*(it.gst||0)/100);
+    return `<tr><td>${idx+1}</td><td>${escapeHtml(it.desc||'')}</td><td class="r">${it.qty||0}</td><td class="r">${fmt(it.rate||0)}</td><td class="r">${it.gst||0}%</td><td class="r">${fmt(base+g)}</td></tr>`;
+  }).join('');
+  const total = itemsTotal(items);
+  const win = window.open('', '_blank');
+  if(!win) return;
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${escapeHtml(title)} ${escapeHtml(doc.number||'')}</title>
+<style>
+  body{font-family:Arial,Helvetica,sans-serif;padding:32px;color:#222;max-width:820px;margin:0 auto;}
+  .head{display:flex;justify-content:space-between;border-bottom:3px solid #C1791F;padding-bottom:14px;margin-bottom:20px;gap:20px;}
+  h1{margin:0;font-size:21px;}
+  .muted{color:#666;font-size:12.5px;margin-top:2px;}
+  .doctitle{font-size:20px;font-weight:700;color:#C1791F;text-align:right;}
+  .docnum{font-family:monospace;color:#555;text-align:right;margin-top:2px;}
+  .meta{display:flex;justify-content:space-between;margin-bottom:16px;font-size:13px;gap:20px;}
+  table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px;}
+  th,td{border:1px solid #ccc;padding:7px 8px;text-align:left;}
+  th{background:#f5f1e8;}
+  td.r, th.r{text-align:right;}
+  .totals{margin-top:10px;text-align:right;font-size:16px;font-weight:700;}
+  .notes{margin-top:22px;font-size:12.5px;white-space:pre-wrap;}
+  @media print{ .noprint{display:none;} body{padding:0;} }
+</style></head><body>
+  <div class="head">
+    <div>
+      <h1>${escapeHtml(bp.name || (lang==='en'?'Your Company Name':'आपकी कंपनी का नाम'))}</h1>
+      ${bp.address?`<div class="muted">${escapeHtml(bp.address)}</div>`:''}
+      <div class="muted">${bp.gstin?('GSTIN: '+escapeHtml(bp.gstin)):''}${bp.phone?(' · '+escapeHtml(bp.phone)):''}${bp.email?(' · '+escapeHtml(bp.email)):''}</div>
+    </div>
+    <div>
+      <div class="doctitle">${escapeHtml(title)}</div>
+      <div class="docnum">${escapeHtml(doc.number||'')}</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div><b>${lang==='en'?'Bill To':'प्राप्तकर्ता'}:</b><br>${escapeHtml(partyName(doc.party))}</div>
+    <div style="text-align:right;">
+      <div>${lang==='en'?'Date':'तारीख'}: ${fmtDate(doc.date)}</div>
+      ${isInvoice ? (doc.dueDate?`<div>${lang==='en'?'Due Date':'देय तिथि'}: ${fmtDate(doc.dueDate)}</div>`:'') : (doc.validUntil?`<div>${lang==='en'?'Valid Until':'वैधता'}: ${fmtDate(doc.validUntil)}</div>`:'')}
+    </div>
+  </div>
+  <table>
+    <thead><tr><th>#</th><th>${lang==='en'?'Description':'विवरण'}</th><th class="r">${lang==='en'?'Qty':'मात्रा'}</th><th class="r">${lang==='en'?'Rate':'दर'}</th><th class="r">GST</th><th class="r">${lang==='en'?'Amount':'राशि'}</th></tr></thead>
+    <tbody>${rowsHtml}</tbody>
+  </table>
+  <div class="totals">${lang==='en'?'Total':'कुल'}: ${fmt(total)}</div>
+  ${doc.notes?`<div class="notes"><b>${lang==='en'?'Notes':'टिप्पणी'}:</b><br>${escapeHtml(doc.notes)}</div>`:''}
+  <div class="noprint" style="margin-top:28px;">
+    <button onclick="window.print()" style="padding:10px 18px;font-size:14px;cursor:pointer;">${lang==='en'?'Print / Save as PDF':'प्रिंट करें / PDF सेव करें'}</button>
+  </div>
+</body></html>`);
+  win.document.close();
+}
+
 /* ---------------- Projects ---------------- */
 function renderProjects(){
   return `
@@ -954,9 +1375,28 @@ function renderCatList(type){
   }).join('') || `<div class="empty">${tr('noCategory')}</div>`;
 }
 function renderSettings(){
+  const bp = state.businessProfile || {};
   return `
     <div class="page-head">
       <div><h1>${tr('settingsTitle')}</h1><p>${tr('settingsSub')}</p></div>
+    </div>
+    <div class="panel">
+      <h2>${tr('bizProfileTitle')}</h2>
+      <p style="font-size:12.5px;color:var(--ink-soft);margin-top:-8px;margin-bottom:14px;">${tr('bizProfileSub')}</p>
+      <form id="biz-profile-form">
+        <div class="field-row">
+          <div class="field"><label>${tr('fieldBizName')}</label><input type="text" name="name" value="${escapeHtml(bp.name||'')}"></div>
+          <div class="field"><label>${tr('fieldGstin')}</label><input type="text" name="gstin" value="${escapeHtml(bp.gstin||'')}"></div>
+        </div>
+        <div class="field"><label>${tr('fieldBizAddress')}</label><textarea name="address">${escapeHtml(bp.address||'')}</textarea></div>
+        <div class="field-row">
+          <div class="field"><label>${tr('fieldPhone')}</label><input type="text" name="phone" value="${escapeHtml(bp.phone||'')}"></div>
+          <div class="field"><label>${tr('fieldEmail')}</label><input type="text" name="email" value="${escapeHtml(bp.email||'')}"></div>
+        </div>
+        <div class="modal-actions" style="justify-content:flex-start;">
+          <button type="submit" class="btn amber sm">${tr('saveBizBtn')}</button>
+        </div>
+      </form>
     </div>
     <div class="grid-2">
       <div class="panel">
@@ -988,11 +1428,11 @@ async function addCategory(type, name){
 }
 
 /* ---------------- Modals ---------------- */
-function openModal(html){
+function openModal(html, wide){
   const div = document.createElement('div');
   div.className = 'overlay';
   div.id = 'modal-overlay';
-  div.innerHTML = `<div class="modal">${html}</div>`;
+  div.innerHTML = `<div class="modal${wide?' wide':''}">${html}</div>`;
   document.body.appendChild(div);
   div.addEventListener('click', e=>{ if(e.target===div) closeModal(); });
 }
@@ -1237,6 +1677,51 @@ function attachHandlers(){
   byAction('back-parties', ()=>{ activePartyId=null; render(); });
   byAction('close-modal', closeModal);
   byAction('export-csv', exportCsv);
+
+  byAction('new-quote', (e)=> quoteModal(null, e.currentTarget.dataset.partyid));
+  byAction('edit-quote', e=> quoteModal(state.quotations.find(q=>q.id===e.currentTarget.dataset.id)));
+  byAction('del-quote', async e=>{
+    if(confirm(tr('confirmDelQuote'))){
+      state.quotations = state.quotations.filter(q=>q.id!==e.currentTarget.dataset.id);
+      await saveState(); render();
+    }
+  });
+  byAction('print-quote', e=> printDocument(state.quotations.find(q=>q.id===e.currentTarget.dataset.id), 'quote'));
+  byAction('convert-quote', e=>{
+    const quote = state.quotations.find(q=>q.id===e.currentTarget.dataset.id);
+    if(quote) invoiceModal(null, {sourceQuote: quote});
+  });
+
+  byAction('new-invoice', (e)=> invoiceModal(null, {presetPartyId: e.currentTarget.dataset.partyid}));
+  byAction('edit-invoice', e=> invoiceModal(state.invoices.find(i=>i.id===e.currentTarget.dataset.id)));
+  byAction('del-invoice', async e=>{
+    if(confirm(tr('confirmDelInvoice'))){
+      state.invoices = state.invoices.filter(i=>i.id!==e.currentTarget.dataset.id);
+      await saveState(); render();
+    }
+  });
+  byAction('print-invoice', e=> printDocument(state.invoices.find(i=>i.id===e.currentTarget.dataset.id), 'invoice'));
+  byAction('mark-paid-invoice', async e=>{
+    const inv = state.invoices.find(i=>i.id===e.currentTarget.dataset.id);
+    if(!inv || inv.status==='भुगतान हो गया') return;
+    inv.status = 'भुगतान हो गया';
+    markInvoicePaidTx(inv);
+    await saveState(); render();
+  });
+
+  const qfStatus = document.getElementById('qf-status'); if(qfStatus) qfStatus.addEventListener('change', e=>{quoteFilters.status=e.target.value; render();});
+  const invfStatus = document.getElementById('invf-status'); if(invfStatus) invfStatus.addEventListener('change', e=>{invoiceFilters.status=e.target.value; render();});
+
+  const bizForm = document.getElementById('biz-profile-form');
+  if(bizForm) bizForm.addEventListener('submit', async e=>{
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    state.businessProfile = {
+      name: fd.get('name')||'', address: fd.get('address')||'', gstin: fd.get('gstin')||'',
+      phone: fd.get('phone')||'', email: fd.get('email')||'',
+    };
+    await saveState();
+  });
 
   const addCatIncome = document.getElementById('add-cat-income');
   if(addCatIncome) addCatIncome.addEventListener('submit', async e=>{
