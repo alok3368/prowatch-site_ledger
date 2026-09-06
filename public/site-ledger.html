@@ -1003,7 +1003,7 @@ function closeModal(){
 
 function txModal(tx, presetPartyId){
   const isEdit = !!tx;
-  const t = tx || {id:null, date:new Date().toISOString().slice(0,10), project:state.projects[0]?.id||'', type:'Expense', category:CATS_EXPENSE[0], party:presetPartyId||'', desc:'', amount:'', gst:0, mode:PAY_MODES[0], status:'भुगतान हो गया', ref:''};
+  const t = tx || {id:null, date:new Date().toISOString().slice(0,10), project:state.projects[0]?.id||'', type:'Expense', category:state.categories.expense[0], party:presetPartyId||'', desc:'', amount:'', gst:0, mode:PAY_MODES[0], status:'भुगतान हो गया', ref:''};
   openModal(`
     <h3>${isEdit?tr('editTx'):tr('newTx')}</h3>
     <form id="tx-form">
