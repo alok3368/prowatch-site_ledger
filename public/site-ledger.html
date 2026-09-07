@@ -318,6 +318,7 @@ const T = {
     monthlyTrend:'मासिक आय बनाम खर्च (पिछले 6 महीने)', legendIncome:'आय', legendExpense:'खर्च',
     gstSummary:'GST सारांश', outputGst:'आउटपुट GST (आय पर)', inputGst:'इनपुट GST (खर्च पर)', netGstPayable:'नेट GST देय',
     projComparison:'प्रोजेक्ट-वार तुलना', thMargin:'मार्जिन', thProfit:'लाभ',
+    printReportBtn:'रिपोर्ट प्रिंट करें', reportGeneratedOn:'जनरेट किया गया', thMonth:'महीना',
     settingsTitle:'श्रेणियां', settingsSub:'अपनी जरूरत के अनुसार आय व खर्च की श्रेणियां जोड़ें या हटाएं',
     incomeCats:'आय श्रेणियां', expenseCats:'खर्च श्रेणियां', newIncomeCatPh:'नई आय श्रेणी का नाम',
     newExpenseCatPh:'नई खर्च श्रेणी का नाम', addBtn:'+ जोड़ें', cannotDeleteUsed:'इस्तेमाल हो रही श्रेणी नहीं हटाई जा सकती',
@@ -348,6 +349,13 @@ const T = {
     bizProfileTitle:'बिजनेस प्रोफ़ाइल', bizProfileSub:'यह जानकारी कोटेशन व इनवॉइस के प्रिंट पर दिखेगी',
     fieldBizName:'कंपनी/फर्म का नाम', fieldBizAddress:'पता', fieldGstin:'GSTIN (वैकल्पिक)',
     fieldPhone:'फोन', fieldEmail:'ईमेल', saveBizBtn:'सहेजें',
+    navPO:'पीओ', poTitle:'परचेज ऑर्डर', newPOBtn:'+ नया पीओ', noPOFound:'कोई पीओ नहीं मिला',
+    editPO:'पीओ बदलें', newPO:'नया परचेज ऑर्डर', confirmDelPO:'क्या आप वाकई इस पीओ को मिटाना चाहते हैं?',
+    fieldDeliveryDate:'डिलीवरी तिथि (वैकल्पिक)', fieldVendor:'आपूर्तिकर्ता / पार्टी', markReceivedBtn:'प्राप्त हुआ चिह्नित करें',
+    navCashbook:'कैशबुक', cashbookTitle:'रोज़ का कैश बुक', cashbookSub:'दैनिक नकद लेन-देन व शेष राशि',
+    cbOpeningBal:'शुरुआती शेष', cbCashIn:'नकद प्राप्ति', cbCashOut:'नकद भुगतान', cbClosingBal:'अंतिम शेष',
+    cbAllProjects:'सभी प्रोजेक्ट', newCashEntryBtn:'+ नई नकद एंट्री', thRunningBal:'चलित शेष', noCashEntries:'इस तारीख को कोई नकद लेन-देन नहीं',
+    attachReceipt:'बिल/रसीद फोटो जोड़ें (वैकल्पिक)', viewReceipt:'रसीद देखें', removeReceipt:'हटाएं',
   },
   en:{
     navDashboard:'Dashboard', navTransactions:'Transactions', navProjects:'Projects', navParties:'Parties',
@@ -373,6 +381,7 @@ const T = {
     monthlyTrend:'Monthly Income vs Expense (Last 6 Months)', legendIncome:'Income', legendExpense:'Expense',
     gstSummary:'GST Summary', outputGst:'Output GST (on Income)', inputGst:'Input GST (on Expense)', netGstPayable:'Net GST Payable',
     projComparison:'Project-wise Comparison', thMargin:'Margin', thProfit:'Profit',
+    printReportBtn:'Print Report', reportGeneratedOn:'Generated on', thMonth:'Month',
     settingsTitle:'Categories', settingsSub:'Add or remove income and expense categories as needed',
     incomeCats:'Income Categories', expenseCats:'Expense Categories', newIncomeCatPh:'New income category name',
     newExpenseCatPh:'New expense category name', addBtn:'+ Add', cannotDeleteUsed:'A category in use cannot be deleted',
@@ -403,6 +412,13 @@ const T = {
     bizProfileTitle:'Business Profile', bizProfileSub:'This information appears on printed quotations and invoices',
     fieldBizName:'Company/Firm Name', fieldBizAddress:'Address', fieldGstin:'GSTIN (optional)',
     fieldPhone:'Phone', fieldEmail:'Email', saveBizBtn:'Save',
+    navPO:'Purchase Orders', poTitle:'Purchase Orders', newPOBtn:'+ New Purchase Order', noPOFound:'No purchase orders found',
+    editPO:'Edit Purchase Order', newPO:'New Purchase Order', confirmDelPO:'Are you sure you want to delete this purchase order?',
+    fieldDeliveryDate:'Delivery Date (optional)', fieldVendor:'Vendor / Party', markReceivedBtn:'Mark as Received',
+    navCashbook:'Cashbook', cashbookTitle:'Daily Cashbook', cashbookSub:'Daily cash transactions and running balance',
+    cbOpeningBal:'Opening Balance', cbCashIn:'Cash In', cbCashOut:'Cash Out', cbClosingBal:'Closing Balance',
+    cbAllProjects:'All Projects', newCashEntryBtn:'+ New Cash Entry', thRunningBal:'Running Balance', noCashEntries:'No cash transactions on this date',
+    attachReceipt:'Attach bill/receipt photo (optional)', viewReceipt:'View Receipt', removeReceipt:'Remove',
   },
 };
 
@@ -417,7 +433,7 @@ const DATA_EN = {
   'मटेरियल':'Material', 'मजदूरी':'Labour', 'मशीनरी/उपकरण':'Machinery/Equipment',
   'ट्रांसपोर्ट/ईंधन':'Transport/Fuel', 'साइट ओवरहेड':'Site Overhead', 'टैक्स/GST':'Tax/GST', 'अन्य खर्च':'Other Expense',
   'ड्राफ्ट':'Draft', 'भेजा गया':'Sent', 'स्वीकृत':'Accepted', 'अस्वीकृत':'Rejected', 'इनवॉइस में बदला':'Converted to Invoice',
-  'इनवॉइस भुगतान':'Invoice Payment',
+  'इनवॉइस भुगतान':'Invoice Payment', 'प्राप्त हुआ':'Received', 'पीओ / सामग्री खरीद':'PO / Material Purchase',
 };
 
 const DEFAULT_CATS_INCOME = ["एडवांस प्राप्त","RA बिल भुगतान","रिटेंशन रिलीज़","अन्य आय"];
@@ -430,6 +446,8 @@ const QUOTE_STATUS = ["ड्राफ्ट","भेजा गया","स्�
 const QUOTE_STATUS_SELECTABLE = QUOTE_STATUS.slice(0,4); // "converted" is system-set only
 const INVOICE_STATUS = ["ड्राफ्ट","भेजा गया","भुगतान हो गया","बकाया"];
 const INVOICE_PAYMENT_CATEGORY = "इनवॉइस भुगतान";
+const PO_STATUS = ["ड्राफ्ट","भेजा गया","प्राप्त हुआ"];
+const PO_EXPENSE_CATEGORY = "पीओ / सामग्री खरीद";
 
 function uid(p){ return p + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 function fmt(n){
@@ -490,7 +508,7 @@ function seedData(){
   return {
     projects:proj, parties:parties, transactions:tx,
     categories:{income:[...DEFAULT_CATS_INCOME], expense:[...DEFAULT_CATS_EXPENSE]},
-    quotations:[], invoices:[], counters:{quote:1, invoice:1},
+    quotations:[], invoices:[], purchaseOrders:[], counters:{quote:1, invoice:1, po:1},
     businessProfile:{name:'', address:'', gstin:'', phone:'', email:''},
   };
 }
@@ -532,7 +550,9 @@ async function loadState(){
   // migration: quotations & invoicing feature
   if(!state.quotations){ state.quotations = []; changed = true; }
   if(!state.invoices){ state.invoices = []; changed = true; }
-  if(!state.counters){ state.counters = {quote:1, invoice:1}; changed = true; }
+  if(!state.counters){ state.counters = {quote:1, invoice:1, po:1}; changed = true; }
+  if(state.counters && state.counters.po===undefined){ state.counters.po = 1; changed = true; }
+  if(!state.purchaseOrders){ state.purchaseOrders = []; changed = true; }
   if(!state.businessProfile){ state.businessProfile = {name:'', address:'', gstin:'', phone:'', email:''}; changed = true; }
   if(changed) await saveState();
 }
@@ -599,6 +619,9 @@ let activePartyId = null;
 let txFilters = {project:'all', type:'all', status:'all', q:''};
 let quoteFilters = {status:'all'};
 let invoiceFilters = {status:'all'};
+let poFilters = {status:'all'};
+let cashbookDate = new Date().toISOString().slice(0,10);
+let cashbookProject = 'all';
 
 const root = document.getElementById('app');
 
@@ -621,6 +644,8 @@ function render(){
         ${navBtn('transactions',tr('navTransactions'), state.transactions.length)}
         ${navBtn('quotations',tr('navQuotations'), state.quotations.length)}
         ${navBtn('invoices',tr('navInvoices'), state.invoices.length)}
+        ${navBtn('purchase_orders',tr('navPO'), state.purchaseOrders.length)}
+        ${navBtn('cashbook',tr('navCashbook'))}
         ${navBtn('projects',tr('navProjects'), state.projects.length)}
         ${navBtn('parties',tr('navParties'), state.parties.length)}
         ${navBtn('reports',tr('navReports'))}
@@ -641,6 +666,8 @@ function render(){
   else if(activeTab==='transactions') main.innerHTML = renderTransactions();
   else if(activeTab==='quotations') main.innerHTML = renderQuotations();
   else if(activeTab==='invoices') main.innerHTML = renderInvoices();
+  else if(activeTab==='purchase_orders') main.innerHTML = renderPurchaseOrders();
+  else if(activeTab==='cashbook') main.innerHTML = renderCashbook();
   else if(activeTab==='projects') main.innerHTML = renderProjects();
   else if(activeTab==='parties') main.innerHTML = renderParties();
   else if(activeTab==='reports') main.innerHTML = renderReports();
@@ -820,6 +847,7 @@ function renderTransactions(){
             <td class="mono" style="font-size:12px;">${L(t.mode)}</td>
             <td><span class="tag ${t.status==='भुगतान हो गया'?'paid':'due'}">${L(t.status)}</span></td>
             <td class="row-actions">
+              ${t.receiptImage?`<button data-action="view-receipt" data-id="${t.id}" title="${tr('viewReceipt')}">📎</button>`:''}
               <button data-action="edit-tx" data-id="${t.id}">${tr('editBtn')}</button>
               <button data-action="del-tx" data-id="${t.id}">${tr('deleteBtn')}</button>
             </td>
@@ -884,6 +912,27 @@ function readItems(container){
 }
 function escapeHtml(s){
   return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function compressImageFile(file, maxWidth, quality){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      const img = new Image();
+      img.onload = ()=>{
+        let w = img.width, h = img.height;
+        if(w > maxWidth){ h = Math.round(h * maxWidth / w); w = maxWidth; }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      img.src = reader.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 function markInvoicePaidTx(inv){
   if(inv.linkedTransactionId) return;
@@ -1130,12 +1179,137 @@ function invoiceModal(invoice, opts){
   });
 }
 
+/* ---------------- Purchase Orders ---------------- */
+function markPOReceivedTx(po){
+  if(po.linkedTransactionId) return;
+  if(!state.categories.expense.includes(PO_EXPENSE_CATEGORY)) state.categories.expense.push(PO_EXPENSE_CATEGORY);
+  const total = itemsTotal(po.items);
+  const txObj = {
+    id: uid('t'), date: po.date, project:'', type:'Expense', category: PO_EXPENSE_CATEGORY,
+    party: po.party||null, desc: (lang==='en'?'Purchase Order ':'पीओ ') + po.number, amount: total, gst:0,
+    mode: PAY_MODES[1], status:'भुगतान हो गया', ref: po.number,
+    createdBy: currentUser ? currentUser.email : null,
+  };
+  state.transactions.push(txObj);
+  po.linkedTransactionId = txObj.id;
+}
+function renderPurchaseOrders(){
+  let list = [...state.purchaseOrders];
+  if(poFilters.status!=='all') list = list.filter(p=>p.status===poFilters.status);
+  list.sort((a,b)=> new Date(b.date)-new Date(a.date));
+  return `
+    <div class="page-head">
+      <div><h1>${tr('poTitle')}</h1><p>${list.length} ${tr('poTitle')}</p></div>
+      <button class="btn amber" data-action="new-po">${tr('newPOBtn')}</button>
+    </div>
+    <div class="filters">
+      <select id="pof-status"><option value="all">${tr('allStatus')}</option>${PO_STATUS.map(s=>`<option value="${s}" ${poFilters.status===s?'selected':''}>${L(s)}</option>`).join('')}</select>
+    </div>
+    <div class="panel" style="padding:0;overflow-x:auto;">
+      <table>
+        <thead><tr><th>${tr('thNumber')}</th><th>${tr('thDate')}</th><th>${tr('fieldVendor')}</th><th class="num">${tr('thAmount')}</th><th>${tr('thStatus')}</th><th></th></tr></thead>
+        <tbody>
+        ${list.length===0?`<tr><td colspan="6"><div class="empty"><div class="big">📦</div>${tr('noPOFound')}</div></td></tr>`:
+        list.map(p=>`
+          <tr>
+            <td class="mono">${p.number}</td>
+            <td class="mono">${fmtDate(p.date)}</td>
+            <td>${partyName(p.party)}</td>
+            <td class="num">${fmt(itemsTotal(p.items))}</td>
+            <td><span class="tag ${p.status==='प्राप्त हुआ'?'paid':''}">${L(p.status)}</span></td>
+            <td class="row-actions">
+              <button data-action="print-po" data-id="${p.id}">${tr('printBtn')}</button>
+              ${p.status!=='प्राप्त हुआ'?`<button data-action="mark-received-po" data-id="${p.id}">${tr('markReceivedBtn')}</button>`:''}
+              <button data-action="edit-po" data-id="${p.id}">${tr('editBtn')}</button>
+              <button data-action="del-po" data-id="${p.id}">${tr('deleteBtn')}</button>
+            </td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+function poModal(po, presetPartyId){
+  const isEdit = !!po;
+  const p = po || {id:null, number:null, date:new Date().toISOString().slice(0,10), deliveryDate:'', party:presetPartyId||'', items:[{}], notes:'', status:PO_STATUS[0]};
+  const itemsHtml = (p.items && p.items.length ? p.items : [{}]).map(itemRowHtml).join('');
+  openModal(`
+    <h3>${isEdit?tr('editPO'):tr('newPO')}</h3>
+    ${isEdit?`<div class="mono" style="font-size:12px;color:var(--ink-soft);margin-bottom:12px;">${p.number}</div>`:''}
+    <form id="po-form">
+      <div class="field-row">
+        <div class="field"><label>${tr('fieldDate')}</label><input type="date" name="date" value="${p.date}" required></div>
+        <div class="field"><label>${tr('fieldDeliveryDate')}</label><input type="date" name="deliveryDate" value="${p.deliveryDate||''}"></div>
+      </div>
+      <div class="field"><label>${tr('fieldVendor')}</label>
+        <select name="party" required><option value="">—</option>${state.parties.map(x=>`<option value="${x.id}" ${p.party===x.id?'selected':''}>${x.name}</option>`).join('')}</select>
+      </div>
+      <div class="field">
+        <label>${tr('fieldItems')}</label>
+        <div class="items-head"><span>${tr('itemDesc')}</span><span>${tr('itemQty')}</span><span>${tr('itemRate')}</span><span>GST</span><span>${tr('itemAmount')}</span><span></span></div>
+        <div id="po-items">${itemsHtml}</div>
+        <button type="button" class="btn ghost sm" id="po-add-item" style="margin-top:6px;">${tr('addItemBtn')}</button>
+      </div>
+      <div class="field"><label>${tr('fieldNotes')}</label><textarea name="notes">${p.notes||''}</textarea></div>
+      <div class="field"><label>${tr('fieldStatus')}</label>
+        <select name="status">${PO_STATUS.map(s=>`<option value="${s}" ${p.status===s?'selected':''}>${L(s)}</option>`).join('')}</select>
+      </div>
+      <div class="doc-total-row"><span>${tr('totalAmount')}:</span><span class="mono" id="po-total-el">${fmt(0)}</span></div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" data-action="close-modal">${tr('cancelBtn')}</button>
+        <button type="submit" class="btn amber">${isEdit?tr('saveChangesBtn'):tr('addBtnModal')}</button>
+      </div>
+    </form>
+  `, true);
+  const container = document.getElementById('po-items');
+  const recalc = wireItems(container, 'po-total-el');
+  document.getElementById('po-add-item').addEventListener('click', ()=>{
+    container.insertAdjacentHTML('beforeend', itemRowHtml());
+    recalc();
+  });
+  document.getElementById('po-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const items = readItems(container);
+    if(items.length===0){ alert(tr('needOneItem')); return; }
+    const newPO = {
+      id: p.id || uid('po'),
+      number: p.number || ('PO-' + String(state.counters.po).padStart(4,'0')),
+      date: fd.get('date'),
+      deliveryDate: fd.get('deliveryDate') || '',
+      party: fd.get('party'),
+      items,
+      notes: fd.get('notes') || '',
+      status: fd.get('status') || PO_STATUS[0],
+      linkedTransactionId: p.linkedTransactionId || null,
+      createdBy: p.createdBy || (currentUser ? currentUser.email : null),
+    };
+    if(newPO.status==='प्राप्त हुआ'){
+      markPOReceivedTx(newPO);
+    } else if(newPO.linkedTransactionId){
+      state.transactions = state.transactions.filter(t=>t.id!==newPO.linkedTransactionId);
+      newPO.linkedTransactionId = null;
+    }
+    if(isEdit){
+      const idx = state.purchaseOrders.findIndex(x=>x.id===p.id);
+      state.purchaseOrders[idx] = newPO;
+    } else {
+      state.purchaseOrders.push(newPO);
+      state.counters.po++;
+    }
+    await saveState();
+    closeModal(); render();
+  });
+}
+
 /* ---------------- Print / PDF ---------------- */
 function printDocument(doc, type){
   if(!doc) return;
   const bp = state.businessProfile || {};
   const isInvoice = type==='invoice';
-  const title = isInvoice ? (lang==='en'?'INVOICE':'इनवॉइस') : (lang==='en'?'QUOTATION':'कोटेशन / एस्टीमेट');
+  const isPO = type==='po';
+  const title = isInvoice ? (lang==='en'?'INVOICE':'इनवॉइस') : isPO ? (lang==='en'?'PURCHASE ORDER':'परचेज ऑर्डर') : (lang==='en'?'QUOTATION':'कोटेशन / एस्टीमेट');
+  const billToLabel = isPO ? (lang==='en'?'Vendor':'आपूर्तिकर्ता') : (lang==='en'?'Bill To':'प्राप्तकर्ता');
   const items = doc.items || [];
   const rowsHtml = items.map((it,idx)=>{
     const base = (it.qty||0)*(it.rate||0);
@@ -1174,10 +1348,10 @@ function printDocument(doc, type){
     </div>
   </div>
   <div class="meta">
-    <div><b>${lang==='en'?'Bill To':'प्राप्तकर्ता'}:</b><br>${escapeHtml(partyName(doc.party))}</div>
+    <div><b>${billToLabel}:</b><br>${escapeHtml(partyName(doc.party))}</div>
     <div style="text-align:right;">
       <div>${lang==='en'?'Date':'तारीख'}: ${fmtDate(doc.date)}</div>
-      ${isInvoice ? (doc.dueDate?`<div>${lang==='en'?'Due Date':'देय तिथि'}: ${fmtDate(doc.dueDate)}</div>`:'') : (doc.validUntil?`<div>${lang==='en'?'Valid Until':'वैधता'}: ${fmtDate(doc.validUntil)}</div>`:'')}
+      ${isInvoice ? (doc.dueDate?`<div>${lang==='en'?'Due Date':'देय तिथि'}: ${fmtDate(doc.dueDate)}</div>`:'') : isPO ? (doc.deliveryDate?`<div>${lang==='en'?'Delivery Date':'डिलीवरी तिथि'}: ${fmtDate(doc.deliveryDate)}</div>`:'') : (doc.validUntil?`<div>${lang==='en'?'Valid Until':'वैधता'}: ${fmtDate(doc.validUntil)}</div>`:'')}
     </div>
   </div>
   <table>
@@ -1191,6 +1365,140 @@ function printDocument(doc, type){
   </div>
 </body></html>`);
   win.document.close();
+}
+
+function printReport(){
+  const bp = state.businessProfile || {};
+  const {tt, monthData, outputGst, inputGst, projRows} = buildReportData();
+  const title = lang==='en' ? 'FINANCIAL REPORT' : 'वित्तीय रिपोर्ट';
+  const genDate = new Date().toLocaleDateString(lang==='en'?'en-IN':'hi-IN',{day:'2-digit',month:'short',year:'numeric'});
+
+  const monthRows = monthData.map(m=>`<tr><td>${escapeHtml(m.label)}</td><td class="r">${fmt(m.inc)}</td><td class="r">${fmt(m.exp)}</td><td class="r">${fmt(m.inc-m.exp)}</td></tr>`).join('');
+  const projTableRows = projRows.map(({p,s})=>`<tr><td>${escapeHtml(p.name)}</td><td class="r">${fmt(p.contractValue)}</td><td class="r">${fmt(s.income)}</td><td class="r">${fmt(s.expense)}</td><td class="r">${fmt(s.profit)}</td><td class="r">${s.income>0?s.margin.toFixed(1):'0'}%</td></tr>`).join('');
+
+  const win = window.open('', '_blank');
+  if(!win) return;
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${escapeHtml(title)}</title>
+<style>
+  body{font-family:Arial,Helvetica,sans-serif;padding:32px;color:#222;max-width:900px;margin:0 auto;}
+  .head{display:flex;justify-content:space-between;border-bottom:3px solid #C1791F;padding-bottom:14px;margin-bottom:20px;gap:20px;}
+  h1{margin:0;font-size:21px;}
+  .muted{color:#666;font-size:12.5px;margin-top:2px;}
+  .doctitle{font-size:20px;font-weight:700;color:#C1791F;text-align:right;}
+  .docnum{font-family:monospace;color:#555;text-align:right;margin-top:2px;}
+  h2.sec{font-size:15px;border-bottom:1.5px solid #ddd;padding-bottom:6px;margin:26px 0 10px 0;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th,td{border:1px solid #ccc;padding:7px 8px;text-align:left;}
+  th{background:#f5f1e8;}
+  td.r, th.r{text-align:right;}
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px;}
+  .kpi{border:1px solid #ddd;border-radius:4px;padding:10px 12px;}
+  .kpi .l{font-size:11px;color:#777;} .kpi .v{font-size:16px;font-weight:700;margin-top:3px;}
+  @media print{ .noprint{display:none;} body{padding:0;} }
+</style></head><body>
+  <div class="head">
+    <div>
+      <h1>${escapeHtml(bp.name || (lang==='en'?'Your Company Name':'आपकी कंपनी का नाम'))}</h1>
+      ${bp.address?`<div class="muted">${escapeHtml(bp.address)}</div>`:''}
+      <div class="muted">${bp.gstin?('GSTIN: '+escapeHtml(bp.gstin)):''}${bp.phone?(' · '+escapeHtml(bp.phone)):''}${bp.email?(' · '+escapeHtml(bp.email)):''}</div>
+    </div>
+    <div>
+      <div class="doctitle">${escapeHtml(title)}</div>
+      <div class="docnum">${escapeHtml(tr('reportGeneratedOn'))}: ${genDate}</div>
+    </div>
+  </div>
+
+  <h2 class="sec">${escapeHtml(tr('kpiIncome'))} / ${escapeHtml(tr('kpiExpense'))} / ${escapeHtml(tr('kpiProfit'))}</h2>
+  <div class="kpis">
+    <div class="kpi"><div class="l">${escapeHtml(tr('kpiIncome'))}</div><div class="v">${fmt(tt.income)}</div></div>
+    <div class="kpi"><div class="l">${escapeHtml(tr('kpiExpense'))}</div><div class="v">${fmt(tt.expense)}</div></div>
+    <div class="kpi"><div class="l">${escapeHtml(tr('kpiProfit'))}</div><div class="v">${fmt(tt.profit)}</div></div>
+    <div class="kpi"><div class="l">${escapeHtml(tr('kpiReceivable'))}</div><div class="v">${fmt(tt.outstandingReceivable)}</div></div>
+    <div class="kpi"><div class="l">${escapeHtml(tr('kpiPayable'))}</div><div class="v">${fmt(tt.outstandingPayable)}</div></div>
+    <div class="kpi"><div class="l">${escapeHtml(tr('kpiCash'))}</div><div class="v">${fmt(tt.cash)}</div></div>
+  </div>
+
+  <h2 class="sec">${escapeHtml(tr('monthlyTrend'))}</h2>
+  <table>
+    <thead><tr><th>${escapeHtml(tr('thMonth'))}</th><th class="r">${escapeHtml(tr('legendIncome'))}</th><th class="r">${escapeHtml(tr('legendExpense'))}</th><th class="r">${escapeHtml(tr('kpiProfit'))}</th></tr></thead>
+    <tbody>${monthRows}</tbody>
+  </table>
+
+  <h2 class="sec">${escapeHtml(tr('gstSummary'))}</h2>
+  <div class="kpis" style="grid-template-columns:repeat(3,1fr);">
+    <div class="kpi"><div class="l">${escapeHtml(tr('outputGst'))}</div><div class="v">${fmt(outputGst)}</div></div>
+    <div class="kpi"><div class="l">${escapeHtml(tr('inputGst'))}</div><div class="v">${fmt(inputGst)}</div></div>
+    <div class="kpi"><div class="l">${escapeHtml(tr('netGstPayable'))}</div><div class="v">${fmt(outputGst-inputGst)}</div></div>
+  </div>
+
+  <h2 class="sec">${escapeHtml(tr('projComparison'))}</h2>
+  <table>
+    <thead><tr><th>${escapeHtml(tr('thProject'))}</th><th class="r">${escapeHtml(tr('contractValue'))}</th><th class="r">${escapeHtml(tr('typeIncome'))}</th><th class="r">${escapeHtml(tr('typeExpense'))}</th><th class="r">${escapeHtml(tr('thProfit'))}</th><th class="r">${escapeHtml(tr('thMargin'))}</th></tr></thead>
+    <tbody>${projTableRows}</tbody>
+  </table>
+
+  <div class="noprint" style="margin-top:28px;">
+    <button onclick="window.print()" style="padding:10px 18px;font-size:14px;cursor:pointer;">${lang==='en'?'Print / Save as PDF':'प्रिंट करें / PDF सेव करें'}</button>
+  </div>
+</body></html>`);
+  win.document.close();
+}
+
+/* ---------------- Cashbook ---------------- */
+function computeCashbook(dateStr, projectId){
+  let list = state.transactions.filter(t=>t.mode==='नकद' && t.status==='भुगतान हो गया');
+  if(projectId && projectId!=='all') list = list.filter(t=>t.project===projectId);
+  const before = list.filter(t=>t.date < dateStr);
+  const openingBalance = before.reduce((s,t)=> s + (t.type==='Income'?txTotal(t):-txTotal(t)), 0);
+  const dayList = list.filter(t=>t.date===dateStr).slice().sort((a,b)=> (a.id > b.id ? 1 : -1));
+  let running = openingBalance;
+  const rows = dayList.map(t=>{
+    const amt = txTotal(t);
+    running += (t.type==='Income' ? amt : -amt);
+    return {...t, amt, running};
+  });
+  const cashIn = dayList.filter(t=>t.type==='Income').reduce((s,t)=>s+txTotal(t),0);
+  const cashOut = dayList.filter(t=>t.type==='Expense').reduce((s,t)=>s+txTotal(t),0);
+  return {openingBalance, rows, cashIn, cashOut, closingBalance: running};
+}
+function renderCashbook(){
+  const cb = computeCashbook(cashbookDate, cashbookProject);
+  return `
+    <div class="page-head">
+      <div><h1>${tr('cashbookTitle')}</h1><p>${tr('cashbookSub')}</p></div>
+      <button class="btn amber" data-action="new-cash-entry">${tr('newCashEntryBtn')}</button>
+    </div>
+    <div class="filters">
+      <input type="date" id="cb-date" value="${cashbookDate}">
+      <select id="cb-project">
+        <option value="all" ${cashbookProject==='all'?'selected':''}>${tr('cbAllProjects')}</option>
+        ${state.projects.map(p=>`<option value="${p.id}" ${cashbookProject===p.id?'selected':''}>${p.name}</option>`).join('')}
+      </select>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="label">${tr('cbOpeningBal')}</div><div class="value mono">${fmt(cb.openingBalance)}</div></div>
+      <div class="kpi"><div class="label">${tr('cbCashIn')}</div><div class="value mono" style="color:var(--green)">${fmt(cb.cashIn)}</div></div>
+      <div class="kpi"><div class="label">${tr('cbCashOut')}</div><div class="value mono" style="color:var(--rust)">${fmt(cb.cashOut)}</div></div>
+      <div class="kpi"><div class="label">${tr('cbClosingBal')}</div><div class="value mono">${fmt(cb.closingBalance)}</div></div>
+    </div>
+    <div class="panel" style="padding:0;overflow-x:auto;">
+      <table>
+        <thead><tr><th>${tr('thDesc')}</th><th>${tr('thProject')}</th><th>${tr('thParty')}</th><th class="num">${tr('typeIncome')}</th><th class="num">${tr('typeExpense')}</th><th class="num">${tr('thRunningBal')}</th></tr></thead>
+        <tbody>
+        ${cb.rows.length===0?`<tr><td colspan="6"><div class="empty"><div class="big">💵</div>${tr('noCashEntries')}</div></td></tr>`:
+        cb.rows.map(t=>`
+          <tr>
+            <td>${t.desc||L(t.category)}</td>
+            <td>${projectName(t.project)}</td>
+            <td>${partyName(t.party)}</td>
+            <td class="num" style="color:var(--green)">${t.type==='Income'?fmt(t.amt):''}</td>
+            <td class="num" style="color:var(--rust)">${t.type==='Expense'?fmt(t.amt):''}</td>
+            <td class="num mono">${fmt(t.running)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
 }
 
 /* ---------------- Projects ---------------- */
@@ -1290,9 +1598,8 @@ function renderParties(){
 }
 
 /* ---------------- Reports ---------------- */
-function renderReports(){
+function buildReportData(){
   const tt = overallTotals(state.transactions);
-  // monthly trend last 6 months
   const months = [];
   const now = new Date(2026,8,3); // fixed "today" reference
   for(let i=5;i>=0;i--){
@@ -1304,14 +1611,21 @@ function renderReports(){
     const exp = state.transactions.filter(t=>t.type==='Expense' && t.date.startsWith(m.key)).reduce((s,t)=>s+txTotal(t),0);
     return {...m, inc, exp};
   });
-  const maxM = Math.max(1,...monthData.map(m=>Math.max(m.inc,m.exp)));
-
-  // GST summary
   const outputGst = state.transactions.filter(t=>t.type==='Income').reduce((s,t)=>s+gstAmt(t),0);
   const inputGst = state.transactions.filter(t=>t.type==='Expense').reduce((s,t)=>s+gstAmt(t),0);
+  const projRows = state.projects.map(p=>({p, s: projectStats(p.id)}));
+  return {tt, monthData, outputGst, inputGst, projRows};
+}
+
+function renderReports(){
+  const {tt, monthData, outputGst, inputGst, projRows} = buildReportData();
+  const maxM = Math.max(1,...monthData.map(m=>Math.max(m.inc,m.exp)));
 
   return `
-    <div class="page-head"><div><h1>${tr('reportsTitle')}</h1><p>${tr('reportsSub')}</p></div></div>
+    <div class="page-head">
+      <div><h1>${tr('reportsTitle')}</h1><p>${tr('reportsSub')}</p></div>
+      <button class="btn ghost" data-action="print-report">${tr('printReportBtn')}</button>
+    </div>
 
     <div class="grid-2">
       <div class="panel">
@@ -1341,17 +1655,14 @@ function renderReports(){
       <table>
         <thead><tr><th>${tr('thProject')}</th><th class="num">${tr('contractValue')}</th><th class="num">${tr('typeIncome')}</th><th class="num">${tr('typeExpense')}</th><th class="num">${tr('thProfit')}</th><th class="num">${tr('thMargin')}</th></tr></thead>
         <tbody>
-        ${state.projects.map(p=>{
-          const s = projectStats(p.id);
-          return `<tr>
+        ${projRows.map(({p,s})=>`<tr>
             <td>${p.name}</td>
             <td class="num">${fmt(p.contractValue)}</td>
             <td class="num" style="color:var(--green)">${fmt(s.income)}</td>
             <td class="num" style="color:var(--rust)">${fmt(s.expense)}</td>
             <td class="num" style="color:${s.profit>=0?'var(--green)':'var(--rust)'}">${fmt(s.profit)}</td>
             <td class="num">${s.income>0?s.margin.toFixed(1):'0'}%</td>
-          </tr>`;
-        }).join('')}
+          </tr>`).join('')}
         </tbody>
       </table>
     </div>
@@ -1435,15 +1746,16 @@ function openModal(html, wide){
   div.innerHTML = `<div class="modal${wide?' wide':''}">${html}</div>`;
   document.body.appendChild(div);
   div.addEventListener('click', e=>{ if(e.target===div) closeModal(); });
+  div.querySelectorAll('[data-action="close-modal"]').forEach(b=>b.addEventListener('click', closeModal));
 }
 function closeModal(){
   const el = document.getElementById('modal-overlay');
   if(el) el.remove();
 }
 
-function txModal(tx, presetPartyId){
+function txModal(tx, presetPartyId, presets){
   const isEdit = !!tx;
-  const t = tx || {id:null, date:new Date().toISOString().slice(0,10), project:state.projects[0]?.id||'', type:'Expense', category:state.categories.expense[0], party:presetPartyId||'', desc:'', amount:'', gst:0, mode:PAY_MODES[0], status:'भुगतान हो गया', ref:''};
+  const t = tx || Object.assign({id:null, date:new Date().toISOString().slice(0,10), project:state.projects[0]?.id||'', type:'Expense', category:state.categories.expense[0], party:presetPartyId||'', desc:'', amount:'', gst:0, mode:PAY_MODES[0], status:'भुगतान हो गया', ref:'', receiptImage:null}, presets||{});
   openModal(`
     <h3>${isEdit?tr('editTx'):tr('newTx')}</h3>
     <form id="tx-form">
@@ -1496,6 +1808,11 @@ function txModal(tx, presetPartyId){
         </div>
       </div>
       <div class="field"><label>${tr('fieldRef')}</label><input type="text" name="ref" value="${t.ref||''}"></div>
+      <div class="field">
+        <label>${tr('attachReceipt')}</label>
+        <input type="file" accept="image/*" id="tx-receipt-file">
+        <div id="tx-receipt-preview" style="margin-top:8px;"></div>
+      </div>
       <div class="modal-actions">
         <button type="button" class="btn ghost" data-action="close-modal">${tr('cancelBtn')}</button>
         <button type="submit" class="btn amber">${isEdit?tr('saveChangesBtn'):tr('addBtnModal')}</button>
@@ -1532,6 +1849,27 @@ function txModal(tx, presetPartyId){
   }
   addConfirm.addEventListener('click', confirmAddCat);
   addInput.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); confirmAddCat(); } });
+
+  let receiptDataUrl = t.receiptImage || null;
+  function renderReceiptPreview(){
+    const el = document.getElementById('tx-receipt-preview');
+    if(!el) return;
+    el.innerHTML = receiptDataUrl
+      ? `<div style="display:flex;align-items:center;gap:10px;"><img src="${receiptDataUrl}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--line);"><button type="button" class="btn ghost sm" id="tx-receipt-remove">${tr('removeReceipt')}</button></div>`
+      : '';
+    const rm = document.getElementById('tx-receipt-remove');
+    if(rm) rm.addEventListener('click', ()=>{ receiptDataUrl = null; renderReceiptPreview(); });
+  }
+  renderReceiptPreview();
+  document.getElementById('tx-receipt-file').addEventListener('change', async e=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    try{
+      receiptDataUrl = await compressImageFile(file, 900, 0.72);
+      renderReceiptPreview();
+    }catch(err){ console.error(err); }
+  });
+
   document.getElementById('tx-form').addEventListener('submit', async e=>{
     e.preventDefault();
     const fd = new FormData(e.target);
@@ -1548,6 +1886,7 @@ function txModal(tx, presetPartyId){
       mode: fd.get('mode'),
       status: fd.get('status'),
       ref: fd.get('ref'),
+      receiptImage: receiptDataUrl,
       createdBy: t.createdBy || (currentUser ? currentUser.email : null),
     };
     if(isEdit){
@@ -1677,6 +2016,13 @@ function attachHandlers(){
   byAction('back-parties', ()=>{ activePartyId=null; render(); });
   byAction('close-modal', closeModal);
   byAction('export-csv', exportCsv);
+  byAction('print-report', printReport);
+  byAction('view-receipt', e=>{
+    const tItem = state.transactions.find(x=>x.id===e.currentTarget.dataset.id);
+    if(tItem && tItem.receiptImage){
+      openModal(`<h3>${tr('viewReceipt')}</h3><img src="${tItem.receiptImage}" style="width:100%;border-radius:8px;display:block;"><div class="modal-actions"><button type="button" class="btn ghost" data-action="close-modal">${tr('cancelBtn')}</button></div>`);
+    }
+  });
 
   byAction('new-quote', (e)=> quoteModal(null, e.currentTarget.dataset.partyid));
   byAction('edit-quote', e=> quoteModal(state.quotations.find(q=>q.id===e.currentTarget.dataset.id)));
@@ -1709,8 +2055,30 @@ function attachHandlers(){
     await saveState(); render();
   });
 
+  byAction('new-po', (e)=> poModal(null, e.currentTarget.dataset.partyid));
+  byAction('edit-po', e=> poModal(state.purchaseOrders.find(p=>p.id===e.currentTarget.dataset.id)));
+  byAction('del-po', async e=>{
+    if(confirm(tr('confirmDelPO'))){
+      state.purchaseOrders = state.purchaseOrders.filter(p=>p.id!==e.currentTarget.dataset.id);
+      await saveState(); render();
+    }
+  });
+  byAction('print-po', e=> printDocument(state.purchaseOrders.find(p=>p.id===e.currentTarget.dataset.id), 'po'));
+  byAction('mark-received-po', async e=>{
+    const po = state.purchaseOrders.find(p=>p.id===e.currentTarget.dataset.id);
+    if(!po || po.status==='प्राप्त हुआ') return;
+    po.status = 'प्राप्त हुआ';
+    markPOReceivedTx(po);
+    await saveState(); render();
+  });
+
+  byAction('new-cash-entry', ()=> txModal(null, null, {mode:'नकद', date:cashbookDate, project: cashbookProject!=='all'?cashbookProject:(state.projects[0]?.id||'')}));
+  const cbDate = document.getElementById('cb-date'); if(cbDate) cbDate.addEventListener('change', e=>{cashbookDate=e.target.value; render();});
+  const cbProject = document.getElementById('cb-project'); if(cbProject) cbProject.addEventListener('change', e=>{cashbookProject=e.target.value; render();});
+
   const qfStatus = document.getElementById('qf-status'); if(qfStatus) qfStatus.addEventListener('change', e=>{quoteFilters.status=e.target.value; render();});
   const invfStatus = document.getElementById('invf-status'); if(invfStatus) invfStatus.addEventListener('change', e=>{invoiceFilters.status=e.target.value; render();});
+  const pofStatus = document.getElementById('pof-status'); if(pofStatus) pofStatus.addEventListener('change', e=>{poFilters.status=e.target.value; render();});
 
   const bizForm = document.getElementById('biz-profile-form');
   if(bizForm) bizForm.addEventListener('submit', async e=>{
