@@ -376,6 +376,12 @@ const T = {
     manageBoqBtn:'BOQ जोड़ें / बदलें', boqModalTitle:'BOQ (मात्रा सूची)', fieldUnit:'इकाई', fieldContractQty:'अनुबंध मात्रा',
     addBoqRowBtn:'+ आइटम जोड़ें', saveBoqBtn:'BOQ सहेजें', contractTotal:'कुल अनुबंध मूल्य',
     workDoneTillDate:'अब तक हुआ काम', completionPct:'पूर्णता',
+    navRetention:'रिटेंशन', retentionTitle:'रिटेंशन व सिक्योरिटी डिपॉज़िट', newRetentionBtn:'+ नई एंट्री', noRetentionFound:'कोई रिटेंशन एंट्री नहीं मिली',
+    editRetention:'एंट्री बदलें', newRetention:'नई रिटेंशन एंट्री', confirmDelRetention:'क्या आप वाकई इस एंट्री को मिटाना चाहते हैं?',
+    fieldRetentionType:'प्रकार', fieldHeldDate:'रोकने की तिथि', fieldExpectedRelease:'अपेक्षित रिलीज़ तिथि (वैकल्पिक)',
+    fieldReleaseDate:'रिलीज़ तिथि', markReleasedBtn:'रिलीज़ हुआ चिह्नित करें',
+    totalHeld:'कुल रोकी गई राशि', totalReleased:'कुल जारी की गई राशि', dueForReleaseSoon:'जल्द देय (30 दिन में)',
+    thSource:'स्रोत', sourceRABill:'RA बिल', sourceManual:'मैनुअल एंट्री',
   },
   en:{
     navDashboard:'Dashboard', navTransactions:'Transactions', navProjects:'Projects', navParties:'Parties',
@@ -450,6 +456,12 @@ const T = {
     manageBoqBtn:'Add / Edit BOQ', boqModalTitle:'BOQ (Bill of Quantities)', fieldUnit:'Unit', fieldContractQty:'Contract Qty',
     addBoqRowBtn:'+ Add Item', saveBoqBtn:'Save BOQ', contractTotal:'Total Contract Value',
     workDoneTillDate:'Work Done Till Date', completionPct:'Completion',
+    navRetention:'Retention', retentionTitle:'Retention & Security Deposits', newRetentionBtn:'+ New Entry', noRetentionFound:'No retention entries found',
+    editRetention:'Edit Entry', newRetention:'New Retention Entry', confirmDelRetention:'Are you sure you want to delete this entry?',
+    fieldRetentionType:'Type', fieldHeldDate:'Held Date', fieldExpectedRelease:'Expected Release Date (optional)',
+    fieldReleaseDate:'Release Date', markReleasedBtn:'Mark as Released',
+    totalHeld:'Total Held', totalReleased:'Total Released', dueForReleaseSoon:'Due Soon (30 days)',
+    thSource:'Source', sourceRABill:'RA Bill', sourceManual:'Manual Entry',
   },
 };
 
@@ -466,6 +478,7 @@ const DATA_EN = {
   'ड्राफ्ट':'Draft', 'भेजा गया':'Sent', 'स्वीकृत':'Accepted', 'अस्वीकृत':'Rejected', 'इनवॉइस में बदला':'Converted to Invoice',
   'इनवॉइस भुगतान':'Invoice Payment', 'प्राप्त हुआ':'Received', 'पीओ / सामग्री खरीद':'PO / Material Purchase',
   'प्रस्तुत':'Submitted',
+  'रोका गया':'Held', 'जारी हुआ':'Released', 'रिटेंशन (क्लाइंट के पास)':'Retention (held by client)', 'सिक्योरिटी डिपॉज़िट':'Security Deposit',
 };
 
 const DEFAULT_CATS_INCOME = ["एडवांस प्राप्त","RA बिल भुगतान","रिटेंशन रिलीज़","अन्य आय"];
@@ -484,6 +497,9 @@ const RA_STATUS = ["ड्राफ्ट","प्रस्तुत","स्व
 const RA_INCOME_CATEGORY = "RA बिल भुगतान";
 const RA_DEFAULT_RETENTION_PCT = 5;
 const RA_DEFAULT_GST_PCT = 18;
+const RETENTION_STATUS = ["रोका गया","जारी हुआ"];
+const RETENTION_TYPES = ["रिटेंशन (क्लाइंट के पास)","सिक्योरिटी डिपॉज़िट"];
+const RETENTION_RELEASE_CATEGORY = "रिटेंशन रिलीज़";
 
 function uid(p){ return p + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 function fmt(n){
@@ -544,7 +560,7 @@ function seedData(){
   return {
     projects:proj, parties:parties, transactions:tx,
     categories:{income:[...DEFAULT_CATS_INCOME], expense:[...DEFAULT_CATS_EXPENSE]},
-    quotations:[], invoices:[], purchaseOrders:[], raBills:[], counters:{quote:1, invoice:1, po:1, ra:1},
+    quotations:[], invoices:[], purchaseOrders:[], raBills:[], retentions:[], counters:{quote:1, invoice:1, po:1, ra:1},
     businessProfile:{name:'', address:'', gstin:'', phone:'', email:''},
   };
 }
@@ -590,6 +606,7 @@ async function loadState(){
   if(state.counters && state.counters.po===undefined){ state.counters.po = 1; changed = true; }
   if(!state.purchaseOrders){ state.purchaseOrders = []; changed = true; }
   if(!state.raBills){ state.raBills = []; changed = true; }
+  if(!state.retentions){ state.retentions = []; changed = true; }
   if(state.counters && state.counters.ra===undefined){ state.counters.ra = 1; changed = true; }
   state.projects.forEach(p=>{ if(!p.boq){ p.boq = []; changed = true; } });
   if(!state.businessProfile){ state.businessProfile = {name:'', address:'', gstin:'', phone:'', email:''}; changed = true; }
@@ -686,6 +703,7 @@ function render(){
         ${navBtn('invoices',tr('navInvoices'), state.invoices.length)}
         ${navBtn('purchase_orders',tr('navPO'), state.purchaseOrders.length)}
         ${navBtn('ra_bills',tr('navRABills'), state.raBills.length)}
+        ${navBtn('retention',tr('navRetention'), state.retentions.length)}
         ${navBtn('cashbook',tr('navCashbook'))}
         ${navBtn('projects',tr('navProjects'), state.projects.length)}
         ${navBtn('parties',tr('navParties'), state.parties.length)}
@@ -709,6 +727,7 @@ function render(){
   else if(activeTab==='invoices') main.innerHTML = renderInvoices();
   else if(activeTab==='purchase_orders') main.innerHTML = renderPurchaseOrders();
   else if(activeTab==='ra_bills') main.innerHTML = renderRABills();
+  else if(activeTab==='retention') main.innerHTML = renderRetention();
   else if(activeTab==='cashbook') main.innerHTML = renderCashbook();
   else if(activeTab==='projects') main.innerHTML = renderProjects();
   else if(activeTab==='parties') main.innerHTML = renderParties();
@@ -1458,6 +1477,14 @@ function markRABillPaidTx(bill){
   };
   state.transactions.push(txObj);
   bill.linkedTransactionId = txObj.id;
+  if(calc.retentionAmount > 0 && !state.retentions.some(r=>r.raBillId===bill.id)){
+    state.retentions.push({
+      id: uid('ret'), project: bill.project, type: RETENTION_TYPES[0], raBillId: bill.id,
+      amount: calc.retentionAmount, heldDate: bill.billDate, expectedReleaseDate: '',
+      status: RETENTION_STATUS[0], releasedDate: null, linkedTransactionId: null, notes: '',
+      createdBy: currentUser ? currentUser.email : null,
+    });
+  }
 }
 function renderRABills(){
   let list = [...state.raBills];
@@ -1745,6 +1772,136 @@ function printRABill(bill){
   </div>
 </body></html>`);
   win.document.close();
+}
+
+/* ---------------- Retention & Security Deposits ---------------- */
+function markRetentionReleasedTx(r){
+  if(r.linkedTransactionId) return;
+  const project = state.projects.find(p=>p.id===r.project);
+  const txObj = {
+    id: uid('t'), date: r.releasedDate || new Date().toISOString().slice(0,10), project: r.project, type:'Income',
+    category: RETENTION_RELEASE_CATEGORY, party: null,
+    desc: (lang==='en'?'Retention Released':'रिटेंशन रिलीज़') + (project?(' — '+project.name):''),
+    amount: r.amount, gst:0, mode: PAY_MODES[1], status:'भुगतान हो गया', ref:'',
+    createdBy: currentUser ? currentUser.email : null,
+  };
+  state.transactions.push(txObj);
+  r.linkedTransactionId = txObj.id;
+}
+function renderRetention(){
+  const list = [...state.retentions].sort((a,b)=> new Date(b.heldDate)-new Date(a.heldDate));
+  const totalHeld = state.retentions.filter(r=>r.status===RETENTION_STATUS[0]).reduce((s,r)=>s+r.amount,0);
+  const totalReleased = state.retentions.filter(r=>r.status===RETENTION_STATUS[1]).reduce((s,r)=>s+r.amount,0);
+  const soonCutoff = new Date(); soonCutoff.setDate(soonCutoff.getDate()+30);
+  const dueSoon = state.retentions.filter(r=>r.status===RETENTION_STATUS[0] && r.expectedReleaseDate && new Date(r.expectedReleaseDate)<=soonCutoff).reduce((s,r)=>s+r.amount,0);
+  return `
+    <div class="page-head">
+      <div><h1>${tr('retentionTitle')}</h1><p>${list.length} ${tr('retentionTitle')}</p></div>
+      <button class="btn amber" data-action="new-retention">${tr('newRetentionBtn')}</button>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="label">${tr('totalHeld')}</div><div class="value mono">${fmt(totalHeld)}</div></div>
+      <div class="kpi"><div class="label">${tr('dueForReleaseSoon')}</div><div class="value mono" style="color:var(--rust)">${fmt(dueSoon)}</div></div>
+      <div class="kpi"><div class="label">${tr('totalReleased')}</div><div class="value mono" style="color:var(--green)">${fmt(totalReleased)}</div></div>
+    </div>
+    <div class="panel" style="padding:0;overflow-x:auto;">
+      <table>
+        <thead><tr><th>${tr('thProject')}</th><th>${tr('fieldRetentionType')}</th><th>${tr('thSource')}</th><th class="num">${tr('thAmount')}</th><th>${tr('fieldHeldDate')}</th><th>${tr('fieldExpectedRelease')}</th><th>${tr('thStatus')}</th><th></th></tr></thead>
+        <tbody>
+        ${list.length===0?`<tr><td colspan="8"><div class="empty"><div class="big">🔒</div>${tr('noRetentionFound')}</div></td></tr>`:
+        list.map(r=>`
+          <tr>
+            <td>${projectName(r.project)}</td>
+            <td>${L(r.type)}</td>
+            <td>${r.raBillId ? (tr('sourceRABill')+': '+((state.raBills.find(b=>b.id===r.raBillId)||{}).number||'')) : tr('sourceManual')}</td>
+            <td class="num">${fmt(r.amount)}</td>
+            <td class="mono">${fmtDate(r.heldDate)}</td>
+            <td class="mono">${r.expectedReleaseDate?fmtDate(r.expectedReleaseDate):'—'}</td>
+            <td><span class="tag ${r.status==='जारी हुआ'?'paid':'due'}">${L(r.status)}</span></td>
+            <td class="row-actions">
+              ${r.status!=='जारी हुआ'?`<button data-action="release-retention" data-id="${r.id}">${tr('markReleasedBtn')}</button>`:''}
+              <button data-action="edit-retention" data-id="${r.id}">${tr('editBtn')}</button>
+              <button data-action="del-retention" data-id="${r.id}">${tr('deleteBtn')}</button>
+            </td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+function retentionModal(ret, presetProjectId){
+  const isEdit = !!ret;
+  const r = ret || {id:null, project:presetProjectId||'', type:RETENTION_TYPES[0], raBillId:null, amount:'', heldDate:new Date().toISOString().slice(0,10), expectedReleaseDate:'', status:RETENTION_STATUS[0], releasedDate:'', linkedTransactionId:null, notes:''};
+  const projectLocked = !!r.raBillId;
+  openModal(`
+    <h3>${isEdit?tr('editRetention'):tr('newRetention')}</h3>
+    ${r.raBillId?`<div style="font-size:12.5px;color:var(--ink-soft);margin-bottom:10px;">${tr('sourceRABill')}: ${(state.raBills.find(b=>b.id===r.raBillId)||{}).number||''}</div>`:''}
+    <form id="ret-form">
+      <div class="field"><label>${tr('fieldProject')}</label>
+        <select name="project" ${projectLocked?'disabled':''} required>
+          <option value="">—</option>
+          ${state.projects.map(p=>`<option value="${p.id}" ${r.project===p.id?'selected':''}>${p.name}</option>`).join('')}
+        </select>
+        ${projectLocked?`<input type="hidden" name="project" value="${r.project}">`:''}
+      </div>
+      <div class="field"><label>${tr('fieldRetentionType')}</label>
+        <select name="type">${RETENTION_TYPES.map(t=>`<option value="${t}" ${r.type===t?'selected':''}>${L(t)}</option>`).join('')}</select>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>${tr('fieldAmount')}</label><input class="mono" type="number" name="amount" min="0" value="${r.amount}" required></div>
+        <div class="field"><label>${tr('fieldHeldDate')}</label><input type="date" name="heldDate" value="${r.heldDate}" required></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>${tr('fieldExpectedRelease')}</label><input type="date" name="expectedReleaseDate" value="${r.expectedReleaseDate||''}"></div>
+        <div class="field"><label>${tr('fieldStatus')}</label>
+          <select name="status" id="ret-status">${RETENTION_STATUS.map(s=>`<option value="${s}" ${r.status===s?'selected':''}>${L(s)}</option>`).join('')}</select>
+        </div>
+      </div>
+      <div class="field" id="ret-release-date-wrap" style="${r.status===RETENTION_STATUS[1]?'':'display:none;'}">
+        <label>${tr('fieldReleaseDate')}</label><input type="date" name="releasedDate" value="${r.releasedDate||new Date().toISOString().slice(0,10)}">
+      </div>
+      <div class="field"><label>${tr('fieldNotes')}</label><textarea name="notes">${r.notes||''}</textarea></div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" data-action="close-modal">${tr('cancelBtn')}</button>
+        <button type="submit" class="btn amber">${isEdit?tr('saveChangesBtn'):tr('addBtnModal')}</button>
+      </div>
+    </form>
+  `);
+  document.getElementById('ret-status').addEventListener('change', e=>{
+    document.getElementById('ret-release-date-wrap').style.display = e.target.value===RETENTION_STATUS[1] ? '' : 'none';
+  });
+  document.getElementById('ret-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const newR = {
+      id: r.id || uid('ret'),
+      project: fd.get('project'),
+      type: fd.get('type'),
+      raBillId: r.raBillId || null,
+      amount: Number(fd.get('amount'))||0,
+      heldDate: fd.get('heldDate'),
+      expectedReleaseDate: fd.get('expectedReleaseDate') || '',
+      status: fd.get('status'),
+      releasedDate: fd.get('releasedDate') || null,
+      linkedTransactionId: r.linkedTransactionId || null,
+      notes: fd.get('notes') || '',
+      createdBy: r.createdBy || (currentUser ? currentUser.email : null),
+    };
+    if(newR.status===RETENTION_STATUS[1]){
+      markRetentionReleasedTx(newR);
+    } else if(newR.linkedTransactionId){
+      state.transactions = state.transactions.filter(t=>t.id!==newR.linkedTransactionId);
+      newR.linkedTransactionId = null;
+    }
+    if(isEdit){
+      const idx = state.retentions.findIndex(x=>x.id===r.id);
+      state.retentions[idx] = newR;
+    } else {
+      state.retentions.push(newR);
+    }
+    await saveState();
+    closeModal(); render();
+  });
 }
 
 /* ---------------- Print / PDF ---------------- */
@@ -2540,6 +2697,23 @@ function attachHandlers(){
     await saveState(); render();
   });
   const rafStatus = document.getElementById('raf-status'); if(rafStatus) rafStatus.addEventListener('change', e=>{raFilters.status=e.target.value; render();});
+
+  byAction('new-retention', ()=> retentionModal(null));
+  byAction('edit-retention', e=> retentionModal(state.retentions.find(r=>r.id===e.currentTarget.dataset.id)));
+  byAction('del-retention', async e=>{
+    if(confirm(tr('confirmDelRetention'))){
+      state.retentions = state.retentions.filter(r=>r.id!==e.currentTarget.dataset.id);
+      await saveState(); render();
+    }
+  });
+  byAction('release-retention', async e=>{
+    const r = state.retentions.find(x=>x.id===e.currentTarget.dataset.id);
+    if(!r || r.status==='जारी हुआ') return;
+    r.status = 'जारी हुआ';
+    r.releasedDate = new Date().toISOString().slice(0,10);
+    markRetentionReleasedTx(r);
+    await saveState(); render();
+  });
 
   const qfStatus = document.getElementById('qf-status'); if(qfStatus) qfStatus.addEventListener('change', e=>{quoteFilters.status=e.target.value; render();});
   const invfStatus = document.getElementById('invf-status'); if(invfStatus) invfStatus.addEventListener('change', e=>{invoiceFilters.status=e.target.value; render();});
