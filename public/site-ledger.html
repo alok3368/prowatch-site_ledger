@@ -227,6 +227,15 @@
   .doc-total-row{display:flex;justify-content:flex-end;gap:8px;align-items:baseline;font-size:15px;font-weight:700;margin:12px 0 4px 0;border-top:1.5px solid var(--line);padding-top:10px;}
   .doc-total-row .mono{font-size:17px;}
   @media(max-width:640px){.items-head{display:none;} .item-row{grid-template-columns:1fr;background:var(--panel-2);padding:8px;border-radius:var(--radius);}}
+  .ra-head{display:grid;grid-template-columns:2.4fr 0.8fr 0.8fr 0.9fr 0.8fr 1fr;gap:6px;font-size:11px;color:var(--ink-soft);font-weight:600;padding:8px 2px 4px 2px;}
+  .ra-row{display:grid;grid-template-columns:2.4fr 0.8fr 0.8fr 0.9fr 0.8fr 1fr;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line);}
+  .ra-desc{font-size:12.5px;} .ra-sub{font-size:10.5px;color:var(--ink-soft);margin-top:2px;}
+  .ra-num{font-size:12.5px;text-align:right;}
+  .ra-cumqty{width:100%;padding:5px 6px;font-size:12.5px;}
+  .ra-summary{margin-top:14px;border-top:1.5px solid var(--line);padding-top:10px;font-size:13.5px;}
+  .ra-summary>div{display:flex;justify-content:space-between;padding:4px 0;}
+  .ra-summary .ra-net{font-weight:700;font-size:16px;border-top:1px solid var(--line);padding-top:8px;margin-top:4px;}
+  @media(max-width:640px){.ra-head{display:none;} .ra-row{grid-template-columns:1fr;background:var(--panel-2);padding:8px;border-radius:var(--radius);margin-bottom:6px;}}
   .field{margin-bottom:13px;}
   .field label{display:block;font-size:12.5px;color:var(--ink-soft);margin-bottom:5px;font-weight:600;}
   .field input, .field select, .field textarea{width:100%;}
@@ -356,6 +365,17 @@ const T = {
     cbOpeningBal:'शुरुआती शेष', cbCashIn:'नकद प्राप्ति', cbCashOut:'नकद भुगतान', cbClosingBal:'अंतिम शेष',
     cbAllProjects:'सभी प्रोजेक्ट', newCashEntryBtn:'+ नई नकद एंट्री', thRunningBal:'चलित शेष', noCashEntries:'इस तारीख को कोई नकद लेन-देन नहीं',
     attachReceipt:'बिल/रसीद फोटो जोड़ें (वैकल्पिक)', viewReceipt:'रसीद देखें', removeReceipt:'हटाएं',
+    navRABills:'आरए बिल', raBillTitle:'RA बिल (रनिंग अकाउंट)', newRABillBtn:'+ नया RA बिल', noRABillFound:'कोई RA बिल नहीं मिला',
+    editRABill:'RA बिल बदलें', newRABill:'नया RA बिल', confirmDelRABill:'क्या आप वाकई इस RA बिल को मिटाना चाहते हैं?',
+    fieldPeriodFrom:'अवधि से (वैकल्पिक)', fieldPeriodTo:'अवधि तक (वैकल्पिक)',
+    fieldRetentionPct:'रिटेंशन %', fieldGstPct:'GST %', fieldOtherDeductions:'अन्य कटौती (₹)',
+    thBOQItem:'BOQ आइटम', thUnit:'इकाई', thContractQty:'अनुबंध मात्रा', thPrevQty:'पिछली संचित मात्रा',
+    thThisCumQty:'इस बिल तक संचित मात्रा', thThisQty:'इस बिल की मात्रा', thThisAmt:'इस बिल की राशि',
+    basicValue:'मूल राशि', gstAmount:'GST राशि', grossValue:'सकल राशि', retentionAmount:'रिटेंशन राशि', netPayable:'देय राशि',
+    noBoqWarning:'इस प्रोजेक्ट के लिए कोई BOQ आइटम नहीं मिला। कृपया पहले BOQ जोड़ें।',
+    manageBoqBtn:'BOQ जोड़ें / बदलें', boqModalTitle:'BOQ (मात्रा सूची)', fieldUnit:'इकाई', fieldContractQty:'अनुबंध मात्रा',
+    addBoqRowBtn:'+ आइटम जोड़ें', saveBoqBtn:'BOQ सहेजें', contractTotal:'कुल अनुबंध मूल्य',
+    workDoneTillDate:'अब तक हुआ काम', completionPct:'पूर्णता',
   },
   en:{
     navDashboard:'Dashboard', navTransactions:'Transactions', navProjects:'Projects', navParties:'Parties',
@@ -419,6 +439,17 @@ const T = {
     cbOpeningBal:'Opening Balance', cbCashIn:'Cash In', cbCashOut:'Cash Out', cbClosingBal:'Closing Balance',
     cbAllProjects:'All Projects', newCashEntryBtn:'+ New Cash Entry', thRunningBal:'Running Balance', noCashEntries:'No cash transactions on this date',
     attachReceipt:'Attach bill/receipt photo (optional)', viewReceipt:'View Receipt', removeReceipt:'Remove',
+    navRABills:'RA Bills', raBillTitle:'RA Bills (Running Account)', newRABillBtn:'+ New RA Bill', noRABillFound:'No RA bills found',
+    editRABill:'Edit RA Bill', newRABill:'New RA Bill', confirmDelRABill:'Are you sure you want to delete this RA bill?',
+    fieldPeriodFrom:'Period From (optional)', fieldPeriodTo:'Period To (optional)',
+    fieldRetentionPct:'Retention %', fieldGstPct:'GST %', fieldOtherDeductions:'Other Deductions (₹)',
+    thBOQItem:'BOQ Item', thUnit:'Unit', thContractQty:'Contract Qty', thPrevQty:'Previous Cumulative Qty',
+    thThisCumQty:'Cumulative Qty till this Bill', thThisQty:'This Bill Qty', thThisAmt:'This Bill Amount',
+    basicValue:'Basic Value', gstAmount:'GST Amount', grossValue:'Gross Value', retentionAmount:'Retention Amount', netPayable:'Net Payable',
+    noBoqWarning:'No BOQ items found for this project. Please add a BOQ first.',
+    manageBoqBtn:'Add / Edit BOQ', boqModalTitle:'BOQ (Bill of Quantities)', fieldUnit:'Unit', fieldContractQty:'Contract Qty',
+    addBoqRowBtn:'+ Add Item', saveBoqBtn:'Save BOQ', contractTotal:'Total Contract Value',
+    workDoneTillDate:'Work Done Till Date', completionPct:'Completion',
   },
 };
 
@@ -434,6 +465,7 @@ const DATA_EN = {
   'ट्रांसपोर्ट/ईंधन':'Transport/Fuel', 'साइट ओवरहेड':'Site Overhead', 'टैक्स/GST':'Tax/GST', 'अन्य खर्च':'Other Expense',
   'ड्राफ्ट':'Draft', 'भेजा गया':'Sent', 'स्वीकृत':'Accepted', 'अस्वीकृत':'Rejected', 'इनवॉइस में बदला':'Converted to Invoice',
   'इनवॉइस भुगतान':'Invoice Payment', 'प्राप्त हुआ':'Received', 'पीओ / सामग्री खरीद':'PO / Material Purchase',
+  'प्रस्तुत':'Submitted',
 };
 
 const DEFAULT_CATS_INCOME = ["एडवांस प्राप्त","RA बिल भुगतान","रिटेंशन रिलीज़","अन्य आय"];
@@ -448,6 +480,10 @@ const INVOICE_STATUS = ["ड्राफ्ट","भेजा गया","भु
 const INVOICE_PAYMENT_CATEGORY = "इनवॉइस भुगतान";
 const PO_STATUS = ["ड्राफ्ट","भेजा गया","प्राप्त हुआ"];
 const PO_EXPENSE_CATEGORY = "पीओ / सामग्री खरीद";
+const RA_STATUS = ["ड्राफ्ट","प्रस्तुत","स्वीकृत","भुगतान हो गया"];
+const RA_INCOME_CATEGORY = "RA बिल भुगतान";
+const RA_DEFAULT_RETENTION_PCT = 5;
+const RA_DEFAULT_GST_PCT = 18;
 
 function uid(p){ return p + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 function fmt(n){
@@ -508,7 +544,7 @@ function seedData(){
   return {
     projects:proj, parties:parties, transactions:tx,
     categories:{income:[...DEFAULT_CATS_INCOME], expense:[...DEFAULT_CATS_EXPENSE]},
-    quotations:[], invoices:[], purchaseOrders:[], counters:{quote:1, invoice:1, po:1},
+    quotations:[], invoices:[], purchaseOrders:[], raBills:[], counters:{quote:1, invoice:1, po:1, ra:1},
     businessProfile:{name:'', address:'', gstin:'', phone:'', email:''},
   };
 }
@@ -553,6 +589,9 @@ async function loadState(){
   if(!state.counters){ state.counters = {quote:1, invoice:1, po:1}; changed = true; }
   if(state.counters && state.counters.po===undefined){ state.counters.po = 1; changed = true; }
   if(!state.purchaseOrders){ state.purchaseOrders = []; changed = true; }
+  if(!state.raBills){ state.raBills = []; changed = true; }
+  if(state.counters && state.counters.ra===undefined){ state.counters.ra = 1; changed = true; }
+  state.projects.forEach(p=>{ if(!p.boq){ p.boq = []; changed = true; } });
   if(!state.businessProfile){ state.businessProfile = {name:'', address:'', gstin:'', phone:'', email:''}; changed = true; }
   if(changed) await saveState();
 }
@@ -620,6 +659,7 @@ let txFilters = {project:'all', type:'all', status:'all', q:''};
 let quoteFilters = {status:'all'};
 let invoiceFilters = {status:'all'};
 let poFilters = {status:'all'};
+let raFilters = {status:'all'};
 let cashbookDate = new Date().toISOString().slice(0,10);
 let cashbookProject = 'all';
 
@@ -645,6 +685,7 @@ function render(){
         ${navBtn('quotations',tr('navQuotations'), state.quotations.length)}
         ${navBtn('invoices',tr('navInvoices'), state.invoices.length)}
         ${navBtn('purchase_orders',tr('navPO'), state.purchaseOrders.length)}
+        ${navBtn('ra_bills',tr('navRABills'), state.raBills.length)}
         ${navBtn('cashbook',tr('navCashbook'))}
         ${navBtn('projects',tr('navProjects'), state.projects.length)}
         ${navBtn('parties',tr('navParties'), state.parties.length)}
@@ -667,6 +708,7 @@ function render(){
   else if(activeTab==='quotations') main.innerHTML = renderQuotations();
   else if(activeTab==='invoices') main.innerHTML = renderInvoices();
   else if(activeTab==='purchase_orders') main.innerHTML = renderPurchaseOrders();
+  else if(activeTab==='ra_bills') main.innerHTML = renderRABills();
   else if(activeTab==='cashbook') main.innerHTML = renderCashbook();
   else if(activeTab==='projects') main.innerHTML = renderProjects();
   else if(activeTab==='parties') main.innerHTML = renderParties();
@@ -1302,6 +1344,409 @@ function poModal(po, presetPartyId){
   });
 }
 
+/* ---------------- BOQ (Bill of Quantities) ---------------- */
+function boqRowHtml(it){
+  it = it || {desc:'', unit:'', qty:'', rate:''};
+  return `<div class="item-row" data-id="${it.id||''}">
+    <input type="text" class="boq-desc" placeholder="${tr('itemDesc')}" value="${(it.desc||'').replace(/"/g,'&quot;')}">
+    <input type="text" class="boq-unit" placeholder="${tr('fieldUnit')}" value="${(it.unit||'').replace(/"/g,'&quot;')}">
+    <input type="number" class="boq-qty mono" min="0" step="any" value="${it.qty!==undefined?it.qty:''}">
+    <input type="number" class="boq-rate mono" min="0" step="any" value="${it.rate!==undefined?it.rate:''}">
+    <span class="boq-amt mono">${fmt(0)}</span>
+    <button type="button" class="item-remove" title="remove">✕</button>
+  </div>`;
+}
+function wireBoq(container){
+  function recalc(){
+    let total = 0;
+    container.querySelectorAll('.item-row').forEach(row=>{
+      const qty = Number(row.querySelector('.boq-qty').value)||0;
+      const rate = Number(row.querySelector('.boq-rate').value)||0;
+      const amt = qty*rate;
+      row.querySelector('.boq-amt').textContent = fmt(amt);
+      total += amt;
+    });
+    const totalEl = document.getElementById('boq-total-el');
+    if(totalEl) totalEl.textContent = fmt(total);
+  }
+  container.addEventListener('input', recalc);
+  container.addEventListener('click', e=>{
+    if(e.target.classList.contains('item-remove')){
+      if(container.querySelectorAll('.item-row').length>1){ e.target.closest('.item-row').remove(); recalc(); }
+    }
+  });
+  recalc();
+  return recalc;
+}
+function readBoq(container){
+  const items = [];
+  container.querySelectorAll('.item-row').forEach(row=>{
+    const desc = row.querySelector('.boq-desc').value.trim();
+    const unit = row.querySelector('.boq-unit').value.trim();
+    const qty = Number(row.querySelector('.boq-qty').value)||0;
+    const rate = Number(row.querySelector('.boq-rate').value)||0;
+    if(!desc && !unit && qty===0 && rate===0) return;
+    items.push({id: row.dataset.id || uid('bq'), desc, unit, qty, rate});
+  });
+  return items;
+}
+function boqModal(project){
+  if(!project) return;
+  const items = (project.boq && project.boq.length) ? project.boq : [{}];
+  const itemsHtml = items.map(boqRowHtml).join('');
+  openModal(`
+    <h3>${tr('boqModalTitle')} — ${escapeHtml(project.name)}</h3>
+    <div class="items-head"><span>${tr('itemDesc')}</span><span>${tr('fieldUnit')}</span><span>${tr('fieldContractQty')}</span><span>${tr('itemRate')}</span><span>${tr('itemAmount')}</span><span></span></div>
+    <div id="boq-items">${itemsHtml}</div>
+    <button type="button" class="btn ghost sm" id="boq-add-row" style="margin-top:6px;">${tr('addBoqRowBtn')}</button>
+    <div class="doc-total-row"><span>${tr('contractTotal')}:</span><span class="mono" id="boq-total-el">${fmt(0)}</span></div>
+    <div class="modal-actions">
+      <button type="button" class="btn ghost" data-action="close-modal">${tr('cancelBtn')}</button>
+      <button type="button" class="btn amber" id="boq-save-btn">${tr('saveBoqBtn')}</button>
+    </div>
+  `, true);
+  const container = document.getElementById('boq-items');
+  const recalc = wireBoq(container);
+  document.getElementById('boq-add-row').addEventListener('click', ()=>{
+    container.insertAdjacentHTML('beforeend', boqRowHtml());
+    recalc();
+  });
+  document.getElementById('boq-save-btn').addEventListener('click', async ()=>{
+    const newBoq = readBoq(container);
+    const idx = state.projects.findIndex(x=>x.id===project.id);
+    if(idx>-1){ state.projects[idx].boq = newBoq; await saveState(); }
+    closeModal(); render();
+  });
+}
+
+/* ---------------- RA Bills (Running Account) ---------------- */
+function getPreviousRABill(projectId, createdAt, excludeId){
+  const bills = state.raBills.filter(b=>b.project===projectId && b.id!==excludeId && b.createdAt < createdAt);
+  if(bills.length===0) return null;
+  return bills.reduce((latest,b)=> b.createdAt>latest.createdAt?b:latest);
+}
+function prevCumQtyFromBill(prevBill, boqItemId){
+  if(!prevBill) return 0;
+  const m = (prevBill.measurements||[]).find(x=>x.boqItemId===boqItemId);
+  return m ? (m.cumulativeQty||0) : 0;
+}
+function raBillCalc(bill){
+  const prevBill = getPreviousRABill(bill.project, bill.createdAt, bill.id);
+  const rows = (bill.measurements||[]).map(m=>{
+    const prevQty = prevCumQtyFromBill(prevBill, m.boqItemId);
+    const thisQty = (m.cumulativeQty||0) - prevQty;
+    const thisAmt = thisQty * (m.rate||0);
+    return {...m, prevQty, thisQty, thisAmt};
+  });
+  const basicValue = rows.reduce((s,r)=>s+r.thisAmt,0);
+  const gstAmount = Math.round(basicValue * (bill.gstPct||0)/100);
+  const grossValue = basicValue + gstAmount;
+  const retentionAmount = Math.round(basicValue * (bill.retentionPct||0)/100);
+  const otherDed = bill.otherDeductions||0;
+  const netPayable = grossValue - retentionAmount - otherDed;
+  return {rows, basicValue, gstAmount, grossValue, retentionAmount, otherDed, netPayable};
+}
+function markRABillPaidTx(bill){
+  if(bill.linkedTransactionId) return;
+  const calc = raBillCalc(bill);
+  const project = state.projects.find(p=>p.id===bill.project);
+  const txObj = {
+    id: uid('t'), date: bill.billDate, project: bill.project, type:'Income', category: RA_INCOME_CATEGORY,
+    party: null, desc: (lang==='en'?'RA Bill ':'RA बिल ') + bill.number + (project?(' — '+project.name):''),
+    amount: calc.netPayable, gst:0, mode: PAY_MODES[1], status:'भुगतान हो गया', ref: bill.number,
+    createdBy: currentUser ? currentUser.email : null,
+  };
+  state.transactions.push(txObj);
+  bill.linkedTransactionId = txObj.id;
+}
+function renderRABills(){
+  let list = [...state.raBills];
+  if(raFilters.status!=='all') list = list.filter(b=>b.status===raFilters.status);
+  list.sort((a,b)=> new Date(b.billDate)-new Date(a.billDate));
+  return `
+    <div class="page-head">
+      <div><h1>${tr('raBillTitle')}</h1><p>${list.length} ${tr('raBillTitle')}</p></div>
+      <button class="btn amber" data-action="new-ra">${tr('newRABillBtn')}</button>
+    </div>
+    <div class="filters">
+      <select id="raf-status"><option value="all">${tr('allStatus')}</option>${RA_STATUS.map(s=>`<option value="${s}" ${raFilters.status===s?'selected':''}>${L(s)}</option>`).join('')}</select>
+    </div>
+    <div class="panel" style="padding:0;overflow-x:auto;">
+      <table>
+        <thead><tr><th>${tr('thNumber')}</th><th>${tr('thDate')}</th><th>${tr('thProject')}</th><th class="num">${tr('netPayable')}</th><th>${tr('thStatus')}</th><th></th></tr></thead>
+        <tbody>
+        ${list.length===0?`<tr><td colspan="6"><div class="empty"><div class="big">📐</div>${tr('noRABillFound')}</div></td></tr>`:
+        list.map(b=>{
+          const calc = raBillCalc(b);
+          return `<tr>
+            <td class="mono">${b.number}</td>
+            <td class="mono">${fmtDate(b.billDate)}</td>
+            <td>${projectName(b.project)}</td>
+            <td class="num">${fmt(calc.netPayable)}</td>
+            <td><span class="tag ${b.status==='भुगतान हो गया'?'paid':''}">${L(b.status)}</span></td>
+            <td class="row-actions">
+              <button data-action="print-ra" data-id="${b.id}">${tr('printBtn')}</button>
+              ${b.status!=='भुगतान हो गया'?`<button data-action="mark-paid-ra" data-id="${b.id}">${tr('markPaidBtn')}</button>`:''}
+              <button data-action="edit-ra" data-id="${b.id}">${tr('editBtn')}</button>
+              <button data-action="del-ra" data-id="${b.id}">${tr('deleteBtn')}</button>
+            </td>
+          </tr>`;
+        }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+function measurementRowHtml(m){
+  return `<div class="ra-row" data-boq-id="${m.boqItemId}" data-desc="${escapeHtml(m.desc)}" data-unit="${escapeHtml(m.unit||'')}" data-rate="${m.rate}" data-contractqty="${m.contractQty}" data-prev="${m.prevQty}">
+    <div class="ra-desc">${escapeHtml(m.desc)}<div class="ra-sub">${escapeHtml(m.unit||'')} · ₹${fmt(m.rate)}</div></div>
+    <div class="ra-num">${m.contractQty}</div>
+    <div class="ra-num">${m.prevQty}</div>
+    <input type="number" class="ra-cumqty mono" step="any" min="0" value="${m.cumulativeQty}">
+    <div class="ra-num mono ra-thisqty">0</div>
+    <div class="ra-num mono ra-thisamt">${fmt(0)}</div>
+  </div>`;
+}
+function readRAMeasurements(container){
+  const out = [];
+  container.querySelectorAll('.ra-row').forEach(row=>{
+    out.push({
+      boqItemId: row.dataset.boqId, desc: row.dataset.desc||'', unit: row.dataset.unit||'',
+      rate: Number(row.dataset.rate)||0, contractQty: Number(row.dataset.contractqty)||0,
+      cumulativeQty: Number(row.querySelector('.ra-cumqty').value)||0,
+    });
+  });
+  return out;
+}
+function wireRAMeasurements(container, retentionInput, gstInput, otherDedInput, totalsEls){
+  function recalc(){
+    let basic = 0;
+    container.querySelectorAll('.ra-row').forEach(row=>{
+      const prev = Number(row.dataset.prev)||0;
+      const rate = Number(row.dataset.rate)||0;
+      const cum = Number(row.querySelector('.ra-cumqty').value)||0;
+      const thisQty = cum - prev;
+      const thisAmt = thisQty*rate;
+      row.querySelector('.ra-thisqty').textContent = thisQty;
+      row.querySelector('.ra-thisamt').textContent = fmt(thisAmt);
+      basic += thisAmt;
+    });
+    const gstPct = Number(gstInput.value)||0;
+    const retPct = Number(retentionInput.value)||0;
+    const otherDed = Number(otherDedInput.value)||0;
+    const gstAmt = Math.round(basic*gstPct/100);
+    const gross = basic + gstAmt;
+    const retAmt = Math.round(basic*retPct/100);
+    const net = gross - retAmt - otherDed;
+    totalsEls.basic.textContent = fmt(basic);
+    totalsEls.gst.textContent = fmt(gstAmt);
+    totalsEls.gross.textContent = fmt(gross);
+    totalsEls.retention.textContent = fmt(retAmt);
+    totalsEls.net.textContent = fmt(net);
+  }
+  container.addEventListener('input', recalc);
+  retentionInput.addEventListener('input', recalc);
+  gstInput.addEventListener('input', recalc);
+  otherDedInput.addEventListener('input', recalc);
+  recalc();
+  return recalc;
+}
+function raBillModal(bill){
+  const isEdit = !!bill;
+  const b = bill || {id:null, number:null, project:'', billDate:new Date().toISOString().slice(0,10), periodFrom:'', periodTo:'', measurements:[], retentionPct:RA_DEFAULT_RETENTION_PCT, gstPct:RA_DEFAULT_GST_PCT, otherDeductions:0, status:RA_STATUS[0], notes:'', linkedTransactionId:null, createdAt:Date.now()};
+
+  function buildRows(projectId){
+    const project = state.projects.find(x=>x.id===projectId);
+    if(!project || !project.boq || project.boq.length===0) return null;
+    const prevBill = isEdit
+      ? getPreviousRABill(projectId, b.createdAt, b.id)
+      : state.raBills.filter(x=>x.project===projectId).reduce((a,x)=> (!a || x.createdAt>a.createdAt) ? x : a, null);
+    return project.boq.map(item=>{
+      const existing = isEdit ? (b.measurements||[]).find(m=>m.boqItemId===item.id) : null;
+      const prevQty = prevCumQtyFromBill(prevBill, item.id);
+      return {
+        boqItemId: item.id, desc: existing?existing.desc:item.desc, unit: existing?existing.unit:item.unit,
+        rate: existing?existing.rate:item.rate, contractQty: existing?existing.contractQty:item.qty,
+        cumulativeQty: existing ? existing.cumulativeQty : prevQty, prevQty,
+      };
+    });
+  }
+  function measurementSectionHtml(rows){
+    if(!rows || rows.length===0){
+      return `<p style="font-size:12.5px;color:var(--rust);margin-top:10px;">${tr('noBoqWarning')}</p>`;
+    }
+    return `
+      <div class="ra-head"><span>${tr('thBOQItem')}</span><span>${tr('thContractQty')}</span><span>${tr('thPrevQty')}</span><span>${tr('thThisCumQty')}</span><span>${tr('thThisQty')}</span><span>${tr('thThisAmt')}</span></div>
+      <div id="ra-measurements">${rows.map(measurementRowHtml).join('')}</div>
+    `;
+  }
+  const initialRows = b.project ? buildRows(b.project) : null;
+
+  openModal(`
+    <h3>${isEdit?tr('editRABill'):tr('newRABill')}</h3>
+    ${isEdit?`<div class="mono" style="font-size:12px;color:var(--ink-soft);margin-bottom:12px;">${b.number}</div>`:''}
+    <form id="ra-form">
+      <div class="field"><label>${tr('fieldProject')}</label>
+        <select name="project" id="ra-project-select" ${isEdit?'disabled':''} required>
+          <option value="">—</option>
+          ${state.projects.map(p=>`<option value="${p.id}" ${b.project===p.id?'selected':''}>${p.name}</option>`).join('')}
+        </select>
+        ${isEdit?`<input type="hidden" name="project" value="${b.project}">`:''}
+      </div>
+      <div class="field-row">
+        <div class="field"><label>${tr('fieldDate')}</label><input type="date" name="billDate" value="${b.billDate}" required></div>
+        <div class="field"><label>${tr('fieldPeriodFrom')}</label><input type="date" name="periodFrom" value="${b.periodFrom||''}"></div>
+        <div class="field"><label>${tr('fieldPeriodTo')}</label><input type="date" name="periodTo" value="${b.periodTo||''}"></div>
+      </div>
+      <div class="field" id="ra-measure-wrap">
+        <label>${tr('fieldItems')}</label>
+        ${measurementSectionHtml(initialRows)}
+      </div>
+      <div class="field-row">
+        <div class="field"><label>${tr('fieldRetentionPct')}</label><input type="number" name="retentionPct" id="ra-retention" step="0.1" min="0" value="${b.retentionPct}"></div>
+        <div class="field"><label>${tr('fieldGstPct')}</label><input type="number" name="gstPct" id="ra-gst" step="0.1" min="0" value="${b.gstPct}"></div>
+        <div class="field"><label>${tr('fieldOtherDeductions')}</label><input type="number" name="otherDeductions" id="ra-otherded" step="1" min="0" value="${b.otherDeductions||0}"></div>
+      </div>
+      <div class="field"><label>${tr('fieldNotes')}</label><textarea name="notes">${b.notes||''}</textarea></div>
+      <div class="field"><label>${tr('fieldStatus')}</label>
+        <select name="status">${RA_STATUS.map(s=>`<option value="${s}" ${b.status===s?'selected':''}>${L(s)}</option>`).join('')}</select>
+      </div>
+      <div class="ra-summary">
+        <div><span>${tr('basicValue')}</span><span class="mono" id="ra-basic-el">${fmt(0)}</span></div>
+        <div><span>${tr('gstAmount')}</span><span class="mono" id="ra-gstamt-el">${fmt(0)}</span></div>
+        <div><span>${tr('grossValue')}</span><span class="mono" id="ra-gross-el">${fmt(0)}</span></div>
+        <div><span>${tr('retentionAmount')}</span><span class="mono" id="ra-retamt-el">${fmt(0)}</span></div>
+        <div class="ra-net"><span>${tr('netPayable')}</span><span class="mono" id="ra-net-el">${fmt(0)}</span></div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" data-action="close-modal">${tr('cancelBtn')}</button>
+        <button type="submit" class="btn amber">${isEdit?tr('saveChangesBtn'):tr('addBtnModal')}</button>
+      </div>
+    </form>
+  `, true);
+
+  function wireMeasurements(){
+    const container = document.getElementById('ra-measurements');
+    if(!container) return;
+    const totalsEls = {
+      basic: document.getElementById('ra-basic-el'), gst: document.getElementById('ra-gstamt-el'),
+      gross: document.getElementById('ra-gross-el'), retention: document.getElementById('ra-retamt-el'),
+      net: document.getElementById('ra-net-el'),
+    };
+    wireRAMeasurements(container, document.getElementById('ra-retention'), document.getElementById('ra-gst'), document.getElementById('ra-otherded'), totalsEls);
+  }
+  wireMeasurements();
+
+  if(!isEdit){
+    document.getElementById('ra-project-select').addEventListener('change', e=>{
+      const rows = e.target.value ? buildRows(e.target.value) : null;
+      document.getElementById('ra-measure-wrap').innerHTML = `<label>${tr('fieldItems')}</label>${measurementSectionHtml(rows)}`;
+      wireMeasurements();
+    });
+  }
+
+  document.getElementById('ra-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const projectId = fd.get('project');
+    const measureContainer = document.getElementById('ra-measurements');
+    if(!measureContainer){ alert(tr('noBoqWarning')); return; }
+    const measurements = readRAMeasurements(measureContainer);
+    const newBill = {
+      id: b.id || uid('ra'),
+      number: b.number || ('RA-' + String(state.counters.ra).padStart(4,'0')),
+      project: projectId,
+      billDate: fd.get('billDate'),
+      periodFrom: fd.get('periodFrom') || '',
+      periodTo: fd.get('periodTo') || '',
+      measurements,
+      retentionPct: Number(fd.get('retentionPct'))||0,
+      gstPct: Number(fd.get('gstPct'))||0,
+      otherDeductions: Number(fd.get('otherDeductions'))||0,
+      status: fd.get('status') || RA_STATUS[0],
+      notes: fd.get('notes') || '',
+      linkedTransactionId: b.linkedTransactionId || null,
+      createdAt: b.createdAt || Date.now(),
+      createdBy: b.createdBy || (currentUser ? currentUser.email : null),
+    };
+    if(newBill.status==='भुगतान हो गया'){
+      markRABillPaidTx(newBill);
+    } else if(newBill.linkedTransactionId){
+      state.transactions = state.transactions.filter(t=>t.id!==newBill.linkedTransactionId);
+      newBill.linkedTransactionId = null;
+    }
+    if(isEdit){
+      const idx = state.raBills.findIndex(x=>x.id===b.id);
+      state.raBills[idx] = newBill;
+    } else {
+      state.raBills.push(newBill);
+      state.counters.ra++;
+    }
+    await saveState();
+    closeModal(); render();
+  });
+}
+function printRABill(bill){
+  if(!bill) return;
+  const bp = state.businessProfile || {};
+  const project = state.projects.find(p=>p.id===bill.project) || {};
+  const calc = raBillCalc(bill);
+  const rowsHtml = calc.rows.map((r,idx)=>`<tr><td>${idx+1}</td><td>${escapeHtml(r.desc)}</td><td class="r">${escapeHtml(r.unit||'')}</td><td class="r">${r.contractQty}</td><td class="r">${r.prevQty}</td><td class="r">${r.cumulativeQty}</td><td class="r">${r.thisQty}</td><td class="r">${fmt(r.rate)}</td><td class="r">${fmt(r.thisAmt)}</td></tr>`).join('');
+  const win = window.open('', '_blank');
+  if(!win) return;
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>RA Bill ${escapeHtml(bill.number)}</title>
+<style>
+  body{font-family:Arial,Helvetica,sans-serif;padding:32px;color:#222;max-width:1000px;margin:0 auto;}
+  .head{display:flex;justify-content:space-between;border-bottom:3px solid #C1791F;padding-bottom:14px;margin-bottom:20px;gap:20px;}
+  h1{margin:0;font-size:21px;} .muted{color:#666;font-size:12.5px;margin-top:2px;}
+  .doctitle{font-size:20px;font-weight:700;color:#C1791F;text-align:right;} .docnum{font-family:monospace;color:#555;text-align:right;margin-top:2px;}
+  .meta{display:flex;justify-content:space-between;margin-bottom:16px;font-size:13px;gap:20px;}
+  table{width:100%;border-collapse:collapse;font-size:12px;} th,td{border:1px solid #ccc;padding:6px 7px;text-align:left;}
+  th{background:#f5f1e8;} td.r,th.r{text-align:right;}
+  .summary{margin-top:16px;width:320px;margin-left:auto;font-size:13.5px;}
+  .summary div{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #eee;}
+  .summary .net{font-weight:700;font-size:16px;border-top:2px solid #333;border-bottom:none;padding-top:8px;margin-top:4px;}
+  .notes{margin-top:22px;font-size:12.5px;white-space:pre-wrap;}
+  @media print{ .noprint{display:none;} body{padding:0;} }
+</style></head><body>
+  <div class="head">
+    <div>
+      <h1>${escapeHtml(bp.name || (lang==='en'?'Your Company Name':'आपकी कंपनी का नाम'))}</h1>
+      ${bp.address?`<div class="muted">${escapeHtml(bp.address)}</div>`:''}
+      <div class="muted">${bp.gstin?('GSTIN: '+escapeHtml(bp.gstin)):''}${bp.phone?(' · '+escapeHtml(bp.phone)):''}</div>
+    </div>
+    <div>
+      <div class="doctitle">${lang==='en'?'RA BILL':'RA बिल'}</div>
+      <div class="docnum">${escapeHtml(bill.number)}</div>
+    </div>
+  </div>
+  <div class="meta">
+    <div><b>${lang==='en'?'Project':'प्रोजेक्ट'}:</b> ${escapeHtml(project.name||'')}<br><b>${lang==='en'?'Client':'क्लाइंट'}:</b> ${escapeHtml(project.client||'')}</div>
+    <div style="text-align:right;">
+      <div>${lang==='en'?'Bill Date':'बिल तिथि'}: ${fmtDate(bill.billDate)}</div>
+      ${bill.periodFrom?`<div>${lang==='en'?'Period':'अवधि'}: ${fmtDate(bill.periodFrom)}${bill.periodTo?(' - '+fmtDate(bill.periodTo)):''}</div>`:''}
+    </div>
+  </div>
+  <table>
+    <thead><tr><th>#</th><th>${lang==='en'?'Description':'विवरण'}</th><th class="r">${lang==='en'?'Unit':'इकाई'}</th><th class="r">${lang==='en'?'Contract Qty':'अनुबंध मात्रा'}</th><th class="r">${lang==='en'?'Prev. Qty':'पिछली मात्रा'}</th><th class="r">${lang==='en'?'Cum. Qty':'संचित मात्रा'}</th><th class="r">${lang==='en'?'This Qty':'इस बिल की मात्रा'}</th><th class="r">${lang==='en'?'Rate':'दर'}</th><th class="r">${lang==='en'?'Amount':'राशि'}</th></tr></thead>
+    <tbody>${rowsHtml}</tbody>
+  </table>
+  <div class="summary">
+    <div><span>${lang==='en'?'Basic Value':'मूल राशि'}</span><span>${fmt(calc.basicValue)}</span></div>
+    <div><span>GST (${bill.gstPct}%)</span><span>${fmt(calc.gstAmount)}</span></div>
+    <div><span>${lang==='en'?'Gross Value':'सकल राशि'}</span><span>${fmt(calc.grossValue)}</span></div>
+    <div><span>${lang==='en'?'Retention':'रिटेंशन'} (${bill.retentionPct}%)</span><span>-${fmt(calc.retentionAmount)}</span></div>
+    ${calc.otherDed?`<div><span>${lang==='en'?'Other Deductions':'अन्य कटौती'}</span><span>-${fmt(calc.otherDed)}</span></div>`:''}
+    <div class="net"><span>${lang==='en'?'Net Payable':'देय राशि'}</span><span>${fmt(calc.netPayable)}</span></div>
+  </div>
+  ${bill.notes?`<div class="notes"><b>${lang==='en'?'Notes':'टिप्पणी'}:</b><br>${escapeHtml(bill.notes)}</div>`:''}
+  <div class="noprint" style="margin-top:28px;">
+    <button onclick="window.print()" style="padding:10px 18px;font-size:14px;cursor:pointer;">${lang==='en'?'Print / Save as PDF':'प्रिंट करें / PDF सेव करें'}</button>
+  </div>
+</body></html>`);
+  win.document.close();
+}
+
 /* ---------------- Print / PDF ---------------- */
 function printDocument(doc, type){
   if(!doc) return;
@@ -1520,6 +1965,7 @@ function renderProjects(){
           </div>
           <div style="display:flex;align-items:center;gap:10px;">
             <span class="status-pill ${p.status}">${L(p.status)}</span>
+            <button class="btn sm ghost" data-action="manage-boq" data-id="${p.id}">${tr('manageBoqBtn')}</button>
             <button class="btn sm ghost" data-action="edit-proj" data-id="${p.id}">${tr('editBtn')}</button>
             <button class="btn sm danger" data-action="del-proj" data-id="${p.id}">${tr('deleteBtn')}</button>
           </div>
@@ -2075,6 +2521,25 @@ function attachHandlers(){
   byAction('new-cash-entry', ()=> txModal(null, null, {mode:'नकद', date:cashbookDate, project: cashbookProject!=='all'?cashbookProject:(state.projects[0]?.id||'')}));
   const cbDate = document.getElementById('cb-date'); if(cbDate) cbDate.addEventListener('change', e=>{cashbookDate=e.target.value; render();});
   const cbProject = document.getElementById('cb-project'); if(cbProject) cbProject.addEventListener('change', e=>{cashbookProject=e.target.value; render();});
+
+  byAction('manage-boq', e=> boqModal(state.projects.find(p=>p.id===e.currentTarget.dataset.id)));
+  byAction('new-ra', ()=> raBillModal(null));
+  byAction('edit-ra', e=> raBillModal(state.raBills.find(b=>b.id===e.currentTarget.dataset.id)));
+  byAction('del-ra', async e=>{
+    if(confirm(tr('confirmDelRABill'))){
+      state.raBills = state.raBills.filter(b=>b.id!==e.currentTarget.dataset.id);
+      await saveState(); render();
+    }
+  });
+  byAction('print-ra', e=> printRABill(state.raBills.find(b=>b.id===e.currentTarget.dataset.id)));
+  byAction('mark-paid-ra', async e=>{
+    const bill = state.raBills.find(b=>b.id===e.currentTarget.dataset.id);
+    if(!bill || bill.status==='भुगतान हो गया') return;
+    bill.status = 'भुगतान हो गया';
+    markRABillPaidTx(bill);
+    await saveState(); render();
+  });
+  const rafStatus = document.getElementById('raf-status'); if(rafStatus) rafStatus.addEventListener('change', e=>{raFilters.status=e.target.value; render();});
 
   const qfStatus = document.getElementById('qf-status'); if(qfStatus) qfStatus.addEventListener('change', e=>{quoteFilters.status=e.target.value; render();});
   const invfStatus = document.getElementById('invf-status'); if(invfStatus) invfStatus.addEventListener('change', e=>{invoiceFilters.status=e.target.value; render();});
