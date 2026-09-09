@@ -236,6 +236,9 @@
   .ra-summary>div{display:flex;justify-content:space-between;padding:4px 0;}
   .ra-summary .ra-net{font-weight:700;font-size:16px;border-top:1px solid var(--line);padding-top:8px;margin-top:4px;}
   @media(max-width:640px){.ra-head{display:none;} .ra-row{grid-template-columns:1fr;background:var(--panel-2);padding:8px;border-radius:var(--radius);margin-bottom:6px;}}
+  .mat-row{display:grid;grid-template-columns:2fr 1fr 28px;gap:6px;margin-bottom:6px;align-items:center;}
+  .mat-row input{width:100%;padding:6px 8px;font-size:13px;}
+  .forecast-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:20px;}
   .field{margin-bottom:13px;}
   .field label{display:block;font-size:12.5px;color:var(--ink-soft);margin-bottom:5px;font-weight:600;}
   .field input, .field select, .field textarea{width:100%;}
@@ -382,6 +385,23 @@ const T = {
     fieldReleaseDate:'रिलीज़ तिथि', markReleasedBtn:'रिलीज़ हुआ चिह्नित करें',
     totalHeld:'कुल रोकी गई राशि', totalReleased:'कुल जारी की गई राशि', dueForReleaseSoon:'जल्द देय (30 दिन में)',
     thSource:'स्रोत', sourceRABill:'RA बिल', sourceManual:'मैनुअल एंट्री',
+    navLabour:'श्रम', labourTitle:'श्रमिक हाज़िरी व मजदूरी', labourSub:'दैनिक हाज़िरी दर्ज करें व मजदूरी का हिसाब रखें',
+    newLabourerBtn:'+ नया श्रमिक', markAttendance:'हाज़िरी दर्ज करें', saveAttendanceBtn:'हाज़िरी सहेजें',
+    thName:'नाम', fieldCategory:'श्रेणी (मिस्त्री/हेल्पर आदि)', fieldDailyWage:'दैनिक मजदूरी (₹)',
+    fieldAttStatus:'उपस्थिति', fieldAdvance:'एडवांस (₹)', wageRegister:'मजदूरी रजिस्टर',
+    thPresentDays:'उपस्थित दिन', thHalfDays:'आधे दिन', thWageEarned:'कुल मजदूरी', thAdvanceGiven:'दिया गया एडवांस',
+    settleBtn:'भुगतान करें', noWageData:'चयनित अवधि में कोई हाज़िरी दर्ज नहीं', labourersTitle:'श्रमिक सूची', noLabourers:'कोई श्रमिक जोड़ा नहीं गया',
+    editLabourer:'श्रमिक बदलें', newLabourer:'नया श्रमिक', confirmDelLabourer:'क्या आप वाकई इस श्रमिक को मिटाना चाहते हैं?',
+    navStock:'स्टॉक', stockTitle:'मटेरियल स्टॉक लेजर', stockSub:'सामग्री की खरीद, उपयोग व शेष मात्रा का हिसाब',
+    newStockEntryBtn:'+ नई एंट्री', manageMaterialsBtn:'मटेरियल सूची', stockOverview:'स्टॉक अवलोकन', stockEntries:'लेन-देन सूची',
+    noMaterials:'कोई मटेरियल नहीं जोड़ा गया। पहले मटेरियल सूची में आइटम जोड़ें।', noStockEntries:'कोई स्टॉक एंट्री नहीं मिली',
+    thMaterial:'मटेरियल', thTotalIn:'कुल खरीद', thTotalOut:'कुल उपयोग', thAdjustments:'समायोजन', thBalance:'शेष मात्रा', thEstValue:'अनुमानित मूल्य',
+    thType:'प्रकार', fieldMaterial:'मटेरियल', fieldStockType:'लेन-देन प्रकार', confirmDelStockEntry:'क्या आप वाकई इस एंट्री को मिटाना चाहते हैं?',
+    navCashFlow:'कैश फ्लो', cashFlowTitle:'कैश फ्लो पूर्वानुमान', cashFlowSub:'मौजूदा डेटा के आधार पर आने वाले नकद प्रवाह का अनुमान',
+    currentPosition:'मौजूदा शुद्ध स्थिति', overdueWarning:'समयबाह्य (देय तिथि निकल चुकी)', next:'अगले', days:'दिन',
+    expectedIn:'अपेक्षित प्राप्ति', expectedOut:'अपेक्षित भुगतान', projectedBalance:'अनुमानित शेष',
+    upcomingItems:'आने वाली मदें', noUpcomingItems:'अगले 90 दिनों में कोई नियत मद नहीं मिली', thDirection:'दिशा', overdueTag:'समयबाह्य',
+    forecastDisclaimer:'यह अनुमान केवल इस ऐप में दर्ज डेटा (देय इनवॉइस, RA बिल, पीओ, रिटेंशन व बकाया लेन-देन) पर आधारित है — वास्तविक बैंक बैलेंस अलग हो सकता है।',
   },
   en:{
     navDashboard:'Dashboard', navTransactions:'Transactions', navProjects:'Projects', navParties:'Parties',
@@ -462,6 +482,23 @@ const T = {
     fieldReleaseDate:'Release Date', markReleasedBtn:'Mark as Released',
     totalHeld:'Total Held', totalReleased:'Total Released', dueForReleaseSoon:'Due Soon (30 days)',
     thSource:'Source', sourceRABill:'RA Bill', sourceManual:'Manual Entry',
+    navLabour:'Labour', labourTitle:'Labour Attendance & Wages', labourSub:'Mark daily attendance and track wages',
+    newLabourerBtn:'+ New Labourer', markAttendance:'Mark Attendance', saveAttendanceBtn:'Save Attendance',
+    thName:'Name', fieldCategory:'Category (Mason/Helper etc.)', fieldDailyWage:'Daily Wage (₹)',
+    fieldAttStatus:'Attendance', fieldAdvance:'Advance (₹)', wageRegister:'Wage Register',
+    thPresentDays:'Present Days', thHalfDays:'Half Days', thWageEarned:'Wage Earned', thAdvanceGiven:'Advance Given',
+    settleBtn:'Settle & Pay', noWageData:'No attendance recorded in the selected period', labourersTitle:'Labourers', noLabourers:'No labourers added yet',
+    editLabourer:'Edit Labourer', newLabourer:'New Labourer', confirmDelLabourer:'Are you sure you want to delete this labourer?',
+    navStock:'Stock', stockTitle:'Material Stock Ledger', stockSub:'Track material purchases, usage, and running balance',
+    newStockEntryBtn:'+ New Entry', manageMaterialsBtn:'Manage Materials', stockOverview:'Stock Overview', stockEntries:'Transaction Log',
+    noMaterials:'No materials added yet. Add material items first.', noStockEntries:'No stock entries found',
+    thMaterial:'Material', thTotalIn:'Total Purchased', thTotalOut:'Total Used', thAdjustments:'Adjustments', thBalance:'Balance', thEstValue:'Est. Value',
+    thType:'Type', fieldMaterial:'Material', fieldStockType:'Transaction Type', confirmDelStockEntry:'Are you sure you want to delete this entry?',
+    navCashFlow:'Cash Flow', cashFlowTitle:'Cash Flow Forecast', cashFlowSub:'Projected cash flow based on your current data',
+    currentPosition:'Current Net Position', overdueWarning:'Overdue (past due date)', next:'Next', days:'Days',
+    expectedIn:'Expected In', expectedOut:'Expected Out', projectedBalance:'Projected Balance',
+    upcomingItems:'Upcoming Items', noUpcomingItems:'No scheduled items in the next 90 days', thDirection:'Direction', overdueTag:'Overdue',
+    forecastDisclaimer:'This forecast is based only on data recorded in this app (due invoices, RA bills, POs, retention, and due transactions) — actual bank balance may differ.',
   },
 };
 
@@ -479,6 +516,8 @@ const DATA_EN = {
   'इनवॉइस भुगतान':'Invoice Payment', 'प्राप्त हुआ':'Received', 'पीओ / सामग्री खरीद':'PO / Material Purchase',
   'प्रस्तुत':'Submitted',
   'रोका गया':'Held', 'जारी हुआ':'Released', 'रिटेंशन (क्लाइंट के पास)':'Retention (held by client)', 'सिक्योरिटी डिपॉज़िट':'Security Deposit',
+  'उपस्थित':'Present', 'आधा दिन':'Half Day', 'अनुपस्थित':'Absent',
+  'खरीद':'Purchase', 'उपयोग':'Consumption', 'समायोजन':'Adjustment',
 };
 
 const DEFAULT_CATS_INCOME = ["एडवांस प्राप्त","RA बिल भुगतान","रिटेंशन रिलीज़","अन्य आय"];
@@ -500,6 +539,10 @@ const RA_DEFAULT_GST_PCT = 18;
 const RETENTION_STATUS = ["रोका गया","जारी हुआ"];
 const RETENTION_TYPES = ["रिटेंशन (क्लाइंट के पास)","सिक्योरिटी डिपॉज़िट"];
 const RETENTION_RELEASE_CATEGORY = "रिटेंशन रिलीज़";
+const ATT_STATUS = ["उपस्थित","आधा दिन","अनुपस्थित"];
+const WAGE_EXPENSE_CATEGORY = "मजदूरी";
+const STOCK_TYPES = ["खरीद","उपयोग","समायोजन"];
+const MATERIAL_EXPENSE_CATEGORY = "मटेरियल";
 
 function uid(p){ return p + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 function fmt(n){
@@ -560,7 +603,9 @@ function seedData(){
   return {
     projects:proj, parties:parties, transactions:tx,
     categories:{income:[...DEFAULT_CATS_INCOME], expense:[...DEFAULT_CATS_EXPENSE]},
-    quotations:[], invoices:[], purchaseOrders:[], raBills:[], retentions:[], counters:{quote:1, invoice:1, po:1, ra:1},
+    quotations:[], invoices:[], purchaseOrders:[], raBills:[], retentions:[], labourers:[], attendance:[],
+    materials:[], stockEntries:[],
+    counters:{quote:1, invoice:1, po:1, ra:1},
     businessProfile:{name:'', address:'', gstin:'', phone:'', email:''},
   };
 }
@@ -607,6 +652,10 @@ async function loadState(){
   if(!state.purchaseOrders){ state.purchaseOrders = []; changed = true; }
   if(!state.raBills){ state.raBills = []; changed = true; }
   if(!state.retentions){ state.retentions = []; changed = true; }
+  if(!state.labourers){ state.labourers = []; changed = true; }
+  if(!state.attendance){ state.attendance = []; changed = true; }
+  if(!state.materials){ state.materials = []; changed = true; }
+  if(!state.stockEntries){ state.stockEntries = []; changed = true; }
   if(state.counters && state.counters.ra===undefined){ state.counters.ra = 1; changed = true; }
   state.projects.forEach(p=>{ if(!p.boq){ p.boq = []; changed = true; } });
   if(!state.businessProfile){ state.businessProfile = {name:'', address:'', gstin:'', phone:'', email:''}; changed = true; }
@@ -679,6 +728,11 @@ let poFilters = {status:'all'};
 let raFilters = {status:'all'};
 let cashbookDate = new Date().toISOString().slice(0,10);
 let cashbookProject = 'all';
+let laborDate = new Date().toISOString().slice(0,10);
+let laborProject = null;
+let wageDateFrom = (()=>{ const d = new Date(); d.setDate(d.getDate()-14); return d.toISOString().slice(0,10); })();
+let wageDateTo = new Date().toISOString().slice(0,10);
+let stockProjectFilter = 'all';
 
 const root = document.getElementById('app');
 
@@ -704,6 +758,9 @@ function render(){
         ${navBtn('purchase_orders',tr('navPO'), state.purchaseOrders.length)}
         ${navBtn('ra_bills',tr('navRABills'), state.raBills.length)}
         ${navBtn('retention',tr('navRetention'), state.retentions.length)}
+        ${navBtn('labour',tr('navLabour'), state.labourers.length)}
+        ${navBtn('stock',tr('navStock'), state.materials.length)}
+        ${navBtn('cashflow',tr('navCashFlow'))}
         ${navBtn('cashbook',tr('navCashbook'))}
         ${navBtn('projects',tr('navProjects'), state.projects.length)}
         ${navBtn('parties',tr('navParties'), state.parties.length)}
@@ -728,6 +785,9 @@ function render(){
   else if(activeTab==='purchase_orders') main.innerHTML = renderPurchaseOrders();
   else if(activeTab==='ra_bills') main.innerHTML = renderRABills();
   else if(activeTab==='retention') main.innerHTML = renderRetention();
+  else if(activeTab==='labour') main.innerHTML = renderLabour();
+  else if(activeTab==='stock') main.innerHTML = renderMaterialStock();
+  else if(activeTab==='cashflow') main.innerHTML = renderCashFlow();
   else if(activeTab==='cashbook') main.innerHTML = renderCashbook();
   else if(activeTab==='projects') main.innerHTML = renderProjects();
   else if(activeTab==='parties') main.innerHTML = renderParties();
@@ -1904,6 +1964,432 @@ function retentionModal(ret, presetProjectId){
   });
 }
 
+/* ---------------- Labour Attendance & Wages ---------------- */
+function computeWageSummary(dateFrom, dateTo, projectId){
+  return state.labourers.map(l=>{
+    const recs = state.attendance.filter(a=> a.labourerId===l.id && a.project===projectId && !a.settled && a.date>=dateFrom && a.date<=dateTo);
+    const presentDays = recs.filter(a=>a.status==='उपस्थित').length;
+    const halfDays = recs.filter(a=>a.status==='आधा दिन').length;
+    const absentDays = recs.filter(a=>a.status==='अनुपस्थित').length;
+    const wageEarned = presentDays*l.dailyWage + halfDays*l.dailyWage*0.5;
+    const advanceGiven = recs.reduce((s,a)=>s+(a.advance||0),0);
+    const netPayable = wageEarned - advanceGiven;
+    return {labourerId:l.id, name:l.name, presentDays, halfDays, absentDays, wageEarned, advanceGiven, netPayable, recordIds: recs.map(a=>a.id)};
+  }).filter(s=> s.presentDays+s.halfDays+s.absentDays>0 || s.advanceGiven>0);
+}
+function renderLabour(){
+  if(!laborProject) laborProject = state.projects[0]?.id || '';
+  const projectId = laborProject;
+  const dayRecords = projectId ? state.attendance.filter(a=>a.date===laborDate && a.project===projectId) : [];
+  const summary = projectId ? computeWageSummary(wageDateFrom, wageDateTo, projectId) : [];
+
+  return `
+    <div class="page-head">
+      <div><h1>${tr('labourTitle')}</h1><p>${tr('labourSub')}</p></div>
+      <button class="btn amber" data-action="new-labourer">${tr('newLabourerBtn')}</button>
+    </div>
+    <div class="filters">
+      <select id="labor-project">${state.projects.map(p=>`<option value="${p.id}" ${projectId===p.id?'selected':''}>${p.name}</option>`).join('')}</select>
+    </div>
+
+    <div class="panel">
+      <h2>${tr('markAttendance')}</h2>
+      <div class="filters" style="margin-top:0;margin-bottom:12px;"><input type="date" id="labor-date" value="${laborDate}"></div>
+      ${state.labourers.length===0?`<div class="empty"><div class="big">👷</div>${tr('noLabourers')}</div>`:`
+      <table>
+        <thead><tr><th>${tr('thName')}</th><th>${tr('fieldCategory')}</th><th class="num">${tr('fieldDailyWage')}</th><th>${tr('fieldAttStatus')}</th><th class="num">${tr('fieldAdvance')}</th></tr></thead>
+        <tbody id="attendance-rows">
+        ${state.labourers.map(l=>{
+          const rec = dayRecords.find(a=>a.labourerId===l.id);
+          return `<tr data-labourer-id="${l.id}">
+            <td>${escapeHtml(l.name)}</td>
+            <td>${escapeHtml(l.category||'')}</td>
+            <td class="num mono">${fmt(l.dailyWage)}</td>
+            <td><select class="att-status">${ATT_STATUS.map(s=>`<option value="${s}" ${(rec?rec.status:ATT_STATUS[0])===s?'selected':''}>${L(s)}</option>`).join('')}</select></td>
+            <td><input type="number" class="att-advance mono" min="0" value="${rec?(rec.advance||0):0}" style="width:100px;"></td>
+          </tr>`;
+        }).join('')}
+        </tbody>
+      </table>
+      <div class="modal-actions" style="justify-content:flex-start;margin-top:14px;">
+        <button class="btn amber sm" data-action="save-attendance">${tr('saveAttendanceBtn')}</button>
+      </div>`}
+    </div>
+
+    <div class="panel">
+      <h2>${tr('wageRegister')}</h2>
+      <div class="filters" style="margin-top:0;margin-bottom:12px;">
+        <input type="date" id="wage-from" value="${wageDateFrom}">
+        <input type="date" id="wage-to" value="${wageDateTo}">
+      </div>
+      <table>
+        <thead><tr><th>${tr('thName')}</th><th class="num">${tr('thPresentDays')}</th><th class="num">${tr('thHalfDays')}</th><th class="num">${tr('thWageEarned')}</th><th class="num">${tr('thAdvanceGiven')}</th><th class="num">${tr('netPayable')}</th><th></th></tr></thead>
+        <tbody>
+        ${summary.length===0?`<tr><td colspan="7"><div class="empty"><div class="big">💰</div>${tr('noWageData')}</div></td></tr>`:
+        summary.map(s=>`
+          <tr>
+            <td>${escapeHtml(s.name)}</td>
+            <td class="num">${s.presentDays}</td>
+            <td class="num">${s.halfDays}</td>
+            <td class="num">${fmt(s.wageEarned)}</td>
+            <td class="num">${fmt(s.advanceGiven)}</td>
+            <td class="num mono" style="font-weight:700;">${fmt(s.netPayable)}</td>
+            <td class="row-actions">${s.netPayable>0?`<button data-action="settle-wage" data-id="${s.labourerId}">${tr('settleBtn')}</button>`:''}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h2>${tr('labourersTitle')}</h2>
+      <table>
+        <thead><tr><th>${tr('thName')}</th><th>${tr('fieldCategory')}</th><th class="num">${tr('fieldDailyWage')}</th><th>${tr('fieldPhone')}</th><th></th></tr></thead>
+        <tbody>
+        ${state.labourers.length===0?`<tr><td colspan="5"><div class="empty">${tr('noLabourers')}</div></td></tr>`:
+        state.labourers.map(l=>`<tr>
+          <td>${escapeHtml(l.name)}</td><td>${escapeHtml(l.category||'')}</td><td class="num mono">${fmt(l.dailyWage)}</td><td>${escapeHtml(l.phone||'')}</td>
+          <td class="row-actions"><button data-action="edit-labourer" data-id="${l.id}">${tr('editBtn')}</button><button data-action="del-labourer" data-id="${l.id}">${tr('deleteBtn')}</button></td>
+        </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+function labourerModal(labourer){
+  const isEdit = !!labourer;
+  const l = labourer || {id:null, name:'', category:'', dailyWage:'', phone:'', notes:''};
+  openModal(`
+    <h3>${isEdit?tr('editLabourer'):tr('newLabourer')}</h3>
+    <form id="labourer-form">
+      <div class="field"><label>${tr('thName')}</label><input type="text" name="name" value="${escapeHtml(l.name)}" required></div>
+      <div class="field-row">
+        <div class="field"><label>${tr('fieldCategory')}</label><input type="text" name="category" value="${escapeHtml(l.category||'')}"></div>
+        <div class="field"><label>${tr('fieldDailyWage')}</label><input type="number" class="mono" name="dailyWage" min="0" value="${l.dailyWage}" required></div>
+      </div>
+      <div class="field"><label>${tr('fieldPhone')}</label><input type="text" name="phone" value="${escapeHtml(l.phone||'')}"></div>
+      <div class="field"><label>${tr('fieldNotes')}</label><textarea name="notes">${escapeHtml(l.notes||'')}</textarea></div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" data-action="close-modal">${tr('cancelBtn')}</button>
+        <button type="submit" class="btn amber">${isEdit?tr('saveChangesBtn'):tr('addBtnModal')}</button>
+      </div>
+    </form>
+  `);
+  document.getElementById('labourer-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const newL = {
+      id: l.id || uid('lab'), name: fd.get('name'), category: fd.get('category')||'',
+      dailyWage: Number(fd.get('dailyWage'))||0, phone: fd.get('phone')||'', notes: fd.get('notes')||'',
+    };
+    if(isEdit){
+      const idx = state.labourers.findIndex(x=>x.id===l.id);
+      state.labourers[idx] = newL;
+    } else {
+      state.labourers.push(newL);
+    }
+    await saveState();
+    closeModal(); render();
+  });
+}
+
+/* ---------------- Material Stock Ledger ---------------- */
+function computeStockOverview(projectId){
+  return state.materials.map(m=>{
+    const entries = state.stockEntries.filter(e=> e.materialId===m.id && (projectId==='all'||e.project===projectId));
+    const totalIn = entries.filter(e=>e.type===STOCK_TYPES[0]).reduce((s,e)=>s+e.qty,0);
+    const totalOut = entries.filter(e=>e.type===STOCK_TYPES[1]).reduce((s,e)=>s+e.qty,0);
+    const adjustments = entries.filter(e=>e.type===STOCK_TYPES[2]).reduce((s,e)=>s+e.qty,0);
+    const balance = totalIn - totalOut + adjustments;
+    const purchaseEntries = entries.filter(e=>e.type===STOCK_TYPES[0] && e.qty>0);
+    const totalPurchaseValue = purchaseEntries.reduce((s,e)=>s+e.qty*(e.rate||0),0);
+    const totalPurchaseQty = purchaseEntries.reduce((s,e)=>s+e.qty,0);
+    const avgRate = totalPurchaseQty>0 ? totalPurchaseValue/totalPurchaseQty : 0;
+    return {material:m, totalIn, totalOut, adjustments, balance, avgRate, estValue: balance*avgRate};
+  });
+}
+function stockEntryCreateTx(entry, material){
+  const txObj = {
+    id: uid('t'), date: entry.date, project: entry.project, type:'Expense', category: MATERIAL_EXPENSE_CATEGORY,
+    party: null, desc: (lang==='en'?'Material Purchase - ':'सामग्री खरीद - ') + material.name + ` (${entry.qty} ${material.unit||''})`,
+    amount: entry.qty*(entry.rate||0), gst:0, mode: PAY_MODES[1], status:'भुगतान हो गया', ref:'',
+    createdBy: currentUser ? currentUser.email : null,
+  };
+  state.transactions.push(txObj);
+  entry.linkedTransactionId = txObj.id;
+}
+function renderMaterialStock(){
+  const overview = computeStockOverview(stockProjectFilter);
+  let entries = [...state.stockEntries];
+  if(stockProjectFilter!=='all') entries = entries.filter(e=>e.project===stockProjectFilter);
+  entries.sort((a,b)=> new Date(b.date)-new Date(a.date));
+
+  return `
+    <div class="page-head">
+      <div><h1>${tr('stockTitle')}</h1><p>${tr('stockSub')}</p></div>
+      <button class="btn amber" data-action="new-stock-entry">${tr('newStockEntryBtn')}</button>
+    </div>
+    <div class="filters">
+      <select id="stock-project-filter">
+        <option value="all" ${stockProjectFilter==='all'?'selected':''}>${tr('cbAllProjects')}</option>
+        ${state.projects.map(p=>`<option value="${p.id}" ${stockProjectFilter===p.id?'selected':''}>${p.name}</option>`).join('')}
+      </select>
+      <button class="btn ghost sm" data-action="manage-materials">${tr('manageMaterialsBtn')}</button>
+    </div>
+
+    <div class="panel" style="padding:0;overflow-x:auto;">
+      <h2 style="padding:16px 16px 0 16px;">${tr('stockOverview')}</h2>
+      <table>
+        <thead><tr><th>${tr('thMaterial')}</th><th>${tr('fieldUnit')}</th><th class="num">${tr('thTotalIn')}</th><th class="num">${tr('thTotalOut')}</th><th class="num">${tr('thAdjustments')}</th><th class="num">${tr('thBalance')}</th><th class="num">${tr('thEstValue')}</th></tr></thead>
+        <tbody>
+        ${overview.length===0?`<tr><td colspan="7"><div class="empty"><div class="big">🧱</div>${tr('noMaterials')}</div></td></tr>`:
+        overview.map(o=>`<tr>
+          <td>${escapeHtml(o.material.name)}</td>
+          <td>${escapeHtml(o.material.unit||'')}</td>
+          <td class="num">${o.totalIn}</td>
+          <td class="num">${o.totalOut}</td>
+          <td class="num">${o.adjustments}</td>
+          <td class="num mono" style="font-weight:700;">${o.balance}</td>
+          <td class="num">${fmt(o.estValue)}</td>
+        </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel" style="padding:0;overflow-x:auto;">
+      <h2 style="padding:16px 16px 0 16px;">${tr('stockEntries')}</h2>
+      <table>
+        <thead><tr><th>${tr('thDate')}</th><th>${tr('thProject')}</th><th>${tr('thMaterial')}</th><th>${tr('thType')}</th><th class="num">${tr('itemQty')}</th><th class="num">${tr('itemRate')}</th><th></th></tr></thead>
+        <tbody>
+        ${entries.length===0?`<tr><td colspan="7"><div class="empty">${tr('noStockEntries')}</div></td></tr>`:
+        entries.map(e=>{
+          const m = state.materials.find(x=>x.id===e.materialId) || {name:'—',unit:''};
+          return `<tr>
+            <td class="mono">${fmtDate(e.date)}</td>
+            <td>${projectName(e.project)}</td>
+            <td>${escapeHtml(m.name)}</td>
+            <td>${L(e.type)}</td>
+            <td class="num">${e.qty} ${escapeHtml(m.unit||'')}</td>
+            <td class="num">${e.type===STOCK_TYPES[0]?fmt(e.rate||0):''}</td>
+            <td class="row-actions"><button data-action="del-stock-entry" data-id="${e.id}">${tr('deleteBtn')}</button></td>
+          </tr>`;
+        }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+function materialRowHtml(m){
+  m = m || {name:'', unit:''};
+  return `<div class="mat-row" data-id="${m.id||''}">
+    <input type="text" class="mat-name" placeholder="${tr('thMaterial')}" value="${(m.name||'').replace(/"/g,'&quot;')}">
+    <input type="text" class="mat-unit" placeholder="${tr('fieldUnit')}" value="${(m.unit||'').replace(/"/g,'&quot;')}">
+    <button type="button" class="item-remove" title="remove">✕</button>
+  </div>`;
+}
+function materialsModal(){
+  const items = state.materials.length ? state.materials : [{}];
+  const itemsHtml = items.map(materialRowHtml).join('');
+  openModal(`
+    <h3>${tr('manageMaterialsBtn')}</h3>
+    <div id="materials-rows">${itemsHtml}</div>
+    <button type="button" class="btn ghost sm" id="mat-add-row" style="margin-top:6px;">${tr('addBtnModal')}</button>
+    <div class="modal-actions">
+      <button type="button" class="btn ghost" data-action="close-modal">${tr('cancelBtn')}</button>
+      <button type="button" class="btn amber" id="materials-save-btn">${tr('saveChangesBtn')}</button>
+    </div>
+  `);
+  const container = document.getElementById('materials-rows');
+  container.addEventListener('click', e=>{
+    if(e.target.classList.contains('item-remove')){
+      if(container.querySelectorAll('.mat-row').length>1){ e.target.closest('.mat-row').remove(); }
+    }
+  });
+  document.getElementById('mat-add-row').addEventListener('click', ()=>{
+    container.insertAdjacentHTML('beforeend', materialRowHtml());
+  });
+  document.getElementById('materials-save-btn').addEventListener('click', async ()=>{
+    const newMats = [];
+    container.querySelectorAll('.mat-row').forEach(row=>{
+      const name = row.querySelector('.mat-name').value.trim();
+      const unit = row.querySelector('.mat-unit').value.trim();
+      if(!name) return;
+      newMats.push({id: row.dataset.id || uid('mat'), name, unit});
+    });
+    state.materials = newMats;
+    await saveState();
+    closeModal(); render();
+  });
+}
+function stockEntryModal(){
+  if(state.materials.length===0){
+    materialsModal();
+    return;
+  }
+  const today = new Date().toISOString().slice(0,10);
+  const defaultProject = stockProjectFilter!=='all' ? stockProjectFilter : (state.projects[0]?.id||'');
+  openModal(`
+    <h3>${tr('newStockEntryBtn')}</h3>
+    <form id="stock-form">
+      <div class="field"><label>${tr('fieldProject')}</label>
+        <select name="project" required>${state.projects.map(p=>`<option value="${p.id}" ${defaultProject===p.id?'selected':''}>${p.name}</option>`).join('')}</select>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>${tr('fieldDate')}</label><input type="date" name="date" value="${today}" required></div>
+        <div class="field"><label>${tr('fieldStockType')}</label>
+          <select name="type" id="stock-type-select">${STOCK_TYPES.map(s=>`<option value="${s}">${L(s)}</option>`).join('')}</select>
+        </div>
+      </div>
+      <div class="field"><label>${tr('fieldMaterial')}</label>
+        <select name="materialId" required>${state.materials.map(m=>`<option value="${m.id}">${escapeHtml(m.name)} (${escapeHtml(m.unit||'')})</option>`).join('')}</select>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>${tr('itemQty')}</label><input type="number" class="mono" name="qty" step="any" required></div>
+        <div class="field" id="stock-rate-wrap"><label>${tr('itemRate')}</label><input type="number" class="mono" name="rate" step="any" min="0" value="0"></div>
+      </div>
+      <div class="field"><label>${tr('fieldNotes')}</label><textarea name="notes"></textarea></div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" data-action="close-modal">${tr('cancelBtn')}</button>
+        <button type="submit" class="btn amber">${tr('addBtnModal')}</button>
+      </div>
+    </form>
+  `);
+  function toggleRateVisibility(){
+    const type = document.getElementById('stock-type-select').value;
+    document.getElementById('stock-rate-wrap').style.display = type===STOCK_TYPES[0] ? '' : 'none';
+  }
+  document.getElementById('stock-type-select').addEventListener('change', toggleRateVisibility);
+  toggleRateVisibility();
+  document.getElementById('stock-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const type = fd.get('type');
+    const qty = Number(fd.get('qty'))||0;
+    const entry = {
+      id: uid('se'), date: fd.get('date'), project: fd.get('project'), materialId: fd.get('materialId'),
+      type, qty, rate: type===STOCK_TYPES[0] ? (Number(fd.get('rate'))||0) : 0,
+      notes: fd.get('notes') || '', linkedTransactionId: null,
+      createdBy: currentUser ? currentUser.email : null,
+    };
+    state.stockEntries.push(entry);
+    if(type===STOCK_TYPES[0] && entry.qty>0){
+      const material = state.materials.find(m=>m.id===entry.materialId);
+      stockEntryCreateTx(entry, material);
+    }
+    await saveState();
+    closeModal(); render();
+  });
+}
+
+/* ---------------- Cash Flow Forecast ---------------- */
+function getScheduledCashEvents(){
+  const events = [];
+  state.invoices.forEach(inv=>{
+    if(inv.status==='बकाया'){
+      const amt = itemsTotal(inv.items);
+      if(amt>0) events.push({date: inv.dueDate||inv.date, amount:amt, direction:'in', label:(lang==='en'?'Invoice ':'इनवॉइस ')+inv.number});
+    }
+  });
+  state.raBills.forEach(b=>{
+    if(b.status!=='भुगतान हो गया'){
+      const net = raBillCalc(b).netPayable;
+      if(net>0) events.push({date: b.billDate, amount:net, direction:'in', label:(lang==='en'?'RA Bill ':'RA बिल ')+b.number});
+    }
+  });
+  state.retentions.forEach(r=>{
+    if(r.status==='रोका गया' && r.expectedReleaseDate){
+      events.push({date: r.expectedReleaseDate, amount:r.amount, direction:'in', label:(lang==='en'?'Retention — ':'रिटेंशन — ')+projectName(r.project)});
+    }
+  });
+  state.purchaseOrders.forEach(po=>{
+    if(po.status!=='प्राप्त हुआ'){
+      const amt = itemsTotal(po.items);
+      if(amt>0) events.push({date: po.deliveryDate||po.date, amount:amt, direction:'out', label:(lang==='en'?'PO ':'पीओ ')+po.number});
+    }
+  });
+  state.transactions.forEach(t=>{
+    if(t.status==='बकाया'){
+      const amt = txTotal(t);
+      if(amt>0) events.push({date:t.date, amount:amt, direction: t.type==='Income'?'in':'out', label: t.desc || L(t.category)});
+    }
+  });
+  return events;
+}
+function buildForecast(){
+  const today = new Date(); today.setHours(0,0,0,0);
+  const events = getScheduledCashEvents();
+  const realizedNet = state.transactions.filter(t=>t.status==='भुगतान हो गया').reduce((s,t)=> s + (t.type==='Income'?txTotal(t):-txTotal(t)), 0);
+
+  let overdueIn=0, overdueOut=0;
+  const horizonDays = [30,60,90];
+  const buckets = horizonDays.map(h=>({days:h, in:0, out:0}));
+  const upcoming = [];
+
+  events.forEach(ev=>{
+    const d = new Date(ev.date);
+    if(isNaN(d.getTime())) return;
+    d.setHours(0,0,0,0);
+    const diffDays = Math.round((d-today)/86400000);
+    const isOverdue = diffDays<0;
+    if(isOverdue){ if(ev.direction==='in') overdueIn+=ev.amount; else overdueOut+=ev.amount; }
+    if(diffDays<=90){
+      buckets.forEach(b=>{ if(diffDays<=b.days){ if(ev.direction==='in') b.in+=ev.amount; else b.out+=ev.amount; } });
+      upcoming.push({...ev, diffDays, isOverdue});
+    }
+  });
+  upcoming.sort((a,b)=>a.diffDays-b.diffDays);
+
+  const results = buckets.map(b=>({
+    days: b.days, in: b.in, out: b.out, net: b.in-b.out,
+    projectedBalance: realizedNet + b.in - b.out,
+  }));
+  return {realizedNet, overdueIn, overdueOut, buckets: results, upcoming};
+}
+function renderCashFlow(){
+  const fc = buildForecast();
+  return `
+    <div class="page-head"><div><h1>${tr('cashFlowTitle')}</h1><p>${tr('cashFlowSub')}</p></div></div>
+
+    <div class="panel">
+      <h2>${tr('currentPosition')}</h2>
+      <div class="kpis" style="grid-template-columns:1fr;margin-bottom:0;">
+        <div class="kpi"><div class="label">${tr('currentPosition')}</div><div class="value mono">${fmt(fc.realizedNet)}</div></div>
+      </div>
+      ${(fc.overdueIn>0||fc.overdueOut>0)?`<p style="font-size:12.5px;color:var(--rust);margin-top:12px;">${tr('overdueWarning')}: +${fmt(fc.overdueIn)} / -${fmt(fc.overdueOut)}</p>`:''}
+    </div>
+
+    <div class="forecast-grid">
+      ${fc.buckets.map(b=>`
+        <div class="panel">
+          <h2>${tr('next')} ${b.days} ${tr('days')}</h2>
+          <div class="kpis" style="grid-template-columns:1fr;margin-bottom:0;">
+            <div class="kpi"><div class="label">${tr('expectedIn')}</div><div class="value mono" style="color:var(--green)">${fmt(b.in)}</div></div>
+            <div class="kpi"><div class="label">${tr('expectedOut')}</div><div class="value mono" style="color:var(--rust)">${fmt(b.out)}</div></div>
+            <div class="kpi"><div class="label">${tr('projectedBalance')}</div><div class="value mono" style="font-weight:700;">${fmt(b.projectedBalance)}</div></div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="panel" style="padding:0;overflow-x:auto;">
+      <h2 style="padding:16px 16px 0 16px;">${tr('upcomingItems')}</h2>
+      <table>
+        <thead><tr><th>${tr('thDate')}</th><th>${tr('thDesc')}</th><th>${tr('thDirection')}</th><th class="num">${tr('thAmount')}</th></tr></thead>
+        <tbody>
+        ${fc.upcoming.length===0?`<tr><td colspan="4"><div class="empty"><div class="big">📅</div>${tr('noUpcomingItems')}</div></td></tr>`:
+        fc.upcoming.map(ev=>`
+          <tr>
+            <td class="mono">${fmtDate(ev.date)} ${ev.isOverdue?`<span style="color:var(--rust);font-size:11px;">(${tr('overdueTag')})</span>`:''}</td>
+            <td>${escapeHtml(ev.label)}</td>
+            <td>${ev.direction==='in'?tr('typeIncome'):tr('typeExpense')}</td>
+            <td class="num" style="color:${ev.direction==='in'?'var(--green)':'var(--rust)'}">${ev.direction==='in'?'+':'-'}${fmt(ev.amount)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:11.5px;color:var(--ink-soft);margin-top:10px;">${tr('forecastDisclaimer')}</p>
+  `;
+}
+
 /* ---------------- Print / PDF ---------------- */
 function printDocument(doc, type){
   if(!doc) return;
@@ -2714,6 +3200,68 @@ function attachHandlers(){
     markRetentionReleasedTx(r);
     await saveState(); render();
   });
+
+  byAction('new-labourer', ()=> labourerModal(null));
+  byAction('edit-labourer', e=> labourerModal(state.labourers.find(l=>l.id===e.currentTarget.dataset.id)));
+  byAction('del-labourer', async e=>{
+    if(confirm(tr('confirmDelLabourer'))){
+      state.labourers = state.labourers.filter(l=>l.id!==e.currentTarget.dataset.id);
+      await saveState(); render();
+    }
+  });
+  byAction('save-attendance', async ()=>{
+    const date = document.getElementById('labor-date').value;
+    const projectId = laborProject;
+    document.querySelectorAll('#attendance-rows tr').forEach(row=>{
+      const labourerId = row.dataset.labourerId;
+      const status = row.querySelector('.att-status').value;
+      const advance = Number(row.querySelector('.att-advance').value)||0;
+      let rec = state.attendance.find(a=>a.date===date && a.project===projectId && a.labourerId===labourerId);
+      if(!rec){
+        rec = {id: uid('att'), date, project: projectId, labourerId, status, advance, settled:false, settlementId:null};
+        state.attendance.push(rec);
+      } else {
+        rec.status = status; rec.advance = advance;
+      }
+    });
+    await saveState(); render();
+  });
+  byAction('settle-wage', async e=>{
+    const labourerId = e.currentTarget.dataset.id;
+    const summary = computeWageSummary(wageDateFrom, wageDateTo, laborProject);
+    const s = summary.find(x=>x.labourerId===labourerId);
+    if(!s || s.netPayable<=0) return;
+    const settlementId = uid('wset');
+    state.transactions.push({
+      id: uid('t'), date: wageDateTo, project: laborProject, type:'Expense', category: WAGE_EXPENSE_CATEGORY,
+      party: null, desc: (lang==='en'?'Wages - ':'मजदूरी - ') + s.name + ` (${fmtDate(wageDateFrom)} – ${fmtDate(wageDateTo)})`,
+      amount: s.netPayable, gst:0, mode: PAY_MODES[0], status:'भुगतान हो गया', ref: settlementId,
+      createdBy: currentUser ? currentUser.email : null,
+    });
+    s.recordIds.forEach(id=>{
+      const rec = state.attendance.find(a=>a.id===id);
+      if(rec){ rec.settled = true; rec.settlementId = settlementId; }
+    });
+    await saveState(); render();
+  });
+  const laborDateEl = document.getElementById('labor-date'); if(laborDateEl) laborDateEl.addEventListener('change', e=>{laborDate=e.target.value; render();});
+  const laborProjectEl = document.getElementById('labor-project'); if(laborProjectEl) laborProjectEl.addEventListener('change', e=>{laborProject=e.target.value; render();});
+  const wageFromEl = document.getElementById('wage-from'); if(wageFromEl) wageFromEl.addEventListener('change', e=>{wageDateFrom=e.target.value; render();});
+  const wageToEl = document.getElementById('wage-to'); if(wageToEl) wageToEl.addEventListener('change', e=>{wageDateTo=e.target.value; render();});
+
+  byAction('new-stock-entry', ()=> stockEntryModal());
+  byAction('manage-materials', ()=> materialsModal());
+  byAction('del-stock-entry', async e=>{
+    if(confirm(tr('confirmDelStockEntry'))){
+      const entry = state.stockEntries.find(x=>x.id===e.currentTarget.dataset.id);
+      if(entry && entry.linkedTransactionId){
+        state.transactions = state.transactions.filter(t=>t.id!==entry.linkedTransactionId);
+      }
+      state.stockEntries = state.stockEntries.filter(x=>x.id!==e.currentTarget.dataset.id);
+      await saveState(); render();
+    }
+  });
+  const stockProjFilterEl = document.getElementById('stock-project-filter'); if(stockProjFilterEl) stockProjFilterEl.addEventListener('change', e=>{stockProjectFilter=e.target.value; render();});
 
   const qfStatus = document.getElementById('qf-status'); if(qfStatus) qfStatus.addEventListener('change', e=>{quoteFilters.status=e.target.value; render();});
   const invfStatus = document.getElementById('invf-status'); if(invfStatus) invfStatus.addEventListener('change', e=>{invoiceFilters.status=e.target.value; render();});
