@@ -402,6 +402,11 @@ const T = {
     expectedIn:'अपेक्षित प्राप्ति', expectedOut:'अपेक्षित भुगतान', projectedBalance:'अनुमानित शेष',
     upcomingItems:'आने वाली मदें', noUpcomingItems:'अगले 90 दिनों में कोई नियत मद नहीं मिली', thDirection:'दिशा', overdueTag:'समयबाह्य',
     forecastDisclaimer:'यह अनुमान केवल इस ऐप में दर्ज डेटा (देय इनवॉइस, RA बिल, पीओ, रिटेंशन व बकाया लेन-देन) पर आधारित है — वास्तविक बैंक बैलेंस अलग हो सकता है।',
+    navGSTFiling:'GST फाइलिंग', gstFilingTitle:'GST फाइलिंग सारांश', gstFilingSub:'GSTR-1 / GSTR-3B भरने के लिए दर-वार सारांश',
+    outwardSupplies:'बाहरी आपूर्ति (बिक्री / आय)', inwardSupplies:'आंतरिक आपूर्ति (खरीद / व्यय) — ITC',
+    gstRate:'GST दर', taxableValue:'कर योग्य मूल्य', cgst:'CGST (अनुमानित)', sgst:'SGST (अनुमानित)', totalGst:'कुल GST',
+    total:'कुल', nilRatedSupplies:'शून्य-दर आपूर्ति (0%)', itcAmount:'ITC राशि', netGstSummary:'शुद्ध GST सारांश', noGstData:'चयनित अवधि में कोई GST डेटा नहीं मिला',
+    gstDisclaimer:'यह एक सरल सारांश है, आधिकारिक GST रिटर्न नहीं। CGST/SGST विभाजन केवल अनुमान है (कुल GST का आधा-आधा) — अंतरराज्यीय लेन-देन के लिए इसके बजाय IGST का उपयोग करें। कृपया फाइल करने से पहले अपने CA या टैक्स सलाहकार से सत्यापन करवाएं।',
   },
   en:{
     navDashboard:'Dashboard', navTransactions:'Transactions', navProjects:'Projects', navParties:'Parties',
@@ -499,6 +504,11 @@ const T = {
     expectedIn:'Expected In', expectedOut:'Expected Out', projectedBalance:'Projected Balance',
     upcomingItems:'Upcoming Items', noUpcomingItems:'No scheduled items in the next 90 days', thDirection:'Direction', overdueTag:'Overdue',
     forecastDisclaimer:'This forecast is based only on data recorded in this app (due invoices, RA bills, POs, retention, and due transactions) — actual bank balance may differ.',
+    navGSTFiling:'GST Filing', gstFilingTitle:'GST Filing Summary', gstFilingSub:'Rate-wise summary to help fill GSTR-1 / GSTR-3B',
+    outwardSupplies:'Outward Supplies (Sales / Income)', inwardSupplies:'Inward Supplies (Purchases / Expense) — ITC',
+    gstRate:'GST Rate', taxableValue:'Taxable Value', cgst:'CGST (estimated)', sgst:'SGST (estimated)', totalGst:'Total GST',
+    total:'Total', nilRatedSupplies:'Nil-rated Supplies (0%)', itcAmount:'ITC Amount', netGstSummary:'Net GST Summary', noGstData:'No GST data found for the selected period',
+    gstDisclaimer:'This is a simplified summary, not an official GST return. The CGST/SGST split is an estimate only (half of total GST) — use IGST instead for interstate transactions. Please verify with your CA or tax advisor before filing.',
   },
 };
 
@@ -733,6 +743,8 @@ let laborProject = null;
 let wageDateFrom = (()=>{ const d = new Date(); d.setDate(d.getDate()-14); return d.toISOString().slice(0,10); })();
 let wageDateTo = new Date().toISOString().slice(0,10);
 let stockProjectFilter = 'all';
+let gstDateFrom = (()=>{ const d=new Date(); return new Date(d.getFullYear(), d.getMonth(), 1).toISOString().slice(0,10); })();
+let gstDateTo = new Date().toISOString().slice(0,10);
 
 const root = document.getElementById('app');
 
@@ -761,6 +773,7 @@ function render(){
         ${navBtn('labour',tr('navLabour'), state.labourers.length)}
         ${navBtn('stock',tr('navStock'), state.materials.length)}
         ${navBtn('cashflow',tr('navCashFlow'))}
+        ${navBtn('gst_filing',tr('navGSTFiling'))}
         ${navBtn('cashbook',tr('navCashbook'))}
         ${navBtn('projects',tr('navProjects'), state.projects.length)}
         ${navBtn('parties',tr('navParties'), state.parties.length)}
@@ -788,6 +801,7 @@ function render(){
   else if(activeTab==='labour') main.innerHTML = renderLabour();
   else if(activeTab==='stock') main.innerHTML = renderMaterialStock();
   else if(activeTab==='cashflow') main.innerHTML = renderCashFlow();
+  else if(activeTab==='gst_filing') main.innerHTML = renderGSTFiling();
   else if(activeTab==='cashbook') main.innerHTML = renderCashbook();
   else if(activeTab==='projects') main.innerHTML = renderProjects();
   else if(activeTab==='parties') main.innerHTML = renderParties();
@@ -2390,6 +2404,139 @@ function renderCashFlow(){
   `;
 }
 
+/* ---------------- GST Filing Summary ---------------- */
+function computeGSTBreakup(dateFrom, dateTo){
+  const outward = {}; const inward = {};
+  GST_RATES.forEach(r=>{ outward[r] = {taxable:0, gst:0}; inward[r] = {taxable:0, gst:0}; });
+  state.transactions.forEach(t=>{
+    if(t.date<dateFrom || t.date>dateTo) return;
+    const rate = GST_RATES.includes(Number(t.gst)) ? Number(t.gst) : 0;
+    const taxable = t.amount || 0;
+    const gst = gstAmt(t);
+    if(t.type==='Income'){ outward[rate].taxable += taxable; outward[rate].gst += gst; }
+    else { inward[rate].taxable += taxable; inward[rate].gst += gst; }
+  });
+  const outwardRows = GST_RATES.filter(r=>r>0).map(r=>({rate:r, taxable:outward[r].taxable, gst:outward[r].gst}));
+  const inwardRows = GST_RATES.filter(r=>r>0).map(r=>({rate:r, taxable:inward[r].taxable, gst:inward[r].gst}));
+  const totalOutwardTaxable = outwardRows.reduce((s,r)=>s+r.taxable,0);
+  const totalOutwardGst = outwardRows.reduce((s,r)=>s+r.gst,0);
+  const totalInwardTaxable = inwardRows.reduce((s,r)=>s+r.taxable,0);
+  const totalInwardGst = inwardRows.reduce((s,r)=>s+r.gst,0);
+  return {
+    outwardRows, inwardRows, totalOutwardTaxable, totalOutwardGst, totalInwardTaxable, totalInwardGst,
+    zeroRatedOutward: outward[0].taxable, zeroRatedInward: inward[0].taxable,
+    netGstPayable: totalOutwardGst - totalInwardGst,
+  };
+}
+function renderGSTFiling(){
+  const g = computeGSTBreakup(gstDateFrom, gstDateTo);
+  return `
+    <div class="page-head">
+      <div><h1>${tr('gstFilingTitle')}</h1><p>${tr('gstFilingSub')}</p></div>
+      <button class="btn ghost" data-action="print-gst">${tr('printReportBtn')}</button>
+    </div>
+    <div class="filters">
+      <input type="date" id="gst-from" value="${gstDateFrom}">
+      <input type="date" id="gst-to" value="${gstDateTo}">
+    </div>
+
+    <div class="panel" style="padding:0;overflow-x:auto;">
+      <h2 style="padding:16px 16px 0 16px;">${tr('outwardSupplies')}</h2>
+      <table>
+        <thead><tr><th>${tr('gstRate')}</th><th class="num">${tr('taxableValue')}</th><th class="num">${tr('cgst')}</th><th class="num">${tr('sgst')}</th><th class="num">${tr('totalGst')}</th></tr></thead>
+        <tbody>
+        ${g.outwardRows.filter(r=>r.taxable>0).map(r=>`<tr>
+          <td>${r.rate}%</td><td class="num">${fmt(r.taxable)}</td><td class="num">${fmt(r.gst/2)}</td><td class="num">${fmt(r.gst/2)}</td><td class="num" style="font-weight:700;">${fmt(r.gst)}</td>
+        </tr>`).join('')}
+        <tr style="font-weight:700;border-top:2px solid var(--line);"><td>${tr('total')}</td><td class="num">${fmt(g.totalOutwardTaxable)}</td><td class="num">${fmt(g.totalOutwardGst/2)}</td><td class="num">${fmt(g.totalOutwardGst/2)}</td><td class="num">${fmt(g.totalOutwardGst)}</td></tr>
+        </tbody>
+      </table>
+      ${g.zeroRatedOutward>0?`<p style="font-size:12px;color:var(--ink-soft);padding:0 16px 14px 16px;">${tr('nilRatedSupplies')}: ${fmt(g.zeroRatedOutward)}</p>`:'<div style="padding-bottom:8px;"></div>'}
+    </div>
+
+    <div class="panel" style="padding:0;overflow-x:auto;">
+      <h2 style="padding:16px 16px 0 16px;">${tr('inwardSupplies')}</h2>
+      <table>
+        <thead><tr><th>${tr('gstRate')}</th><th class="num">${tr('taxableValue')}</th><th class="num">${tr('itcAmount')}</th></tr></thead>
+        <tbody>
+        ${g.inwardRows.filter(r=>r.taxable>0).map(r=>`<tr><td>${r.rate}%</td><td class="num">${fmt(r.taxable)}</td><td class="num">${fmt(r.gst)}</td></tr>`).join('')}
+        <tr style="font-weight:700;border-top:2px solid var(--line);"><td>${tr('total')}</td><td class="num">${fmt(g.totalInwardTaxable)}</td><td class="num">${fmt(g.totalInwardGst)}</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h2>${tr('netGstSummary')}</h2>
+      <div class="kpis" style="grid-template-columns:1fr;margin-bottom:0;">
+        <div class="kpi"><div class="label">${tr('outputGst')}</div><div class="value mono">${fmt(g.totalOutwardGst)}</div></div>
+        <div class="kpi"><div class="label">${tr('itcAmount')}</div><div class="value mono">${fmt(g.totalInwardGst)}</div></div>
+        <div class="kpi"><div class="label">${tr('netGstPayable')}</div><div class="value mono" style="color:${g.netGstPayable>=0?'var(--rust)':'var(--green)'};font-weight:700;">${fmt(g.netGstPayable)}</div></div>
+      </div>
+    </div>
+    <p style="font-size:11.5px;color:var(--ink-soft);margin-top:4px;">${tr('gstDisclaimer')}</p>
+  `;
+}
+function printGSTFiling(){
+  const bp = state.businessProfile || {};
+  const g = computeGSTBreakup(gstDateFrom, gstDateTo);
+  const genDate = new Date().toLocaleDateString(lang==='en'?'en-IN':'hi-IN',{day:'2-digit',month:'short',year:'numeric'});
+  const outwardRows = g.outwardRows.filter(r=>r.taxable>0).map(r=>`<tr><td>${r.rate}%</td><td class="r">${fmt(r.taxable)}</td><td class="r">${fmt(r.gst/2)}</td><td class="r">${fmt(r.gst/2)}</td><td class="r">${fmt(r.gst)}</td></tr>`).join('');
+  const inwardRows = g.inwardRows.filter(r=>r.taxable>0).map(r=>`<tr><td>${r.rate}%</td><td class="r">${fmt(r.taxable)}</td><td class="r">${fmt(r.gst)}</td></tr>`).join('');
+  const win = window.open('', '_blank');
+  if(!win) return;
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${escapeHtml(tr('gstFilingTitle'))}</title>
+<style>
+  body{font-family:Arial,Helvetica,sans-serif;padding:32px;color:#222;max-width:900px;margin:0 auto;}
+  .head{display:flex;justify-content:space-between;border-bottom:3px solid #C1791F;padding-bottom:14px;margin-bottom:20px;gap:20px;}
+  h1{margin:0;font-size:21px;} .muted{color:#666;font-size:12.5px;margin-top:2px;}
+  .doctitle{font-size:20px;font-weight:700;color:#C1791F;text-align:right;} .docnum{font-family:monospace;color:#555;text-align:right;margin-top:2px;}
+  h2.sec{font-size:15px;border-bottom:1.5px solid #ddd;padding-bottom:6px;margin:26px 0 10px 0;}
+  table{width:100%;border-collapse:collapse;font-size:13px;} th,td{border:1px solid #ccc;padding:7px 8px;text-align:left;}
+  th{background:#f5f1e8;} td.r,th.r{text-align:right;}
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px;}
+  .kpi{border:1px solid #ddd;border-radius:4px;padding:10px 12px;} .kpi .l{font-size:11px;color:#777;} .kpi .v{font-size:16px;font-weight:700;margin-top:3px;}
+  .disclaimer{margin-top:24px;font-size:11.5px;color:#777;border-top:1px solid #ddd;padding-top:10px;}
+  @media print{ .noprint{display:none;} body{padding:0;} }
+</style></head><body>
+  <div class="head">
+    <div>
+      <h1>${escapeHtml(bp.name || (lang==='en'?'Your Company Name':'आपकी कंपनी का नाम'))}</h1>
+      ${bp.gstin?`<div class="muted">GSTIN: ${escapeHtml(bp.gstin)}</div>`:''}
+      ${bp.address?`<div class="muted">${escapeHtml(bp.address)}</div>`:''}
+    </div>
+    <div>
+      <div class="doctitle">${escapeHtml(tr('gstFilingTitle'))}</div>
+      <div class="docnum">${fmtDate(gstDateFrom)} – ${fmtDate(gstDateTo)}</div>
+    </div>
+  </div>
+
+  <h2 class="sec">${escapeHtml(tr('outwardSupplies'))}</h2>
+  <table>
+    <thead><tr><th>${escapeHtml(tr('gstRate'))}</th><th class="r">${escapeHtml(tr('taxableValue'))}</th><th class="r">${escapeHtml(tr('cgst'))}</th><th class="r">${escapeHtml(tr('sgst'))}</th><th class="r">${escapeHtml(tr('totalGst'))}</th></tr></thead>
+    <tbody>${outwardRows}<tr style="font-weight:700;"><td>${escapeHtml(tr('total'))}</td><td class="r">${fmt(g.totalOutwardTaxable)}</td><td class="r">${fmt(g.totalOutwardGst/2)}</td><td class="r">${fmt(g.totalOutwardGst/2)}</td><td class="r">${fmt(g.totalOutwardGst)}</td></tr></tbody>
+  </table>
+
+  <h2 class="sec">${escapeHtml(tr('inwardSupplies'))}</h2>
+  <table>
+    <thead><tr><th>${escapeHtml(tr('gstRate'))}</th><th class="r">${escapeHtml(tr('taxableValue'))}</th><th class="r">${escapeHtml(tr('itcAmount'))}</th></tr></thead>
+    <tbody>${inwardRows}<tr style="font-weight:700;"><td>${escapeHtml(tr('total'))}</td><td class="r">${fmt(g.totalInwardTaxable)}</td><td class="r">${fmt(g.totalInwardGst)}</td></tr></tbody>
+  </table>
+
+  <h2 class="sec">${escapeHtml(tr('netGstSummary'))}</h2>
+  <div class="kpis">
+    <div class="kpi"><div class="l">${escapeHtml(tr('outputGst'))}</div><div class="v">${fmt(g.totalOutwardGst)}</div></div>
+    <div class="kpi"><div class="l">${escapeHtml(tr('itcAmount'))}</div><div class="v">${fmt(g.totalInwardGst)}</div></div>
+    <div class="kpi"><div class="l">${escapeHtml(tr('netGstPayable'))}</div><div class="v">${fmt(g.netGstPayable)}</div></div>
+  </div>
+
+  <div class="disclaimer">${escapeHtml(tr('gstDisclaimer'))} — ${escapeHtml(tr('reportGeneratedOn'))}: ${genDate}</div>
+  <div class="noprint" style="margin-top:22px;">
+    <button onclick="window.print()" style="padding:10px 18px;font-size:14px;cursor:pointer;">${lang==='en'?'Print / Save as PDF':'प्रिंट करें / PDF सेव करें'}</button>
+  </div>
+</body></html>`);
+  win.document.close();
+}
+
 /* ---------------- Print / PDF ---------------- */
 function printDocument(doc, type){
   if(!doc) return;
@@ -3262,6 +3409,10 @@ function attachHandlers(){
     }
   });
   const stockProjFilterEl = document.getElementById('stock-project-filter'); if(stockProjFilterEl) stockProjFilterEl.addEventListener('change', e=>{stockProjectFilter=e.target.value; render();});
+
+  byAction('print-gst', printGSTFiling);
+  const gstFromEl = document.getElementById('gst-from'); if(gstFromEl) gstFromEl.addEventListener('change', e=>{gstDateFrom=e.target.value; render();});
+  const gstToEl = document.getElementById('gst-to'); if(gstToEl) gstToEl.addEventListener('change', e=>{gstDateTo=e.target.value; render();});
 
   const qfStatus = document.getElementById('qf-status'); if(qfStatus) qfStatus.addEventListener('change', e=>{quoteFilters.status=e.target.value; render();});
   const invfStatus = document.getElementById('invf-status'); if(invfStatus) invfStatus.addEventListener('change', e=>{invoiceFilters.status=e.target.value; render();});
