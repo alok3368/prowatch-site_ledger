@@ -279,11 +279,111 @@
   ::-webkit-scrollbar{width:9px;height:9px;}
   ::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px;}
 
-  .loading-screen{display:flex;align-items:center;justify-content:center;height:100vh;width:100%;color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;font-size:13px;}
+  .loading-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;width:100%;gap:14px;color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;font-size:13px;}
+  .spinner{width:32px;height:32px;border:3px solid var(--line);border-top-color:var(--amber);border-radius:50%;animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* ---------- Accessibility & interaction polish ---------- */
+  a{color:inherit;}
+  button, .btn, input, select, textarea{ font-size-adjust:none; }
+  button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible{
+    outline:2px solid var(--amber); outline-offset:2px; border-radius:2px;
+  }
+  .btn, nav button, .lang-btn, .row-actions button, .rail-toggle, .item-remove{ transition:background-color .15s ease, border-color .15s ease, color .15s ease, transform .1s ease; }
+  .btn:active{ transform:translateY(1px); }
+  select, input[type=text], input[type=date], input[type=number], .field textarea{ transition:border-color .15s ease, box-shadow .15s ease; }
+  select:focus, input[type=text]:focus, input[type=date]:focus, input[type=number]:focus, .field textarea:focus{
+    outline:none; border-color:var(--amber-dark); box-shadow:0 0 0 3px rgba(193,121,31,0.15);
+  }
+  .panel, .proj-card, .kpi{ box-shadow:0 1px 2px rgba(33,30,26,0.05); }
+  .proj-card{ transition:box-shadow .15s ease, border-color .15s ease; }
+  .proj-card:hover{ box-shadow:0 3px 12px rgba(33,30,26,0.09); border-color:#C3BBA8; }
+  tbody tr{ transition:background-color .1s ease; }
+  tbody tr:nth-child(even) td{ background:rgba(33,30,26,0.015); }
+  tr:hover td{ background:var(--panel-2) !important; }
+
+  /* KPI accent borders for quicker scanning */
+  .kpi{ border-left:3px solid var(--line); }
+  .kpi.income{ border-left-color:var(--green); }
+  .kpi.expense{ border-left-color:var(--rust); }
+  .kpi.profit{ border-left-color:var(--steel); }
+
+  /* Nicer empty states */
+  .empty{ text-align:center; padding:44px 20px; color:var(--ink-soft); border:1.5px dashed var(--line); border-radius:var(--radius); background:var(--panel-2); }
+  .empty .big{ font-size:32px; margin-bottom:10px; opacity:0.8; }
+
+  /* ---------- Modal close (x) button ---------- */
+  .modal{ position:relative; }
+  .modal-x{
+    position:absolute; top:12px; right:12px; width:28px; height:28px; border-radius:50%;
+    background:transparent; border:none; color:var(--ink-soft); font-size:15px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .modal-x:hover{ background:var(--panel-2); color:var(--ink); }
+  .confirm-body{ display:flex; gap:14px; align-items:flex-start; }
+  .confirm-icon{ font-size:26px; line-height:1; flex-shrink:0; }
+  .confirm-msg{ font-size:14.5px; line-height:1.55; margin:2px 0 0 0; }
+
+  /* ---------- Save status indicator ---------- */
+  .save-indicator{ display:inline-flex; align-items:center; gap:6px; font-size:11px; }
+  .save-indicator:not(:empty)::before{ content:''; width:6px; height:6px; border-radius:50%; background:currentColor; flex-shrink:0; }
+  .save-indicator.saving{ color:var(--amber); }
+  .save-indicator.saving::before{ animation:pulse 1s ease-in-out infinite; }
+  .save-indicator.saved{ color:#8FBF8A; }
+  .save-indicator.error{ color:#D98A76; }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+  /* ---------- Toasts ---------- */
+  #toast-host{ position:fixed; left:50%; bottom:20px; transform:translateX(-50%); z-index:200; display:flex; flex-direction:column; gap:8px; align-items:center; pointer-events:none; width:100%; padding:0 16px; }
+  .toast{
+    pointer-events:auto; max-width:420px; background:var(--ink); color:#EFEAE0; font-size:13.5px;
+    padding:11px 16px; border-radius:var(--radius); box-shadow:0 6px 22px rgba(0,0,0,0.25);
+    opacity:0; transform:translateY(8px); transition:opacity .2s ease, transform .2s ease; cursor:pointer;
+    border-left:4px solid var(--amber);
+  }
+  .toast.show{ opacity:1; transform:translateY(0); }
+  .toast.warn{ border-left-color:var(--amber); }
+  .toast.error{ border-left-color:var(--rust); background:#3A231D; }
+  .toast.ok{ border-left-color:var(--green); }
+  .toast.info{ border-left-color:var(--steel); }
+
+  /* ---------- Responsive layout (mobile sidebar) ---------- */
+  .rail-toggle{ display:none; }
+  .rail-backdrop{ display:none; }
+  .topbar-mobile{ display:none; }
+  .app-col{ flex:1; display:flex; flex-direction:column; min-width:0; }
+  @media(max-width:880px){
+    #app{ position:relative; }
+    .rail{
+      position:fixed; left:0; top:0; height:100vh; z-index:70;
+      transform:translateX(-101%); transition:transform .22s ease; box-shadow:2px 0 20px rgba(0,0,0,0.28);
+    }
+    .rail.open{ transform:translateX(0); }
+    .rail-backdrop{
+      display:block; position:fixed; inset:0; background:rgba(33,30,26,0.5); z-index:65;
+      opacity:0; pointer-events:none; transition:opacity .2s ease;
+    }
+    .rail-backdrop.show{ opacity:1; pointer-events:auto; }
+    .topbar-mobile{
+      display:flex; align-items:center; gap:12px; padding:14px 16px 2px 16px;
+    }
+    .topbar-mobile .mark{ font-weight:700; font-size:16px; }
+    .topbar-mobile .mark span{ color:var(--amber-dark); }
+    .rail-toggle{
+      display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px;
+      border-radius:var(--radius); background:var(--ink); color:#EFEAE0; border:1.5px solid var(--ink);
+      cursor:pointer; font-size:16px; flex-shrink:0;
+    }
+    .rail-toggle:hover{ background:#3A352C; }
+    main{ padding:16px 16px 50px 16px; max-width:100%; }
+    .page-head h1{ font-size:20px; }
+    .kpis{ grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); }
+    .proj-stats{ grid-template-columns:repeat(2,1fr); }
+  }
 </style>
 </head>
 <body>
-<div id="app"><div class="loading-screen">लोड हो रहा है… / Loading…</div></div>
+<div id="app"><div class="loading-screen"><div class="spinner"></div><div>लोड हो रहा है… / Loading…</div></div></div>
 
 <script>
 const STORE_KEY = 'contractor_ledger_hi_v2';
@@ -407,14 +507,6 @@ const T = {
     gstRate:'GST दर', taxableValue:'कर योग्य मूल्य', cgst:'CGST (अनुमानित)', sgst:'SGST (अनुमानित)', totalGst:'कुल GST',
     total:'कुल', nilRatedSupplies:'शून्य-दर आपूर्ति (0%)', itcAmount:'ITC राशि', netGstSummary:'शुद्ध GST सारांश', noGstData:'चयनित अवधि में कोई GST डेटा नहीं मिला',
     gstDisclaimer:'यह एक सरल सारांश है, आधिकारिक GST रिटर्न नहीं। CGST/SGST विभाजन केवल अनुमान है (कुल GST का आधा-आधा) — अंतरराज्यीय लेन-देन के लिए इसके बजाय IGST का उपयोग करें। कृपया फाइल करने से पहले अपने CA या टैक्स सलाहकार से सत्यापन करवाएं।',
-    navReconcile:'बैंक मिलान', reconcileTitle:'बैंक स्टेटमेंट मिलान', reconcileSub:'बैंक स्टेटमेंट अपलोड करें और अपने लेजर से मिलान करें',
-    uploadStatement:'स्टेटमेंट अपलोड करें (CSV)', reconcileHelp:'अपने बैंक की वेबसाइट/ऐप से CSV फॉर्मेट में स्टेटमेंट डाउनलोड करें और यहाँ अपलोड करें। इसमें Date, Debit/Withdrawal, Credit/Deposit कॉलम होने चाहिए।',
-    startOverBtn:'फिर से शुरू करें', matchedCount:'मिलान हुए', unmatchedBankCount:'बैंक में मिले, लेजर में नहीं', unmatchedLedgerCount:'लेजर में हैं, बैंक में नहीं मिले',
-    unmatchedBankLines:'स्टेटमेंट में मिली पर लेजर में दर्ज नहीं', unmatchedLedgerTx:'लेजर में हैं पर स्टेटमेंट में नहीं मिलीं (सत्यापन करें)',
-    addToLedgerBtn:'लेजर में जोड़ें', allMatched:'सभी मिल गए ✓', saveReconcileBtn:'मिलान सहेजें', reconcileSaved:'मिलान सहेजा गया',
-    csvParseError:'फ़ाइल पढ़ने में समस्या — कृपया मान्य CSV फ़ाइल अपलोड करें।',
-    csvColumnsNotFound:'Date व Debit/Credit कॉलम नहीं मिले। कृपया अपनी बैंक स्टेटमेंट के कॉलम हैडर जांचें।',
-    csvNoRowsFound:'फ़ाइल में कोई मान्य लेन-देन नहीं मिला।', reconciledBadge:'मिलान हुआ',
   },
   en:{
     navDashboard:'Dashboard', navTransactions:'Transactions', navProjects:'Projects', navParties:'Parties',
@@ -517,14 +609,6 @@ const T = {
     gstRate:'GST Rate', taxableValue:'Taxable Value', cgst:'CGST (estimated)', sgst:'SGST (estimated)', totalGst:'Total GST',
     total:'Total', nilRatedSupplies:'Nil-rated Supplies (0%)', itcAmount:'ITC Amount', netGstSummary:'Net GST Summary', noGstData:'No GST data found for the selected period',
     gstDisclaimer:'This is a simplified summary, not an official GST return. The CGST/SGST split is an estimate only (half of total GST) — use IGST instead for interstate transactions. Please verify with your CA or tax advisor before filing.',
-    navReconcile:'Bank Reconcile', reconcileTitle:'Bank Statement Reconciliation', reconcileSub:'Upload a bank statement and match it against your ledger',
-    uploadStatement:'Upload Statement (CSV)', reconcileHelp:'Download your statement as a CSV from your bank website or app and upload it here. It should have Date, Debit/Withdrawal, and Credit/Deposit columns.',
-    startOverBtn:'Start Over', matchedCount:'Matched', unmatchedBankCount:'In Bank, Not in Ledger', unmatchedLedgerCount:'In Ledger, Not in Bank',
-    unmatchedBankLines:'Found in statement but not recorded in ledger', unmatchedLedgerTx:'In ledger but not found in statement (please verify)',
-    addToLedgerBtn:'Add to Ledger', allMatched:'All matched ✓', saveReconcileBtn:'Save Reconciliation', reconcileSaved:'Reconciliation saved',
-    csvParseError:'Trouble reading the file — please upload a valid CSV file.',
-    csvColumnsNotFound:'Could not find Date and Debit/Credit columns. Please check your bank statement column headers.',
-    csvNoRowsFound:'No valid transactions found in the file.', reconciledBadge:'Reconciled',
   },
 };
 
@@ -688,6 +772,7 @@ async function loadState(){
   if(changed) await saveState();
 }
 async function saveState(){
+  saveStatus = 'saving'; updateSaveIndicator();
   try{
     const res = await fetch('/api/state', {
       method:'POST',
@@ -698,7 +783,14 @@ async function saveState(){
     if(!res.ok) throw new Error('save failed: '+res.status);
     const data = await res.json();
     if(data.meta) state._meta = data.meta;
-  }catch(e){ console.error('save failed', e); alert(tr('saveError')); }
+    saveStatus = 'saved'; updateSaveIndicator();
+    clearTimeout(saveStatusTimer);
+    saveStatusTimer = setTimeout(()=>{ saveStatus='idle'; updateSaveIndicator(); }, 2200);
+  }catch(e){
+    console.error('save failed', e);
+    saveStatus = 'error'; updateSaveIndicator();
+    showToast(tr('saveError'), 'error');
+  }
 }
 
 /* ---------------- derived calc helpers ---------------- */
@@ -743,6 +835,9 @@ function projectStats(pid){
 
 /* ---------------- UI state ---------------- */
 let activeTab = 'dashboard';
+let railOpen = false;
+let saveStatus = 'idle'; // idle | saving | saved | error
+let saveStatusTimer = null;
 let editingTx = null;
 let editingProj = null;
 let editingParty = null;
@@ -761,16 +856,15 @@ let wageDateTo = new Date().toISOString().slice(0,10);
 let stockProjectFilter = 'all';
 let gstDateFrom = (()=>{ const d=new Date(); return new Date(d.getFullYear(), d.getMonth(), 1).toISOString().slice(0,10); })();
 let gstDateTo = new Date().toISOString().slice(0,10);
-let reconcileState = null;
 
 const root = document.getElementById('app');
 
-function setTab(t){ activeTab = t; activePartyId=null; render(); }
+function setTab(t){ activeTab = t; activePartyId=null; railOpen=false; render(); }
 
 /* ---------------- Render root ---------------- */
 function render(){
   root.innerHTML = `
-    <div class="rail">
+    <div class="rail ${railOpen?'open':''}">
       <div class="brand">
         <div class="mark">साइट <span>लेजर</span></div>
         <div class="sub">CONTRACTOR ACCOUNTING</div>
@@ -791,7 +885,6 @@ function render(){
         ${navBtn('stock',tr('navStock'), state.materials.length)}
         ${navBtn('cashflow',tr('navCashFlow'))}
         ${navBtn('gst_filing',tr('navGSTFiling'))}
-        ${navBtn('reconcile',tr('navReconcile'))}
         ${navBtn('cashbook',tr('navCashbook'))}
         ${navBtn('projects',tr('navProjects'), state.projects.length)}
         ${navBtn('parties',tr('navParties'), state.parties.length)}
@@ -801,10 +894,18 @@ function render(){
       <div class="rail-foot">
         ${currentUser ? `${tr('loggedInAs')}: ${currentUser.name || currentUser.email}<br>` : ''}
         ${state._meta ? `${tr('lastEdit')}: ${state._meta.lastEditedByName || state._meta.lastEditedBy} · ${fmtDate(state._meta.lastEditedAt.slice(0,10))}<br>` : ''}
+        <span class="save-indicator" id="save-indicator"></span><br>
         <a href="/auth/logout" style="color:#B7AF9E;">${tr('logout')}</a>
       </div>
     </div>
-    <main id="main"></main>
+    <div class="rail-backdrop ${railOpen?'show':''}" id="rail-backdrop"></div>
+    <div class="app-col">
+      <div class="topbar-mobile">
+        <button type="button" class="rail-toggle" id="rail-toggle" aria-label="${lang==='en'?'Open menu':'मेनू खोलें'}">☰</button>
+        <div class="mark">साइट <span>लेजर</span></div>
+      </div>
+      <main id="main"></main>
+    </div>
   `;
   document.documentElement.lang = lang;
   document.title = lang==='en' ? 'Site Ledger — Contractor Accounting' : 'साइट लेजर — सिविल कॉन्ट्रैक्टर अकाउंटिंग';
@@ -820,13 +921,13 @@ function render(){
   else if(activeTab==='stock') main.innerHTML = renderMaterialStock();
   else if(activeTab==='cashflow') main.innerHTML = renderCashFlow();
   else if(activeTab==='gst_filing') main.innerHTML = renderGSTFiling();
-  else if(activeTab==='reconcile') main.innerHTML = renderReconcile();
   else if(activeTab==='cashbook') main.innerHTML = renderCashbook();
   else if(activeTab==='projects') main.innerHTML = renderProjects();
   else if(activeTab==='parties') main.innerHTML = renderParties();
   else if(activeTab==='reports') main.innerHTML = renderReports();
   else if(activeTab==='settings') main.innerHTML = renderSettings();
   attachHandlers();
+  updateSaveIndicator();
 }
 function navBtn(id,label,count){
   return `<button class="${activeTab===id?'active':''}" data-tab="${id}">
@@ -995,7 +1096,7 @@ function renderTransactions(){
             <td class="mono">${fmtDate(t.date)}</td>
             <td>${projectName(t.project)}</td>
             <td><span class="tag ${t.type==='Income'?'income':'expense'}">${L(t.category)}</span></td>
-            <td>${t.desc||''}${t.ref?` <span class="mono" style="color:var(--ink-soft);font-size:11px;">#${t.ref}</span>`:''}${t.reconciled?` <span style="color:var(--green);font-size:11px;" title="${tr('reconciledBadge')}">✓</span>`:''}${t.createdBy?`<div style="font-size:10px;color:var(--ink-soft);">${tr('addedBy')}: ${t.createdBy}</div>`:''}</td>
+            <td>${t.desc||''}${t.ref?` <span class="mono" style="color:var(--ink-soft);font-size:11px;">#${t.ref}</span>`:''}${t.createdBy?`<div style="font-size:10px;color:var(--ink-soft);">${tr('addedBy')}: ${t.createdBy}</div>`:''}</td>
             <td>${t.party?partyName(t.party):'—'}</td>
             <td class="num" style="color:${t.type==='Income'?'var(--green)':'var(--rust)'}">${t.type==='Income'?'+':'−'} ${fmt(txTotal(t))}${t.gst?`<div style="font-size:10px;color:var(--ink-soft);">GST ${t.gst}%: ${fmt(gstAmt(t))}</div>`:''}</td>
             <td class="mono" style="font-size:12px;">${L(t.mode)}</td>
@@ -1181,7 +1282,7 @@ function quoteModal(quote, presetPartyId){
     e.preventDefault();
     const fd = new FormData(e.target);
     const items = readItems(container);
-    if(items.length===0){ alert(tr('needOneItem')); return; }
+    if(items.length===0){ showToast(tr('needOneItem'), 'warn'); return; }
     const newQ = {
       id: q.id || uid('q'),
       number: q.number || ('QUO-' + String(state.counters.quote).padStart(4,'0')),
@@ -1296,7 +1397,7 @@ function invoiceModal(invoice, opts){
     e.preventDefault();
     const fd = new FormData(e.target);
     const items = readItems(container);
-    if(items.length===0){ alert(tr('needOneItem')); return; }
+    if(items.length===0){ showToast(tr('needOneItem'), 'warn'); return; }
     const newInv = {
       id: inv.id || uid('i'),
       number: inv.number || ('INV-' + String(state.counters.invoice).padStart(4,'0')),
@@ -1425,7 +1526,7 @@ function poModal(po, presetPartyId){
     e.preventDefault();
     const fd = new FormData(e.target);
     const items = readItems(container);
-    if(items.length===0){ alert(tr('needOneItem')); return; }
+    if(items.length===0){ showToast(tr('needOneItem'), 'warn'); return; }
     const newPO = {
       id: p.id || uid('po'),
       number: p.number || ('PO-' + String(state.counters.po).padStart(4,'0')),
@@ -1770,7 +1871,7 @@ function raBillModal(bill){
     const fd = new FormData(e.target);
     const projectId = fd.get('project');
     const measureContainer = document.getElementById('ra-measurements');
-    if(!measureContainer){ alert(tr('noBoqWarning')); return; }
+    if(!measureContainer){ showToast(tr('noBoqWarning'), 'warn'); return; }
     const measurements = readRAMeasurements(measureContainer);
     const newBill = {
       id: b.id || uid('ra'),
@@ -2556,133 +2657,6 @@ function printGSTFiling(){
   win.document.close();
 }
 
-/* ---------------- Bank Statement Reconciliation ---------------- */
-function parseCSV(text){
-  const rows = [];
-  let row = []; let field = ''; let inQuotes = false;
-  for(let i=0;i<text.length;i++){
-    const c = text[i];
-    if(inQuotes){
-      if(c==='"'){
-        if(text[i+1]==='"'){ field+='"'; i++; } else { inQuotes = false; }
-      } else field += c;
-    } else {
-      if(c==='"') inQuotes = true;
-      else if(c===','){ row.push(field); field=''; }
-      else if(c==='\r'){ /* skip */ }
-      else if(c==='\n'){ row.push(field); rows.push(row); row=[]; field=''; }
-      else field += c;
-    }
-  }
-  if(field.length>0 || row.length>0){ row.push(field); rows.push(row); }
-  return rows.filter(r => r.length>1 || (r.length===1 && r[0].trim()!==''));
-}
-function detectColumns(headerRow){
-  const norm = headerRow.map(h=>(h||'').toLowerCase().trim());
-  const findIdx = (keywords)=> norm.findIndex(h=> keywords.some(k=>h.includes(k)));
-  return {
-    date: findIdx(['date']),
-    desc: findIdx(['narration','description','particular','details','remark']),
-    debit: findIdx(['debit','withdrawal','dr']),
-    credit: findIdx(['credit','deposit','cr']),
-  };
-}
-function parseFlexDate(str){
-  str = (str||'').trim();
-  if(!str) return null;
-  let m = str.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if(m) return `${m[1]}-${m[2]}-${m[3]}`;
-  m = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
-  if(m) return `${m[3]}-${String(m[2]).padStart(2,'0')}-${String(m[1]).padStart(2,'0')}`;
-  m = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2})$/);
-  if(m){ const yy=Number(m[3]); const yyyy = yy<70?2000+yy:1900+yy; return `${yyyy}-${String(m[2]).padStart(2,'0')}-${String(m[1]).padStart(2,'0')}`; }
-  return null;
-}
-function parseAmount(str){
-  if(!str) return 0;
-  const cleaned = String(str).replace(/[^0-9.\-]/g,'');
-  return cleaned ? Number(cleaned) : 0;
-}
-function daysBetween(d1,d2){ return Math.round((new Date(d2)-new Date(d1))/86400000); }
-function matchBankLines(bankLines){
-  const candidateTxs = state.transactions.filter(t=> t.status==='भुगतान हो गया' && t.mode!=='नकद');
-  const usedTxIds = new Set();
-  const results = bankLines.map(line=>{
-    const match = candidateTxs.find(t=>
-      !usedTxIds.has(t.id) &&
-      (t.type==='Income')===(line.direction==='in') &&
-      Math.abs(txTotal(t) - line.amount) < 1 &&
-      Math.abs(daysBetween(t.date, line.date)) <= 3
-    );
-    if(match) usedTxIds.add(match.id);
-    return {...line, matchedTxId: match ? match.id : null};
-  });
-  const dates = bankLines.map(l=>l.date);
-  const minDate = dates.reduce((a,b)=> a<b?a:b);
-  const maxDate = dates.reduce((a,b)=> a>b?a:b);
-  const unmatchedLedger = candidateTxs.filter(t=> !usedTxIds.has(t.id) && t.date>=minDate && t.date<=maxDate);
-  return {results, unmatchedLedger};
-}
-function renderReconcile(){
-  if(!reconcileState){
-    return `
-      <div class="page-head"><div><h1>${tr('reconcileTitle')}</h1><p>${tr('reconcileSub')}</p></div></div>
-      <div class="panel">
-        <h2>${tr('uploadStatement')}</h2>
-        <p style="font-size:12.5px;color:var(--ink-soft);margin-bottom:12px;">${tr('reconcileHelp')}</p>
-        <input type="file" accept=".csv" id="bank-csv-input">
-      </div>
-    `;
-  }
-  const matchedCount = reconcileState.results.filter(r=>r.matchedTxId).length;
-  const unmatchedBank = reconcileState.results.filter(r=>!r.matchedTxId);
-  return `
-    <div class="page-head">
-      <div><h1>${tr('reconcileTitle')}</h1><p>${escapeHtml(reconcileState.fileName)}</p></div>
-      <button class="btn ghost" data-action="reset-reconcile">${tr('startOverBtn')}</button>
-    </div>
-    <div class="kpis">
-      <div class="kpi"><div class="label">${tr('matchedCount')}</div><div class="value mono" style="color:var(--green)">${matchedCount}</div></div>
-      <div class="kpi"><div class="label">${tr('unmatchedBankCount')}</div><div class="value mono" style="color:var(--rust)">${unmatchedBank.length}</div></div>
-      <div class="kpi"><div class="label">${tr('unmatchedLedgerCount')}</div><div class="value mono" style="color:var(--rust)">${reconcileState.unmatchedLedger.length}</div></div>
-    </div>
-
-    <div class="panel" style="padding:0;overflow-x:auto;">
-      <h2 style="padding:16px 16px 0 16px;">${tr('unmatchedBankLines')}</h2>
-      <table>
-        <thead><tr><th>${tr('thDate')}</th><th>${tr('thDesc')}</th><th class="num">${tr('thAmount')}</th><th></th></tr></thead>
-        <tbody>
-        ${unmatchedBank.length===0?`<tr><td colspan="4"><div class="empty">${tr('allMatched')}</div></td></tr>`:
-        unmatchedBank.map(r=>`<tr>
-          <td class="mono">${fmtDate(r.date)}</td>
-          <td>${escapeHtml(r.desc)}</td>
-          <td class="num" style="color:${r.direction==='in'?'var(--green)':'var(--rust)'}">${r.direction==='in'?'+':'-'}${fmt(r.amount)}</td>
-          <td class="row-actions"><button data-action="add-from-bankline" data-id="${r.id}">${tr('addToLedgerBtn')}</button></td>
-        </tr>`).join('')}
-        </tbody>
-      </table>
-    </div>
-
-    <div class="panel" style="padding:0;overflow-x:auto;">
-      <h2 style="padding:16px 16px 0 16px;">${tr('unmatchedLedgerTx')}</h2>
-      <table>
-        <thead><tr><th>${tr('thDate')}</th><th>${tr('thDesc')}</th><th class="num">${tr('thAmount')}</th></tr></thead>
-        <tbody>
-        ${reconcileState.unmatchedLedger.length===0?`<tr><td colspan="3"><div class="empty">${tr('allMatched')}</div></td></tr>`:
-        reconcileState.unmatchedLedger.map(t=>`<tr>
-          <td class="mono">${fmtDate(t.date)}</td><td>${escapeHtml(t.desc||L(t.category))}</td>
-          <td class="num" style="color:${t.type==='Income'?'var(--green)':'var(--rust)'}">${t.type==='Income'?'+':'-'}${fmt(txTotal(t))}</td>
-        </tr>`).join('')}
-        </tbody>
-      </table>
-    </div>
-
-    <div class="modal-actions" style="justify-content:flex-start;">
-      <button class="btn amber" data-action="save-reconciliation">${tr('saveReconcileBtn')}</button>
-    </div>
-  `;
-}
-
 /* ---------------- Print / PDF ---------------- */
 function printDocument(doc, type){
   if(!doc) return;
@@ -3115,24 +3089,87 @@ async function addCategory(type, name){
   const key = type==='Income'?'income':'expense';
   name = (name||'').trim();
   if(!name) return;
-  if(state.categories[key].some(c=>c.toLowerCase()===name.toLowerCase())){ alert(tr('catExists')); return; }
+  if(state.categories[key].some(c=>c.toLowerCase()===name.toLowerCase())){ showToast(tr('catExists'), 'warn'); return; }
   state.categories[key].push(name);
   await saveState();
 }
 
 /* ---------------- Modals ---------------- */
-function openModal(html, wide){
+function openModal(html, wide, onClose){
   const div = document.createElement('div');
   div.className = 'overlay';
   div.id = 'modal-overlay';
-  div.innerHTML = `<div class="modal${wide?' wide':''}">${html}</div>`;
+  div.innerHTML = `<div class="modal${wide?' wide':''}"><button type="button" class="modal-x" data-action="close-modal" aria-label="${lang==='en'?'Close':'बंद करें'}">✕</button>${html}</div>`;
   document.body.appendChild(div);
   div.addEventListener('click', e=>{ if(e.target===div) closeModal(); });
   div.querySelectorAll('[data-action="close-modal"]').forEach(b=>b.addEventListener('click', closeModal));
+  function onKey(e){ if(e.key==='Escape') closeModal(); }
+  document.addEventListener('keydown', onKey);
+  div._escHandler = onKey;
+  if(onClose) div._onClose = onClose;
 }
 function closeModal(){
   const el = document.getElementById('modal-overlay');
-  if(el) el.remove();
+  if(el){
+    if(el._escHandler) document.removeEventListener('keydown', el._escHandler);
+    if(el._onClose) el._onClose();
+    el.remove();
+  }
+}
+
+/* ---------------- Confirm dialog (replaces native confirm()) ---------------- */
+function customConfirm(message, opts){
+  opts = opts || {};
+  return new Promise(resolve=>{
+    let settled = false;
+    const finish = (val)=>{ if(settled) return; settled = true; resolve(val); };
+    openModal(`
+      <div class="confirm-body">
+        <div class="confirm-icon">${opts.danger===false?'❓':'⚠️'}</div>
+        <p class="confirm-msg">${escapeHtml(message)}</p>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" data-action="confirm-cancel">${tr('cancelBtn')}</button>
+        <button type="button" class="btn ${opts.danger===false?'amber':'danger'}" data-action="confirm-ok">${opts.okLabel || tr('deleteBtn')}</button>
+      </div>
+    `, false, ()=>finish(false));
+    const overlay = document.getElementById('modal-overlay');
+    overlay.querySelector('[data-action="confirm-ok"]').addEventListener('click', ()=>{ finish(true); closeModal(); });
+    overlay.querySelector('[data-action="confirm-cancel"]').addEventListener('click', closeModal);
+  });
+}
+
+/* ---------------- Toast notifications (replaces native alert()) ---------------- */
+function showToast(message, type){
+  let host = document.getElementById('toast-host');
+  if(!host){
+    host = document.createElement('div');
+    host.id = 'toast-host';
+    document.body.appendChild(host);
+  }
+  const el = document.createElement('div');
+  el.className = 'toast ' + (type||'info');
+  el.textContent = message;
+  host.appendChild(el);
+  requestAnimationFrame(()=> el.classList.add('show'));
+  const dismiss = ()=>{
+    if(el._dismissed) return; el._dismissed = true;
+    el.classList.remove('show');
+    setTimeout(()=> el.remove(), 220);
+  };
+  el.addEventListener('click', dismiss);
+  setTimeout(dismiss, type==='error' ? 5000 : 3200);
+}
+
+/* ---------------- Save status indicator ---------------- */
+function updateSaveIndicator(){
+  const el = document.getElementById('save-indicator');
+  if(!el) return;
+  el.className = 'save-indicator ' + saveStatus;
+  el.textContent = saveStatus==='saving' ? (lang==='en'?'Saving…':'सेव हो रहा है…')
+    : saveStatus==='saved' ? (lang==='en'?'Saved':'सेव हो गया')
+    : saveStatus==='error' ? (lang==='en'?'Save failed':'सेव नहीं हुआ')
+    : '';
 }
 
 function txModal(tx, presetPartyId, presets){
@@ -3369,6 +3406,10 @@ function exportCsv(){
 function attachHandlers(){
   document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click', ()=>setTab(b.dataset.tab)));
   document.querySelectorAll('[data-lang]').forEach(b=>b.addEventListener('click', ()=>setLang(b.dataset.lang)));
+  const railToggle = document.getElementById('rail-toggle');
+  if(railToggle) railToggle.addEventListener('click', ()=>{ railOpen = !railOpen; render(); });
+  const railBackdrop = document.getElementById('rail-backdrop');
+  if(railBackdrop) railBackdrop.addEventListener('click', ()=>{ railOpen = false; render(); });
 
   const byAction = (action, fn) => {
     document.querySelectorAll(`[data-action="${action}"]`).forEach(el=>el.addEventListener('click', fn));
@@ -3376,8 +3417,9 @@ function attachHandlers(){
   byAction('new-tx', (e)=> txModal(null, e.currentTarget.dataset.partyid));
   byAction('edit-tx', e=> txModal(state.transactions.find(t=>t.id===e.currentTarget.dataset.id)));
   byAction('del-tx', async e=>{
-    if(confirm(tr('confirmDelTx'))){
-      state.transactions = state.transactions.filter(t=>t.id!==e.currentTarget.dataset.id);
+    const id = e.currentTarget.dataset.id;
+    if(await customConfirm(tr('confirmDelTx'))){
+      state.transactions = state.transactions.filter(t=>t.id!==id);
       await saveState(); render();
     }
   });
@@ -3386,8 +3428,8 @@ function attachHandlers(){
   byAction('del-proj', async e=>{
     const id = e.currentTarget.dataset.id;
     const used = state.transactions.some(t=>t.project===id);
-    if(used){ alert(tr('projInUse')); return; }
-    if(confirm(tr('confirmDelProj'))){
+    if(used){ showToast(tr('projInUse'), 'warn'); return; }
+    if(await customConfirm(tr('confirmDelProj'))){
       state.projects = state.projects.filter(p=>p.id!==id);
       await saveState(); render();
     }
@@ -3409,8 +3451,9 @@ function attachHandlers(){
   byAction('new-quote', (e)=> quoteModal(null, e.currentTarget.dataset.partyid));
   byAction('edit-quote', e=> quoteModal(state.quotations.find(q=>q.id===e.currentTarget.dataset.id)));
   byAction('del-quote', async e=>{
-    if(confirm(tr('confirmDelQuote'))){
-      state.quotations = state.quotations.filter(q=>q.id!==e.currentTarget.dataset.id);
+    const id = e.currentTarget.dataset.id;
+    if(await customConfirm(tr('confirmDelQuote'))){
+      state.quotations = state.quotations.filter(q=>q.id!==id);
       await saveState(); render();
     }
   });
@@ -3423,8 +3466,9 @@ function attachHandlers(){
   byAction('new-invoice', (e)=> invoiceModal(null, {presetPartyId: e.currentTarget.dataset.partyid}));
   byAction('edit-invoice', e=> invoiceModal(state.invoices.find(i=>i.id===e.currentTarget.dataset.id)));
   byAction('del-invoice', async e=>{
-    if(confirm(tr('confirmDelInvoice'))){
-      state.invoices = state.invoices.filter(i=>i.id!==e.currentTarget.dataset.id);
+    const id = e.currentTarget.dataset.id;
+    if(await customConfirm(tr('confirmDelInvoice'))){
+      state.invoices = state.invoices.filter(i=>i.id!==id);
       await saveState(); render();
     }
   });
@@ -3440,8 +3484,9 @@ function attachHandlers(){
   byAction('new-po', (e)=> poModal(null, e.currentTarget.dataset.partyid));
   byAction('edit-po', e=> poModal(state.purchaseOrders.find(p=>p.id===e.currentTarget.dataset.id)));
   byAction('del-po', async e=>{
-    if(confirm(tr('confirmDelPO'))){
-      state.purchaseOrders = state.purchaseOrders.filter(p=>p.id!==e.currentTarget.dataset.id);
+    const id = e.currentTarget.dataset.id;
+    if(await customConfirm(tr('confirmDelPO'))){
+      state.purchaseOrders = state.purchaseOrders.filter(p=>p.id!==id);
       await saveState(); render();
     }
   });
@@ -3462,8 +3507,9 @@ function attachHandlers(){
   byAction('new-ra', ()=> raBillModal(null));
   byAction('edit-ra', e=> raBillModal(state.raBills.find(b=>b.id===e.currentTarget.dataset.id)));
   byAction('del-ra', async e=>{
-    if(confirm(tr('confirmDelRABill'))){
-      state.raBills = state.raBills.filter(b=>b.id!==e.currentTarget.dataset.id);
+    const id = e.currentTarget.dataset.id;
+    if(await customConfirm(tr('confirmDelRABill'))){
+      state.raBills = state.raBills.filter(b=>b.id!==id);
       await saveState(); render();
     }
   });
@@ -3480,8 +3526,9 @@ function attachHandlers(){
   byAction('new-retention', ()=> retentionModal(null));
   byAction('edit-retention', e=> retentionModal(state.retentions.find(r=>r.id===e.currentTarget.dataset.id)));
   byAction('del-retention', async e=>{
-    if(confirm(tr('confirmDelRetention'))){
-      state.retentions = state.retentions.filter(r=>r.id!==e.currentTarget.dataset.id);
+    const id = e.currentTarget.dataset.id;
+    if(await customConfirm(tr('confirmDelRetention'))){
+      state.retentions = state.retentions.filter(r=>r.id!==id);
       await saveState(); render();
     }
   });
@@ -3497,8 +3544,9 @@ function attachHandlers(){
   byAction('new-labourer', ()=> labourerModal(null));
   byAction('edit-labourer', e=> labourerModal(state.labourers.find(l=>l.id===e.currentTarget.dataset.id)));
   byAction('del-labourer', async e=>{
-    if(confirm(tr('confirmDelLabourer'))){
-      state.labourers = state.labourers.filter(l=>l.id!==e.currentTarget.dataset.id);
+    const id = e.currentTarget.dataset.id;
+    if(await customConfirm(tr('confirmDelLabourer'))){
+      state.labourers = state.labourers.filter(l=>l.id!==id);
       await saveState(); render();
     }
   });
@@ -3545,12 +3593,13 @@ function attachHandlers(){
   byAction('new-stock-entry', ()=> stockEntryModal());
   byAction('manage-materials', ()=> materialsModal());
   byAction('del-stock-entry', async e=>{
-    if(confirm(tr('confirmDelStockEntry'))){
-      const entry = state.stockEntries.find(x=>x.id===e.currentTarget.dataset.id);
+    const id = e.currentTarget.dataset.id;
+    if(await customConfirm(tr('confirmDelStockEntry'))){
+      const entry = state.stockEntries.find(x=>x.id===id);
       if(entry && entry.linkedTransactionId){
         state.transactions = state.transactions.filter(t=>t.id!==entry.linkedTransactionId);
       }
-      state.stockEntries = state.stockEntries.filter(x=>x.id!==e.currentTarget.dataset.id);
+      state.stockEntries = state.stockEntries.filter(x=>x.id!==id);
       await saveState(); render();
     }
   });
@@ -3559,55 +3608,6 @@ function attachHandlers(){
   byAction('print-gst', printGSTFiling);
   const gstFromEl = document.getElementById('gst-from'); if(gstFromEl) gstFromEl.addEventListener('change', e=>{gstDateFrom=e.target.value; render();});
   const gstToEl = document.getElementById('gst-to'); if(gstToEl) gstToEl.addEventListener('change', e=>{gstDateTo=e.target.value; render();});
-
-  const csvInput = document.getElementById('bank-csv-input');
-  if(csvInput) csvInput.addEventListener('change', async e=>{
-    const file = e.target.files[0];
-    if(!file) return;
-    let text;
-    try{ text = await file.text(); }catch(err){ alert(tr('csvParseError')); return; }
-    const rows = parseCSV(text);
-    if(rows.length<2){ alert(tr('csvParseError')); return; }
-    const header = rows[0];
-    const cols = detectColumns(header);
-    if(cols.date===-1 || (cols.debit===-1 && cols.credit===-1)){ alert(tr('csvColumnsNotFound')); return; }
-    const bankLines = [];
-    for(let i=1;i<rows.length;i++){
-      const r = rows[i];
-      if(!r || r.every(c=>!c || !c.trim())) continue;
-      const dateStr = parseFlexDate(r[cols.date]);
-      if(!dateStr) continue;
-      const debit = cols.debit>-1 ? parseAmount(r[cols.debit]) : 0;
-      const credit = cols.credit>-1 ? parseAmount(r[cols.credit]) : 0;
-      const desc = cols.desc>-1 ? (r[cols.desc]||'').trim() : '';
-      if(debit>0) bankLines.push({id:'bl'+i, date:dateStr, desc, amount:debit, direction:'out'});
-      else if(credit>0) bankLines.push({id:'bl'+i, date:dateStr, desc, amount:credit, direction:'in'});
-    }
-    if(bankLines.length===0){ alert(tr('csvNoRowsFound')); return; }
-    const {results, unmatchedLedger} = matchBankLines(bankLines);
-    reconcileState = {fileName:file.name, results, unmatchedLedger};
-    render();
-  });
-  byAction('reset-reconcile', ()=>{ reconcileState = null; render(); });
-  byAction('add-from-bankline', e=>{
-    if(!reconcileState) return;
-    const line = reconcileState.results.find(r=>r.id===e.currentTarget.dataset.id);
-    if(!line) return;
-    txModal(null, null, {date:line.date, type: line.direction==='in'?'Income':'Expense', amount:line.amount, desc:line.desc, mode:PAY_MODES[1]});
-  });
-  byAction('save-reconciliation', async ()=>{
-    if(!reconcileState) return;
-    reconcileState.results.forEach(r=>{
-      if(r.matchedTxId){
-        const t = state.transactions.find(x=>x.id===r.matchedTxId);
-        if(t){ t.reconciled = true; t.reconciledDate = new Date().toISOString().slice(0,10); }
-      }
-    });
-    await saveState();
-    alert(tr('reconcileSaved'));
-    reconcileState = null;
-    render();
-  });
 
   const qfStatus = document.getElementById('qf-status'); if(qfStatus) qfStatus.addEventListener('change', e=>{quoteFilters.status=e.target.value; render();});
   const invfStatus = document.getElementById('invf-status'); if(invfStatus) invfStatus.addEventListener('change', e=>{invoiceFilters.status=e.target.value; render();});
@@ -3643,7 +3643,7 @@ function attachHandlers(){
     const cat = e.currentTarget.dataset.cat;
     if(catUsageCount(type,cat)>0) return;
     const confirmMsg = lang==='en' ? `Delete category "${L(cat)}"?` : `क्या "${L(cat)}" श्रेणी मिटाएं?`;
-    if(confirm(confirmMsg)){
+    if(await customConfirm(confirmMsg)){
       const key = type==='Income'?'income':'expense';
       state.categories[key] = state.categories[key].filter(c=>c!==cat);
       await saveState(); render();
