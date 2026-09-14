@@ -477,7 +477,7 @@ const T = {
     categoryBreakdown:'श्रेणी-वार खर्च', priceTrend:'दर रुझान (मटेरियल स्टॉक से)', thFirstRate:'पहली दर', thLatestRate:'नवीनतम दर', thChange:'बदलाव',
     noPriceTrendData:'इस पार्टी से जुड़ी कोई मटेरियल खरीद दर्ज नहीं है',
     navGroupMain:'मुख्य', navGroupBilling:'लेन-देन व बिलिंग', navGroupSite:'साइट संसाधन',
-    navGroupTools:'विश्लेषण व टूल्स', navGroupSetup:'सेटअप',
+    navGroupTools:'विश्लेषण व टूल्स', navGroupSetup:'सेटअप', savingBtn:'सहेजा जा रहा है...', savedBtn:'✓ सहेजा गया',
   },
   en:{
     navDashboard:'Dashboard', navTransactions:'Transactions', navProjects:'Projects', navParties:'Parties',
@@ -594,7 +594,7 @@ const T = {
     categoryBreakdown:'Spend by Category', priceTrend:'Price Trend (from Material Stock)', thFirstRate:'First Rate', thLatestRate:'Latest Rate', thChange:'Change',
     noPriceTrendData:'No material purchases linked to this party yet',
     navGroupMain:'Main', navGroupBilling:'Transactions & Billing', navGroupSite:'Site Resources',
-    navGroupTools:'Analysis & Tools', navGroupSetup:'Setup',
+    navGroupTools:'Analysis & Tools', navGroupSetup:'Setup', savingBtn:'Saving...', savedBtn:'✓ Saved',
   },
 };
 
@@ -771,7 +771,8 @@ async function saveState(){
     if(!res.ok) throw new Error('save failed: '+res.status);
     const data = await res.json();
     if(data.meta) state._meta = data.meta;
-  }catch(e){ console.error('save failed', e); alert(tr('saveError')); }
+    return true;
+  }catch(e){ console.error('save failed', e); alert(tr('saveError')); return false; }
 }
 
 /* ---------------- derived calc helpers ---------------- */
@@ -3830,7 +3831,15 @@ function attachHandlers(){
       name: fd.get('name')||'', address: fd.get('address')||'', gstin: fd.get('gstin')||'',
       phone: fd.get('phone')||'', email: fd.get('email')||'',
     };
-    await saveState();
+    const btn = bizForm.querySelector('button[type="submit"]');
+    const originalText = btn ? btn.textContent : '';
+    if(btn){ btn.disabled = true; btn.textContent = tr('savingBtn'); }
+    const ok = await saveState();
+    if(btn){
+      btn.disabled = false;
+      btn.textContent = ok ? tr('savedBtn') : originalText;
+      if(ok) setTimeout(()=>{ if(btn) btn.textContent = originalText; }, 1800);
+    }
   });
 
   const addCatIncome = document.getElementById('add-cat-income');
