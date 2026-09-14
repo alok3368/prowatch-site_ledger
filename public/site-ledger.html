@@ -239,6 +239,7 @@
   .mat-row{display:grid;grid-template-columns:2fr 1fr 28px;gap:6px;margin-bottom:6px;align-items:center;}
   .mat-row input{width:100%;padding:6px 8px;font-size:13px;}
   .forecast-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:20px;}
+  .urgent-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--rust);margin-left:5px;vertical-align:middle;}
   .field{margin-bottom:13px;}
   .field label{display:block;font-size:12.5px;color:var(--ink-soft);margin-bottom:5px;font-weight:600;}
   .field input, .field select, .field textarea{width:100%;}
@@ -415,6 +416,11 @@ const T = {
     csvParseError:'फ़ाइल पढ़ने में समस्या — कृपया मान्य CSV फ़ाइल अपलोड करें।',
     csvColumnsNotFound:'Date व Debit/Credit कॉलम नहीं मिले। कृपया अपनी बैंक स्टेटमेंट के कॉलम हैडर जांचें।',
     csvNoRowsFound:'फ़ाइल में कोई मान्य लेन-देन नहीं मिला।', reconciledBadge:'मिलान हुआ',
+    navScorecards:'वेंडर स्कोरकार्ड', scorecardTitle:'वेंडर व सबकॉन्ट्रैक्टर स्कोरकार्ड', scorecardSub:'खर्च, बकाया व दर के रुझान के आधार पर पार्टी-वार विश्लेषण',
+    thVendor:'नाम', thPartyType:'प्रकार', thTotalSpend:'कुल खर्च', thOutstandingDue:'बकाया राशि', thTxCount:'लेन-देन संख्या', thLastTx:'अंतिम लेन-देन',
+    viewDetailsBtn:'विवरण देखें', noScorecardData:'अभी तक कोई वेंडर लेन-देन दर्ज नहीं है',
+    categoryBreakdown:'श्रेणी-वार खर्च', priceTrend:'दर रुझान (मटेरियल स्टॉक से)', thFirstRate:'पहली दर', thLatestRate:'नवीनतम दर', thChange:'बदलाव',
+    noPriceTrendData:'इस पार्टी से जुड़ी कोई मटेरियल खरीद दर्ज नहीं है',
   },
   en:{
     navDashboard:'Dashboard', navTransactions:'Transactions', navProjects:'Projects', navParties:'Parties',
@@ -525,6 +531,11 @@ const T = {
     csvParseError:'Trouble reading the file — please upload a valid CSV file.',
     csvColumnsNotFound:'Could not find Date and Debit/Credit columns. Please check your bank statement column headers.',
     csvNoRowsFound:'No valid transactions found in the file.', reconciledBadge:'Reconciled',
+    navScorecards:'Vendor Scorecards', scorecardTitle:'Vendor & Subcontractor Scorecards', scorecardSub:'Party-wise analysis based on spend, dues, and price trends',
+    thVendor:'Name', thPartyType:'Type', thTotalSpend:'Total Spend', thOutstandingDue:'Outstanding Due', thTxCount:'Transactions', thLastTx:'Last Transaction',
+    viewDetailsBtn:'View Details', noScorecardData:'No vendor transactions recorded yet',
+    categoryBreakdown:'Spend by Category', priceTrend:'Price Trend (from Material Stock)', thFirstRate:'First Rate', thLatestRate:'Latest Rate', thChange:'Change',
+    noPriceTrendData:'No material purchases linked to this party yet',
   },
 };
 
@@ -582,6 +593,9 @@ function fmtDate(d){
   return dt.toLocaleDateString(lang==='en'?'en-IN':'hi-IN',{day:'2-digit',month:'short',year:'numeric'});
 }
 function daysAgo(d){ return Math.floor((Date.now() - new Date(d).getTime())/86400000); }
+function hasOverdueInvoices(){ return state.invoices.some(inv=> inv.status==='बकाया' && inv.dueDate && daysAgo(inv.dueDate)>0); }
+function hasOverduePOs(){ return state.purchaseOrders.some(po=> po.status!=='प्राप्त हुआ' && po.deliveryDate && daysAgo(po.deliveryDate)>0); }
+function hasOverdueRetention(){ return state.retentions.some(r=> r.status==='रोका गया' && r.expectedReleaseDate && daysAgo(r.expectedReleaseDate)>0); }
 
 function seedData(){
   const proj = [
@@ -783,15 +797,16 @@ function render(){
         ${navBtn('dashboard',tr('navDashboard'))}
         ${navBtn('transactions',tr('navTransactions'), state.transactions.length)}
         ${navBtn('quotations',tr('navQuotations'), state.quotations.length)}
-        ${navBtn('invoices',tr('navInvoices'), state.invoices.length)}
-        ${navBtn('purchase_orders',tr('navPO'), state.purchaseOrders.length)}
+        ${navBtn('invoices',tr('navInvoices'), state.invoices.length, hasOverdueInvoices())}
+        ${navBtn('purchase_orders',tr('navPO'), state.purchaseOrders.length, hasOverduePOs())}
         ${navBtn('ra_bills',tr('navRABills'), state.raBills.length)}
-        ${navBtn('retention',tr('navRetention'), state.retentions.length)}
+        ${navBtn('retention',tr('navRetention'), state.retentions.length, hasOverdueRetention())}
         ${navBtn('labour',tr('navLabour'), state.labourers.length)}
         ${navBtn('stock',tr('navStock'), state.materials.length)}
         ${navBtn('cashflow',tr('navCashFlow'))}
         ${navBtn('gst_filing',tr('navGSTFiling'))}
         ${navBtn('reconcile',tr('navReconcile'))}
+        ${navBtn('scorecards',tr('navScorecards'))}
         ${navBtn('cashbook',tr('navCashbook'))}
         ${navBtn('projects',tr('navProjects'), state.projects.length)}
         ${navBtn('parties',tr('navParties'), state.parties.length)}
@@ -821,6 +836,7 @@ function render(){
   else if(activeTab==='cashflow') main.innerHTML = renderCashFlow();
   else if(activeTab==='gst_filing') main.innerHTML = renderGSTFiling();
   else if(activeTab==='reconcile') main.innerHTML = renderReconcile();
+  else if(activeTab==='scorecards') main.innerHTML = renderScorecards();
   else if(activeTab==='cashbook') main.innerHTML = renderCashbook();
   else if(activeTab==='projects') main.innerHTML = renderProjects();
   else if(activeTab==='parties') main.innerHTML = renderParties();
@@ -828,15 +844,39 @@ function render(){
   else if(activeTab==='settings') main.innerHTML = renderSettings();
   attachHandlers();
 }
-function navBtn(id,label,count){
+function navBtn(id,label,count,urgent){
   return `<button class="${activeTab===id?'active':''}" data-tab="${id}">
-    <span>${label}</span>${count!==undefined?`<span class="num">${count}</span>`:''}
+    <span>${label}${urgent?'<span class="urgent-dot" title="'+tr('overdueTag')+'"></span>':''}</span>${count!==undefined?`<span class="num">${count}</span>`:''}
   </button>`;
 }
 
 /* ---------------- Dashboard ---------------- */
 function buildInsights(tt){
   const insights = [];
+  const overdueInvoices = state.invoices.filter(inv=> inv.status==='बकाया' && inv.dueDate && daysAgo(inv.dueDate)>0);
+  if(overdueInvoices.length){
+    const sum = overdueInvoices.reduce((s,inv)=>s+itemsTotal(inv.items),0);
+    const html = lang==='en'
+      ? `<b>${overdueInvoices.length} invoice${overdueInvoices.length===1?'':'s'}</b> past due date — total <b>${fmt(sum)}</b>. Consider sending a reminder.`
+      : `<b>${overdueInvoices.length} इनवॉइस</b> देय तिथि पार कर चुके हैं — कुल <b>${fmt(sum)}</b>। रिमाइंडर भेजने पर विचार करें।`;
+    insights.push({level:'warn', html});
+  }
+  const overduePOs = state.purchaseOrders.filter(po=> po.status!=='प्राप्त हुआ' && po.deliveryDate && daysAgo(po.deliveryDate)>0);
+  if(overduePOs.length){
+    const sum = overduePOs.reduce((s,po)=>s+itemsTotal(po.items),0);
+    const html = lang==='en'
+      ? `<b>${overduePOs.length} purchase order${overduePOs.length===1?'':'s'}</b> past expected delivery date — total <b>${fmt(sum)}</b>. Follow up with the vendor.`
+      : `<b>${overduePOs.length} परचेज ऑर्डर</b> अपेक्षित डिलीवरी तिथि पार कर चुके हैं — कुल <b>${fmt(sum)}</b>। वेंडर से संपर्क करें।`;
+    insights.push({level:'warn', html});
+  }
+  const overdueRetention = state.retentions.filter(r=> r.status==='रोका गया' && r.expectedReleaseDate && daysAgo(r.expectedReleaseDate)>0);
+  if(overdueRetention.length){
+    const sum = overdueRetention.reduce((s,r)=>s+r.amount,0);
+    const html = lang==='en'
+      ? `<b>${overdueRetention.length} retention release${overdueRetention.length===1?'':'s'}</b> past the expected date — total <b>${fmt(sum)}</b>. Follow up with the client.`
+      : `<b>${overdueRetention.length} रिटेंशन रिलीज़</b> अपेक्षित तिथि पार कर चुकी हैं — कुल <b>${fmt(sum)}</b>। क्लाइंट से संपर्क करें।`;
+    insights.push({level:'warn', html});
+  }
   const overdueRecv = state.transactions.filter(t=>t.type==='Income' && t.status==='बकाया' && daysAgo(t.date)>30);
   const overduePay = state.transactions.filter(t=>t.type==='Expense' && t.status==='बकाया' && daysAgo(t.date)>30);
   if(overdueRecv.length){
@@ -2143,7 +2183,7 @@ function computeStockOverview(projectId){
 function stockEntryCreateTx(entry, material){
   const txObj = {
     id: uid('t'), date: entry.date, project: entry.project, type:'Expense', category: MATERIAL_EXPENSE_CATEGORY,
-    party: null, desc: (lang==='en'?'Material Purchase - ':'सामग्री खरीद - ') + material.name + ` (${entry.qty} ${material.unit||''})`,
+    party: entry.party || null, desc: (lang==='en'?'Material Purchase - ':'सामग्री खरीद - ') + material.name + ` (${entry.qty} ${material.unit||''})`,
     amount: entry.qty*(entry.rate||0), gst:0, mode: PAY_MODES[1], status:'भुगतान हो गया', ref:'',
     createdBy: currentUser ? currentUser.email : null,
   };
@@ -2279,6 +2319,9 @@ function stockEntryModal(){
         <div class="field"><label>${tr('itemQty')}</label><input type="number" class="mono" name="qty" step="any" required></div>
         <div class="field" id="stock-rate-wrap"><label>${tr('itemRate')}</label><input type="number" class="mono" name="rate" step="any" min="0" value="0"></div>
       </div>
+      <div class="field" id="stock-party-wrap"><label>${tr('fieldVendor')}</label>
+        <select name="party"><option value="">—</option>${state.parties.map(p=>`<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('')}</select>
+      </div>
       <div class="field"><label>${tr('fieldNotes')}</label><textarea name="notes"></textarea></div>
       <div class="modal-actions">
         <button type="button" class="btn ghost" data-action="close-modal">${tr('cancelBtn')}</button>
@@ -2288,7 +2331,9 @@ function stockEntryModal(){
   `);
   function toggleRateVisibility(){
     const type = document.getElementById('stock-type-select').value;
-    document.getElementById('stock-rate-wrap').style.display = type===STOCK_TYPES[0] ? '' : 'none';
+    const isPurchase = type===STOCK_TYPES[0];
+    document.getElementById('stock-rate-wrap').style.display = isPurchase ? '' : 'none';
+    document.getElementById('stock-party-wrap').style.display = isPurchase ? '' : 'none';
   }
   document.getElementById('stock-type-select').addEventListener('change', toggleRateVisibility);
   toggleRateVisibility();
@@ -2300,6 +2345,7 @@ function stockEntryModal(){
     const entry = {
       id: uid('se'), date: fd.get('date'), project: fd.get('project'), materialId: fd.get('materialId'),
       type, qty, rate: type===STOCK_TYPES[0] ? (Number(fd.get('rate'))||0) : 0,
+      party: type===STOCK_TYPES[0] ? (fd.get('party')||null) : null,
       notes: fd.get('notes') || '', linkedTransactionId: null,
       createdBy: currentUser ? currentUser.email : null,
     };
@@ -2681,6 +2727,87 @@ function renderReconcile(){
       <button class="btn amber" data-action="save-reconciliation">${tr('saveReconcileBtn')}</button>
     </div>
   `;
+}
+
+/* ---------------- Vendor & Subcontractor Scorecards ---------------- */
+function computeVendorScorecards(){
+  const vendorParties = state.parties.filter(p=>p.type!=='क्लाइंट');
+  return vendorParties.map(p=>{
+    const txs = state.transactions.filter(t=>t.type==='Expense' && t.party===p.id);
+    const paidTxs = txs.filter(t=>t.status==='भुगतान हो गया');
+    const dueTxs = txs.filter(t=>t.status==='बकाया');
+    const totalSpend = paidTxs.reduce((s,t)=>s+txTotal(t),0);
+    const outstandingDue = dueTxs.reduce((s,t)=>s+txTotal(t),0);
+    const lastTxDate = txs.length ? txs.reduce((a,t)=> t.date>a?t.date:a, txs[0].date) : null;
+    const catMap = {};
+    txs.forEach(t=>{ catMap[t.category] = (catMap[t.category]||0) + txTotal(t); });
+    const categories = Object.entries(catMap).map(([cat,amt])=>({cat,amt})).sort((a,b)=>b.amt-a.amt);
+    const stockPurchases = state.stockEntries.filter(e=> e.party===p.id && e.type===STOCK_TYPES[0]);
+    const byMaterial = {};
+    stockPurchases.forEach(e=>{ (byMaterial[e.materialId] = byMaterial[e.materialId]||[]).push(e); });
+    const priceTrends = Object.entries(byMaterial).map(([matId, entries])=>{
+      entries.sort((a,b)=> new Date(a.date)-new Date(b.date));
+      const material = state.materials.find(m=>m.id===matId);
+      const first = entries[0].rate; const latest = entries[entries.length-1].rate;
+      const changePct = first>0 ? ((latest-first)/first*100) : 0;
+      return {material: material?material.name:'—', first, latest, changePct};
+    });
+    return {party:p, totalSpend, outstandingDue, txCount:txs.length, lastTxDate, categories, priceTrends};
+  }).filter(v=> v.txCount>0 || v.priceTrends.length>0).sort((a,b)=> b.totalSpend-a.totalSpend);
+}
+function renderScorecards(){
+  const scorecards = computeVendorScorecards();
+  return `
+    <div class="page-head"><div><h1>${tr('scorecardTitle')}</h1><p>${tr('scorecardSub')}</p></div></div>
+    <div class="panel" style="padding:0;overflow-x:auto;">
+      <table>
+        <thead><tr><th>${tr('thVendor')}</th><th>${tr('thPartyType')}</th><th class="num">${tr('thTotalSpend')}</th><th class="num">${tr('thOutstandingDue')}</th><th class="num">${tr('thTxCount')}</th><th>${tr('thLastTx')}</th><th></th></tr></thead>
+        <tbody>
+        ${scorecards.length===0?`<tr><td colspan="7"><div class="empty"><div class="big">🤝</div>${tr('noScorecardData')}</div></td></tr>`:
+        scorecards.map(v=>`<tr>
+          <td>${escapeHtml(v.party.name)}</td>
+          <td>${L(v.party.type)}</td>
+          <td class="num">${fmt(v.totalSpend)}</td>
+          <td class="num" style="color:${v.outstandingDue>0?'var(--rust)':'inherit'}">${fmt(v.outstandingDue)}</td>
+          <td class="num">${v.txCount}</td>
+          <td class="mono">${v.lastTxDate?fmtDate(v.lastTxDate):'—'}</td>
+          <td class="row-actions"><button data-action="view-scorecard" data-id="${v.party.id}">${tr('viewDetailsBtn')}</button></td>
+        </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+function scorecardDetailModal(partyId){
+  const v = computeVendorScorecards().find(x=>x.party.id===partyId);
+  if(!v) return;
+  openModal(`
+    <h3>${escapeHtml(v.party.name)}</h3>
+    <div class="kpis" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px;">
+      <div class="kpi"><div class="label">${tr('thTotalSpend')}</div><div class="value mono">${fmt(v.totalSpend)}</div></div>
+      <div class="kpi"><div class="label">${tr('thOutstandingDue')}</div><div class="value mono">${fmt(v.outstandingDue)}</div></div>
+      <div class="kpi"><div class="label">${tr('thTxCount')}</div><div class="value mono">${v.txCount}</div></div>
+    </div>
+    <h4 style="margin-bottom:8px;">${tr('categoryBreakdown')}</h4>
+    <table style="margin-bottom:16px;">
+      <thead><tr><th>${tr('fieldCategory')}</th><th class="num">${tr('thAmount')}</th></tr></thead>
+      <tbody>${v.categories.map(c=>`<tr><td>${L(c.cat)}</td><td class="num">${fmt(c.amt)}</td></tr>`).join('')}</tbody>
+    </table>
+    <h4 style="margin-bottom:8px;">${tr('priceTrend')}</h4>
+    ${v.priceTrends.length===0?`<p style="font-size:12px;color:var(--ink-soft);">${tr('noPriceTrendData')}</p>`:`
+    <table>
+      <thead><tr><th>${tr('thMaterial')}</th><th class="num">${tr('thFirstRate')}</th><th class="num">${tr('thLatestRate')}</th><th class="num">${tr('thChange')}</th></tr></thead>
+      <tbody>${v.priceTrends.map(pt=>`<tr>
+        <td>${escapeHtml(pt.material)}</td>
+        <td class="num">${fmt(pt.first)}</td>
+        <td class="num">${fmt(pt.latest)}</td>
+        <td class="num" style="color:${pt.changePct>0?'var(--rust)':(pt.changePct<0?'var(--green)':'inherit')}">${pt.changePct>0?'+':''}${pt.changePct.toFixed(1)}%</td>
+      </tr>`).join('')}</tbody>
+    </table>`}
+    <div class="modal-actions">
+      <button type="button" class="btn ghost" data-action="close-modal">${tr('cancelBtn')}</button>
+    </div>
+  `, true);
 }
 
 /* ---------------- Print / PDF ---------------- */
@@ -3608,6 +3735,8 @@ function attachHandlers(){
     reconcileState = null;
     render();
   });
+
+  byAction('view-scorecard', e=> scorecardDetailModal(e.currentTarget.dataset.id));
 
   const qfStatus = document.getElementById('qf-status'); if(qfStatus) qfStatus.addEventListener('change', e=>{quoteFilters.status=e.target.value; render();});
   const invfStatus = document.getElementById('invf-status'); if(invfStatus) invfStatus.addEventListener('change', e=>{invoiceFilters.status=e.target.value; render();});
