@@ -47,7 +47,7 @@ const ALLOWED_DOMAIN = (process.env.ALLOWED_DOMAIN || '').trim().toLowerCase();
 function isAllowed(email) {
   if (!email) return false;
   const e = email.toLowerCase();
-  if (ALLOWED_EMAILS.length === 0 && !ALLOWED_DOMAIN) return true; // no restriction configured
+  if (ALLOWED_EMAILS.length === 0 && !ALLOWED_DOMAIN) return false; // fail closed if access configuration is absent
   if (ALLOWED_EMAILS.includes(e)) return true;
   if (ALLOWED_DOMAIN && e.endsWith('@' + ALLOWED_DOMAIN)) return true;
   return false;
@@ -171,7 +171,7 @@ initDb()
     app.listen(PORT, () => {
       console.log(`Site Ledger running on port ${PORT}`);
       if (ALLOWED_EMAILS.length === 0 && !ALLOWED_DOMAIN) {
-        console.warn('WARNING: ALLOWED_EMAILS / ALLOWED_DOMAIN not set — any Gmail account can log in.');
+        console.warn('WARNING: ALLOWED_EMAILS / ALLOWED_DOMAIN not set - sign-in denied.');
       }
     });
   })
