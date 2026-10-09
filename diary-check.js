@@ -81,8 +81,15 @@ module.exports = function mount(app, pool, requireAuth) {
 
       const linked = new Set();
       for (const site of diary.sites) {
-        const proj = projects.find(p => site.ledgerProjectId && p.id === site.ledgerProjectId) ||
-          projects.find(p => norm(p.name) === norm(site.name));
+        let proj = projects.find(p => site.ledgerProjectId && p.id === site.ledgerProjectId);
+        if (!proj) {
+          const m = projects.filter(p => norm(p.name) === norm(site.name));
+          if (m.length > 1) {
+            flags.push({ level: 'info', type: 'ambiguous_link', site: site.name, text: `Diary site "${site.name}" matches ${m.length} Ledger projects with the same name. Link it to one (or rename one) so it can be cross-checked.` });
+            continue;
+          }
+          proj = m[0];
+        }
         const dd = diaryDays[site.id] || new Set();
         if (!proj) {
           flags.push({ level: 'info', type: 'unlinked_site', site: site.name, text: `Diary site "${site.name}" is not linked to a Ledger project, so it is not cross-checked.` });
