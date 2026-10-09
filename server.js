@@ -94,7 +94,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 function requireAuth(req, res, next) {
-  if (req.isAuthenticated && req.isAuthenticated()) return next();
+  if (req.isAuthenticated && req.isAuthenticated() && isAllowed(req.user?.email)) return next();
   res.status(401).json({ error: 'not-authenticated' });
 }
 
@@ -111,7 +111,7 @@ app.get('/auth/logout', (req, res) => {
 });
 
 app.get('/api/me', (req, res) => {
-  if (req.isAuthenticated && req.isAuthenticated()) {
+  if (req.isAuthenticated && req.isAuthenticated() && isAllowed(req.user?.email)) {
     return res.json(req.user);
   }
   res.status(401).json({ error: 'not-authenticated' });
@@ -179,4 +179,3 @@ initDb()
     console.error('Failed to initialize database', e);
     process.exit(1);
   });
-
