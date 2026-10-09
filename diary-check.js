@@ -52,7 +52,7 @@ module.exports = function mount(app, pool, requireAuth) {
     } catch (e) { console.error('internal labour failed', e); res.status(500).json({ error: 'failed' }); }
   });
 
-  app.get('/api/diary-check', requireAuth, async (req, res) => {
+  const diaryCheck = async (req, res) => {
     const now = istNow();
     const today = now.toISOString().slice(0, 10);
     const afterSix = now.getUTCHours() >= 18;
@@ -119,6 +119,12 @@ module.exports = function mount(app, pool, requireAuth) {
       console.error('diary-check failed', e);
       res.status(500).json({ ok: false, flags: [{ level: 'warn', type: 'error', text: 'Diary check failed.' }] });
     }
+  };
+  app.get('/api/diary-check', requireAuth, diaryCheck);
+  // Key-based copy for scheduled digests (same JSON as /api/diary-check)
+  app.get('/api/internal/diary-flags', (req, res, next) => {
+    if (!sameKey(req.get('x-internal-key'))) return res.status(401).json({ error: 'unauthorized' });
+    diaryCheck(req, res).catch(next);
   });
 
   app.get('/diary-check.js', (req, res) => res.type('js').set('Cache-Control', 'no-cache').sendFile(path.join(__dirname, 'public', 'diary-check-banner.js')));
