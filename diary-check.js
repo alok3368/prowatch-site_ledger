@@ -101,7 +101,7 @@ module.exports = function mount(app, pool, requireAuth) {
           const d = addDays(today, -i);
           const isToday = d === today;
           if (isToday && !afterSix) continue; // today is only judged after 6pm IST
-          if (ad.has(d) && !dd.has(d)) flags.push({ level: 'warn', type: 'billed_no_diary', site: site.name, date: d, text: `${site.name}: attendance billed on ${d} but no Site Diary entry.` });
+          if (ad.has(d) && !dd.has(d)) flags.push({ level: 'warn', type: 'attendance_no_diary', site: site.name, date: d, text: `${site.name}: attendance marked on ${d} but no Site Diary entry.` });
           else if (dd.has(d) && !ad.has(d)) flags.push({ level: 'warn', type: 'diary_no_attendance', site: site.name, date: d, text: `${site.name}: Site Diary entry on ${d} but no attendance in the Ledger.` });
         }
         if (afterSix && !dd.has(today) && !ad.has(today) && [...dd].some(x => x >= addDays(today, -3))) {
