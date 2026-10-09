@@ -308,8 +308,8 @@
 
   .party-list{display:flex;flex-direction:column;gap:0;}
   .party-item{
-    display:flex;justify-content:space-between;align-items:center;
-    padding:11px 4px;border-bottom:1px solid var(--line);cursor:pointer;
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
+    padding:11px 4px;border-bottom:1px solid var(--line);flex-wrap:wrap;
   }
   .party-item:hover{background:var(--panel-2);}
   .party-item .pname{font-weight:600;font-size:14px;}
@@ -478,6 +478,13 @@ const T = {
     noPriceTrendData:'इस पार्टी से जुड़ी कोई मटेरियल खरीद दर्ज नहीं है',
     navGroupMain:'मुख्य', navGroupBilling:'लेन-देन व बिलिंग', navGroupSite:'साइट संसाधन',
     navGroupTools:'विश्लेषण व टूल्स', navGroupSetup:'सेटअप', savingBtn:'सहेजा जा रहा है...', savedBtn:'✓ सहेजा गया',
+    fieldPartyPhone:'फोन नंबर (पहचान हेतु)', phoneRequired:'फोन नंबर आवश्यक है।',
+    phoneInvalid:'कृपया मान्य फोन नंबर दर्ज करें (कम से कम 10 अंक)।',
+    phoneDuplicate:'यह फोन नंबर पहले से मौजूद है:',
+    confirmDelParty:'क्या आप वाकई इस पार्टी को मिटाना चाहते हैं?',
+    partyInUse:'यह पार्टी मिटाई नहीं जा सकती — इससे जुड़े रिकॉर्ड मौजूद हैं:',
+    recordsTx:'लेन-देन', recordsInv:'इनवॉइस', recordsQuote:'कोटेशन', recordsPO:'पीओ', recordsStock:'स्टॉक एंट्री',
+    partyInUseHint:'पहले इन रिकॉर्ड्स को मिटाएं या किसी अन्य पार्टी से जोड़ें।',
   },
   en:{
     navDashboard:'Dashboard', navTransactions:'Transactions', navProjects:'Projects', navParties:'Parties',
@@ -595,6 +602,13 @@ const T = {
     noPriceTrendData:'No material purchases linked to this party yet',
     navGroupMain:'Main', navGroupBilling:'Transactions & Billing', navGroupSite:'Site Resources',
     navGroupTools:'Analysis & Tools', navGroupSetup:'Setup', savingBtn:'Saving...', savedBtn:'✓ Saved',
+    fieldPartyPhone:'Phone Number (unique ID)', phoneRequired:'Phone number is required.',
+    phoneInvalid:'Please enter a valid phone number (at least 10 digits).',
+    phoneDuplicate:'This phone number already belongs to:',
+    confirmDelParty:'Are you sure you want to delete this party?',
+    partyInUse:'This party cannot be deleted — linked records exist:',
+    recordsTx:'transactions', recordsInv:'invoices', recordsQuote:'quotations', recordsPO:'purchase orders', recordsStock:'stock entries',
+    partyInUseHint:'Please delete or reassign those records first.',
   },
 };
 
@@ -655,6 +669,32 @@ function daysAgo(d){ return Math.floor((Date.now() - new Date(d).getTime())/8640
 function hasOverdueInvoices(){ return state.invoices.some(inv=> inv.status==='बकाया' && inv.dueDate && daysAgo(inv.dueDate)>0); }
 function hasOverduePOs(){ return state.purchaseOrders.some(po=> po.status!=='प्राप्त हुआ' && po.deliveryDate && daysAgo(po.deliveryDate)>0); }
 function hasOverdueRetention(){ return state.retentions.some(r=> r.status==='रोका गया' && r.expectedReleaseDate && daysAgo(r.expectedReleaseDate)>0); }
+
+/* ---- Party phone identity helpers ---- */
+function normalizePhone(str){
+  // keep digits only, then strip leading zeros and an Indian country code,
+  // so "+91 98765 43210", "091-9876543210" and "9876543210" all match
+  let digits = String(str||'').replace(/\D/g,'');
+  digits = digits.replace(/^0+/,'');
+  if(digits.length > 10 && digits.startsWith('91')) digits = digits.slice(2);
+  digits = digits.replace(/^0+/,'');
+  return digits;
+}
+function findPartyByPhone(phone, excludeId){
+  const norm = normalizePhone(phone);
+  if(!norm) return null;
+  return state.parties.find(p=> p.id!==excludeId && normalizePhone(p.phone||p.contact) === norm) || null;
+}
+function partyUsage(partyId){
+  return {
+    tx: state.transactions.filter(t=>t.party===partyId).length,
+    invoices: state.invoices.filter(i=>i.party===partyId).length,
+    quotations: state.quotations.filter(q=>q.party===partyId).length,
+    pos: state.purchaseOrders.filter(p=>p.party===partyId).length,
+    stock: state.stockEntries.filter(e=>e.party===partyId).length,
+  };
+}
+function partyUsageTotal(u){ return u.tx + u.invoices + u.quotations + u.pos + u.stock; }
 
 function seedData(){
   const proj = [
@@ -755,6 +795,7 @@ async function loadState(){
   if(!state.attendance){ state.attendance = []; changed = true; }
   if(!state.materials){ state.materials = []; changed = true; }
   if(!state.stockEntries){ state.stockEntries = []; changed = true; }
+  state.parties.forEach(p=>{ if(p.phone===undefined){ p.phone = p.contact || ''; changed = true; } });
   if(state.counters && state.counters.ra===undefined){ state.counters.ra = 1; changed = true; }
   state.projects.forEach(p=>{ if(!p.boq){ p.boq = []; changed = true; } });
   if(!state.businessProfile){ state.businessProfile = {name:'', address:'', gstin:'', phone:'', email:''}; changed = true; }
@@ -3134,8 +3175,8 @@ function renderParties(){
       <div class="page-head">
         <div>
           <button class="btn ghost sm" data-action="back-parties" style="margin-bottom:10px;">${tr('backToParties')}</button>
-          <h1>${p.name}</h1>
-          <p>${L(p.type)}${p.contact?' · '+p.contact:''}</p>
+          <h1>${escapeHtml(p.name)}</h1>
+          <p>${L(p.type)}${(p.phone||p.contact)?' · '+escapeHtml(p.phone||p.contact):''}</p>
         </div>
         <div style="display:flex;gap:8px;">
           <button class="btn ghost" data-action="edit-party" data-id="${p.id}">${tr('editBtn')}</button>
@@ -3176,9 +3217,16 @@ function renderParties(){
       `<div class="party-list">${state.parties.map(p=>{
         const list = state.transactions.filter(t=>t.party===p.id && t.status==='बकाया');
         const bal = list.reduce((s,t)=>s+txTotal(t),0);
-        return `<div class="party-item" data-action="open-party" data-id="${p.id}">
-          <div><div class="pname">${p.name}</div><div class="ptype">${L(p.type)}</div></div>
+        return `<div class="party-item">
+          <div data-action="open-party" data-id="${p.id}" style="cursor:pointer;flex:1;min-width:0;">
+            <div class="pname">${escapeHtml(p.name)}</div>
+            <div class="ptype">${L(p.type)}${(p.phone||p.contact)?` · <span class="mono">${escapeHtml(p.phone||p.contact)}</span>`:''}</div>
+          </div>
           <div class="pbal" style="color:${bal>0?'var(--rust)':'var(--ink-soft)'}">${bal>0?fmt(bal)+' '+L('बकाया'):tr('cleared')}</div>
+          <div class="row-actions" style="flex-shrink:0;">
+            <button data-action="edit-party" data-id="${p.id}">${tr('editBtn')}</button>
+            <button data-action="del-party" data-id="${p.id}">${tr('deleteBtn')}</button>
+          </div>
         </div>`;
       }).join('')}</div>`}
     </div>
@@ -3527,25 +3575,35 @@ function projModal(proj){
 
 function partyModal(party){
   const isEdit = !!party;
-  const p = party || {id:null, name:'', type:PARTY_TYPES[0], contact:''};
+  const p = party || {id:null, name:'', type:PARTY_TYPES[0], phone:''};
   openModal(`
     <h3>${isEdit?tr('editParty'):tr('newParty')}</h3>
     <form id="party-form">
-      <div class="field"><label>${tr('fieldName')}</label><input type="text" name="name" value="${p.name}" required></div>
+      <div class="field"><label>${tr('fieldName')}</label><input type="text" name="name" value="${escapeHtml(p.name)}" required></div>
       <div class="field-row">
         <div class="field"><label>${tr('fieldType')}</label><select name="type">${PARTY_TYPES.map(pt=>`<option value="${pt}" ${p.type===pt?'selected':''}>${L(pt)}</option>`).join('')}</select></div>
-        <div class="field"><label>${tr('fieldContact')}</label><input type="text" name="contact" value="${p.contact||''}"></div>
+        <div class="field"><label>${tr('fieldPartyPhone')}</label><input type="tel" class="mono" name="phone" value="${escapeHtml(p.phone||p.contact||'')}" required placeholder="98765 43210"></div>
       </div>
+      <div id="party-form-error" style="display:none;color:var(--rust);font-size:12.5px;margin-bottom:10px;"></div>
       <div class="modal-actions">
         <button type="button" class="btn ghost" data-action="close-modal">${tr('cancelBtn')}</button>
         <button type="submit" class="btn amber">${isEdit?tr('saveChangesBtn'):tr('addBtnModal')}</button>
       </div>
     </form>
   `);
+  const errEl = document.getElementById('party-form-error');
+  function showError(msg){ errEl.textContent = msg; errEl.style.display = 'block'; }
   document.getElementById('party-form').addEventListener('submit', async e=>{
     e.preventDefault();
+    errEl.style.display = 'none';
     const fd = new FormData(e.target);
-    const newP = {id: p.id||uid('pt'), name:fd.get('name'), type:fd.get('type'), contact:fd.get('contact')};
+    const rawPhone = (fd.get('phone')||'').trim();
+    const normPhone = normalizePhone(rawPhone);
+    if(!normPhone){ showError(tr('phoneRequired')); return; }
+    if(normPhone.length < 10){ showError(tr('phoneInvalid')); return; }
+    const clash = findPartyByPhone(rawPhone, p.id);
+    if(clash){ showError(`${tr('phoneDuplicate')} ${clash.name}`); return; }
+    const newP = {...p, id: p.id||uid('pt'), name:(fd.get('name')||'').trim(), type:fd.get('type'), phone:rawPhone};
     if(isEdit){ const idx = state.parties.findIndex(x=>x.id===p.id); state.parties[idx]=newP; }
     else state.parties.push(newP);
     await saveState(); closeModal(); render();
@@ -3600,6 +3658,27 @@ function attachHandlers(){
   });
   byAction('new-party', ()=>partyModal(null));
   byAction('edit-party', e=>partyModal(state.parties.find(p=>p.id===e.currentTarget.dataset.id)));
+  byAction('del-party', async e=>{
+    const id = e.currentTarget.dataset.id;
+    const party = state.parties.find(p=>p.id===id);
+    if(!party) return;
+    const u = partyUsage(id);
+    if(partyUsageTotal(u) > 0){
+      const parts = [];
+      if(u.tx) parts.push(`${u.tx} ${tr('recordsTx')}`);
+      if(u.invoices) parts.push(`${u.invoices} ${tr('recordsInv')}`);
+      if(u.quotations) parts.push(`${u.quotations} ${tr('recordsQuote')}`);
+      if(u.pos) parts.push(`${u.pos} ${tr('recordsPO')}`);
+      if(u.stock) parts.push(`${u.stock} ${tr('recordsStock')}`);
+      alert(`${tr('partyInUse')} ${parts.join(', ')}.\n\n${tr('partyInUseHint')}`);
+      return;
+    }
+    if(confirm(`${tr('confirmDelParty')} (${party.name})`)){
+      state.parties = state.parties.filter(p=>p.id!==id);
+      if(activePartyId===id) activePartyId = null;
+      await saveState(); render();
+    }
+  });
   byAction('open-party', e=>{ activePartyId = e.currentTarget.dataset.id; render(); });
   byAction('back-parties', ()=>{ activePartyId=null; render(); });
   byAction('close-modal', closeModal);
