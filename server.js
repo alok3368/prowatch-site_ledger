@@ -160,6 +160,9 @@ app.post('/api/state', requireAuth, async (req, res) => {
   }
 });
 
+// ---------- Diary cross-check ----------
+require('./diary-check')(app, pool, requireAuth);
+
 // ---------- Static frontend ----------
 app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
