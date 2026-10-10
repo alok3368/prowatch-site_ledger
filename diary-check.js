@@ -97,6 +97,14 @@ module.exports = function mount(app, pool, requireAuth) {
         const t = fmtTimeIST(diaryLogged[siteId + '|' + ld]);
         return `; last entry ${ld}${t ? ' ' + t : ''}`;
       };
+      // Evening nudge: after 6 PM IST, any Diary site that was active in the last 7 days but has no entry today.
+      // Works for linked and unlinked sites. If attendance was marked today the attendance flag already covers it.
+      const checkMissed = (site, attendanceToday) => {
+        if (!afterSix || attendanceToday) return;
+        const dd = diaryDays[site.id] || new Set();
+        if (dd.has(today) || ![...dd].some(x => x >= addDays(today, -7))) return;
+        flags.push({ level: 'warn', type: 'missed_entry', site: site.name, date: today, text: `${site.name}: no Site Diary entry today${lastEntry(site.id) ? ' (' + lastEntry(site.id).slice(2) + ')' : ''}.` });
+      };
       const linked = new Set();
       for (const site of diary.sites) {
         let proj = projects.find(p => site.ledgerProjectId && p.id === site.ledgerProjectId);
@@ -104,6 +112,7 @@ module.exports = function mount(app, pool, requireAuth) {
           const m = projects.filter(p => norm(p.name) === norm(site.name));
           if (m.length > 1) {
             flags.push({ level: 'info', type: 'ambiguous_link', site: site.name, text: `Diary site "${site.name}" matches ${m.length} Ledger projects with the same name. Link it to one (or rename one) so it can be cross-checked.` });
+            checkMissed(site, false);
             continue;
           }
           proj = m[0];
@@ -111,6 +120,7 @@ module.exports = function mount(app, pool, requireAuth) {
         const dd = diaryDays[site.id] || new Set();
         if (!proj) {
           flags.push({ level: 'info', type: 'unlinked_site', site: site.name, text: `Diary site "${site.name}" is not linked to a Ledger project, so it is not cross-checked.` });
+          checkMissed(site, false);
           continue;
         }
         linked.add(proj.id);
@@ -122,9 +132,7 @@ module.exports = function mount(app, pool, requireAuth) {
           if (ad.has(d) && !dd.has(d)) flags.push({ level: 'warn', type: 'attendance_no_diary', site: site.name, date: d, text: `${site.name}: attendance marked on ${d} but no Site Diary entry.` });
           else if (dd.has(d) && !ad.has(d)) flags.push({ level: 'warn', type: 'diary_no_attendance', site: site.name, date: d, loggedAt: diaryLogged[site.id + '|' + d] || null, text: `${site.name}: Site Diary entry on ${d}${diaryLogged[site.id + '|' + d] ? ' (logged ' + fmtTimeIST(diaryLogged[site.id + '|' + d]) + ')' : ''} but no attendance in the Ledger.` });
         }
-        if (afterSix && !dd.has(today) && !ad.has(today) && [...dd].some(x => x >= addDays(today, -3))) {
-          flags.push({ level: 'warn', type: 'missed_entry', site: site.name, date: today, text: `${site.name}: no Site Diary entry today (active in the last 3 days${lastEntry(site.id)}).` });
-        }
+        checkMissed(site, ad.has(today));
       }
       for (const p of projects) {
         if (!linked.has(p.id) && attDays[p.id] && attDays[p.id].size) {
