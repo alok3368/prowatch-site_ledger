@@ -192,7 +192,11 @@ require('./diary-check')(app, pool, requireAuth);
 // ---------- Static frontend ----------
 app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'site-ledger.html'));
+  const fs = require('fs');
+  let h = fs.readFileSync(path.join(__dirname, 'public', 'site-ledger.html'), 'utf8');
+  const i = h.lastIndexOf('</body>');
+  if (i >= 0) h = h.slice(0, i) + '<script src="/ledger-safety.js"></script>\n' + h.slice(i);
+  res.set('Cache-Control', 'no-store').type('html').send(h);
 });
 
 initDb()
