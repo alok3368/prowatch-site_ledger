@@ -10,6 +10,15 @@ const path = require('path');
 const PRESENT = 'उपस्थित', HALF = 'आधा दिन';
 const DIARY_URL = () => (process.env.DIARY_URL || 'https://prowatch-site-diary.onrender.com').replace(/\/$/, '');
 
+// "6:42 PM IST" from an ISO timestamp (Indian time); '' if missing/invalid.
+function fmtTimeIST(ts) {
+  if (!ts) return '';
+  const t = new Date(ts);
+  if (isNaN(t)) return '';
+  const ist = new Date(t.getTime() + 5.5 * 3600 * 1000);
+  const h = ist.getUTCHours(), m = ist.getUTCMinutes();
+  return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'} IST`;
+}
 function istNow() { return new Date(Date.now() + 5.5 * 3600 * 1000); }
 function addDays(d, n) { const t = new Date(d + 'T00:00:00Z'); t.setUTCDate(t.getUTCDate() + n); return t.toISOString().slice(0, 10); }
 const norm = s => String(s || '').trim().toLowerCase().replace(/\s+/g, ' ');
@@ -78,7 +87,16 @@ module.exports = function mount(app, pool, requireAuth) {
       for (const a of att) if (a.present + a.half > 0) (attDays[a.project] = attDays[a.project] || new Set()).add(a.date);
       const diaryDays = {}; // siteId -> Set
       for (const d of diary.days) (diaryDays[d.siteId] = diaryDays[d.siteId] || new Set()).add(d.date);
+      const diaryLogged = {}; // siteId|date -> last logged time (ISO), when the Diary reports it
+      for (const d of diary.days) if (d.lastLoggedAt) diaryLogged[d.siteId + '|' + d.date] = d.lastLoggedAt;
 
+      const lastEntry = (siteId) => { // ", last entry 2026-10-09 6:42 PM IST"
+        const days = [...(diaryDays[siteId] || [])].sort();
+        const ld = days[days.length - 1];
+        if (!ld) return '';
+        const t = fmtTimeIST(diaryLogged[siteId + '|' + ld]);
+        return `; last entry ${ld}${t ? ' ' + t : ''}`;
+      };
       const linked = new Set();
       for (const site of diary.sites) {
         let proj = projects.find(p => site.ledgerProjectId && p.id === site.ledgerProjectId);
@@ -102,10 +120,10 @@ module.exports = function mount(app, pool, requireAuth) {
           const isToday = d === today;
           if (isToday && !afterSix) continue; // today is only judged after 6pm IST
           if (ad.has(d) && !dd.has(d)) flags.push({ level: 'warn', type: 'attendance_no_diary', site: site.name, date: d, text: `${site.name}: attendance marked on ${d} but no Site Diary entry.` });
-          else if (dd.has(d) && !ad.has(d)) flags.push({ level: 'warn', type: 'diary_no_attendance', site: site.name, date: d, text: `${site.name}: Site Diary entry on ${d} but no attendance in the Ledger.` });
+          else if (dd.has(d) && !ad.has(d)) flags.push({ level: 'warn', type: 'diary_no_attendance', site: site.name, date: d, loggedAt: diaryLogged[site.id + '|' + d] || null, text: `${site.name}: Site Diary entry on ${d}${diaryLogged[site.id + '|' + d] ? ' (logged ' + fmtTimeIST(diaryLogged[site.id + '|' + d]) + ')' : ''} but no attendance in the Ledger.` });
         }
         if (afterSix && !dd.has(today) && !ad.has(today) && [...dd].some(x => x >= addDays(today, -3))) {
-          flags.push({ level: 'warn', type: 'missed_entry', site: site.name, date: today, text: `${site.name}: no Site Diary entry today (active in the last 3 days).` });
+          flags.push({ level: 'warn', type: 'missed_entry', site: site.name, date: today, text: `${site.name}: no Site Diary entry today (active in the last 3 days${lastEntry(site.id)}).` });
         }
       }
       for (const p of projects) {
@@ -134,7 +152,7 @@ module.exports = function mount(app, pool, requireAuth) {
     fs.readFile(path.join(__dirname, 'public', 'site-ledger.html'), 'utf8', (err, html) => {
       if (err) return next(err);
       const i = html.lastIndexOf('</body>'); // last one: earlier ones sit inside JS strings
-      const out = i < 0 ? html : html.slice(0, i) + '<script src="/ledger-safety.js"></script><script src="/diary-check.js" defer></script>' + html.slice(i);
+      const out = i < 0 ? html : html.slice(0, i) + '<script src="/diary-check.js" defer></script>' + html.slice(i);
       res.set('Cache-Control', 'no-cache').type('html').send(out);
     });
   });
