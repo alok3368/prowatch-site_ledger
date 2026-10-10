@@ -32,6 +32,8 @@ async function initDb() {
       CONSTRAINT single_row CHECK (id = 1)
     );
   `);
+  // revision counter used to stop two sessions silently overwriting each other (additive, safe to re-run)
+  await pool.query('ALTER TABLE ledger_state ADD COLUMN IF NOT EXISTS revision INTEGER NOT NULL DEFAULT 0');
 }
 
 // ---------- Access control ----------
@@ -120,17 +122,16 @@ app.get('/api/me', (req, res) => {
 // ---------- Shared ledger data (Postgres) ----------
 app.get('/api/state', requireAuth, async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT data, last_edited_by, last_edited_by_name, last_edited_at FROM ledger_state WHERE id = 1');
+    const { rows } = await pool.query('SELECT data, revision, last_edited_by, last_edited_by_name, last_edited_at FROM ledger_state WHERE id = 1');
     if (rows.length === 0) return res.status(204).end(); // no data yet -> client seeds it
     const row = rows[0];
     const state = row.data;
-    if (row.last_edited_by) {
-      state._meta = {
-        lastEditedBy: row.last_edited_by,
-        lastEditedByName: row.last_edited_by_name,
-        lastEditedAt: row.last_edited_at,
-      };
-    }
+    state._meta = {
+      revision: row.revision,
+      lastEditedBy: row.last_edited_by,
+      lastEditedByName: row.last_edited_by_name,
+      lastEditedAt: row.last_edited_at,
+    };
     res.json(state);
   } catch (e) {
     console.error('read state failed', e);
@@ -141,18 +142,43 @@ app.get('/api/state', requireAuth, async (req, res) => {
 app.post('/api/state', requireAuth, async (req, res) => {
   try {
     const state = { ...(req.body || {}) };
+    const baseRevision = state.baseRevision;
     delete state._meta; // meta is derived server-side, don't store it inside the JSON blob
+    delete state.baseRevision;
+    // never overwrite the books with something that is not a ledger
+    if (!Array.isArray(state.transactions) || !Array.isArray(state.projects) || !Array.isArray(state.parties)) {
+      return res.status(400).json({ error: 'invalid-state' });
+    }
+    if (!Number.isInteger(baseRevision) || baseRevision < 0) {
+      return res.status(409).json({ error: 'revision-required' });
+    }
     const meta = {
       lastEditedBy: req.user.email,
       lastEditedByName: req.user.name,
       lastEditedAt: new Date().toISOString(),
     };
-    await pool.query(
-      `INSERT INTO ledger_state (id, data, last_edited_by, last_edited_by_name, last_edited_at)
-       VALUES (1, $1, $2, $3, $4)
-       ON CONFLICT (id) DO UPDATE SET data = $1, last_edited_by = $2, last_edited_by_name = $3, last_edited_at = $4`,
-      [state, meta.lastEditedBy, meta.lastEditedByName, meta.lastEditedAt]
-    );
+    let rows;
+    if (baseRevision === 0) {
+      // first ever save: only succeeds if no ledger exists yet
+      ({ rows } = await pool.query(
+        `INSERT INTO ledger_state (id, data, last_edited_by, last_edited_by_name, last_edited_at, revision)
+         SELECT 1, $1::jsonb, $2::text, $3::text, $4::timestamptz, 1
+         WHERE NOT EXISTS (SELECT 1 FROM ledger_state WHERE id = 1)
+         ON CONFLICT (id) DO NOTHING RETURNING revision`,
+        [state, meta.lastEditedBy, meta.lastEditedByName, meta.lastEditedAt]
+      ));
+    } else {
+      ({ rows } = await pool.query(
+        `UPDATE ledger_state SET data = $1, last_edited_by = $2, last_edited_by_name = $3, last_edited_at = $4, revision = revision + 1
+         WHERE id = 1 AND revision = $5 RETURNING revision`,
+        [state, meta.lastEditedBy, meta.lastEditedByName, meta.lastEditedAt, baseRevision]
+      ));
+    }
+    if (rows.length === 0) {
+      const cur = await pool.query('SELECT revision, last_edited_by_name, last_edited_at FROM ledger_state WHERE id = 1');
+      return res.status(409).json({ error: 'revision-conflict', current: cur.rows[0] || null });
+    }
+    meta.revision = rows[0].revision;
     res.json({ ok: true, meta });
   } catch (e) {
     console.error('write state failed', e);
