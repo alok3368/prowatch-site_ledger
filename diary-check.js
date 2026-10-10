@@ -88,6 +88,8 @@ module.exports = function mount(app, pool, requireAuth) {
       const diaryDays = {}; // siteId -> Set
       for (const d of diary.days) (diaryDays[d.siteId] = diaryDays[d.siteId] || new Set()).add(d.date);
       const diaryLogged = {}; // siteId|date -> last logged time (ISO), when the Diary reports it
+      const diaryLabour = {}; // siteId|date -> labour count from Quick logs
+      for (const d of diary.days) if (d.labour) diaryLabour[d.siteId + '|' + d.date] = d.labour;
       for (const d of diary.days) if (d.lastLoggedAt) diaryLogged[d.siteId + '|' + d.date] = d.lastLoggedAt;
 
       const lastEntry = (siteId) => { // ", last entry 2026-10-09 6:42 PM IST"
@@ -131,6 +133,14 @@ module.exports = function mount(app, pool, requireAuth) {
           if (isToday && !afterSix) continue; // today is only judged after 6pm IST
           if (ad.has(d) && !dd.has(d)) flags.push({ level: 'warn', type: 'attendance_no_diary', site: site.name, date: d, text: `${site.name}: attendance marked on ${d} but no Site Diary entry.` });
           else if (dd.has(d) && !ad.has(d)) flags.push({ level: 'warn', type: 'diary_no_attendance', site: site.name, date: d, loggedAt: diaryLogged[site.id + '|' + d] || null, text: `${site.name}: Site Diary entry on ${d}${diaryLogged[site.id + '|' + d] ? ' (logged ' + fmtTimeIST(diaryLogged[site.id + '|' + d]) + ')' : ''} but no attendance in the Ledger.` });
+        }
+        // Quick-log labour count vs Ledger attendance count (info only: attendance may list named workers only)
+        const attCount = {};
+        for (const a of att) if (a.project === proj.id) attCount[a.date] = a;
+        for (const dt of Object.keys(attCount).sort()) {
+          const dl = diaryLabour[site.id + '|' + dt], ac = attCount[dt];
+          const ledgerN = ac.present + ac.half;
+          if (dl && ledgerN > 0 && dl !== ledgerN) flags.push({ level: 'info', type: 'labour_count_differs', site: site.name, date: dt, text: `${site.name} ${dt}: Diary quick log says ${dl} labour, Ledger attendance shows ${ac.present} present${ac.half ? ' + ' + ac.half + ' half day' : ''}.` });
         }
         checkMissed(site, ad.has(today));
       }
