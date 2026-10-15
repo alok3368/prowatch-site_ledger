@@ -21,6 +21,7 @@ const pool = new Pool({
 });
 
 async function initDb() {
+  await require('./diary-projects').init(pool);
   // one row holds the whole shared ledger; session store manages its own table
   await pool.query(`
     CREATE TABLE IF NOT EXISTS ledger_state (
@@ -152,6 +153,8 @@ app.post('/api/state', requireAuth, async (req, res) => {
     if (!Number.isInteger(baseRevision) || baseRevision < 0) {
       return res.status(409).json({ error: 'revision-required' });
     }
+    const links = await pool.query("SELECT project_id FROM diary_project_requests WHERE status='approved'");
+    if (links.rows.some(r => !state.projects.some(p => p.id === r.project_id))) return res.status(409).json({error:'linked-project-cannot-be-removed'});
     const meta = {
       lastEditedBy: req.user.email,
       lastEditedByName: req.user.name,
@@ -187,6 +190,7 @@ app.post('/api/state', requireAuth, async (req, res) => {
 });
 
 // ---------- Diary cross-check ----------
+require('./diary-projects').mount(app, pool, requireAuth);
 require('./diary-check')(app, pool, requireAuth);
 
 // ---------- Static frontend ----------

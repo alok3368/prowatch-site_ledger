@@ -172,7 +172,7 @@ module.exports = function mount(app, pool, requireAuth) {
     fs.readFile(path.join(__dirname, 'public', 'site-ledger.html'), 'utf8', (err, html) => {
       if (err) return next(err);
       const i = html.lastIndexOf('</body>'); // last one: earlier ones sit inside JS strings
-      const out = i < 0 ? html : html.slice(0, i) + '<script src="/diary-check.js" defer></script><script src="/diary-attendance.js" defer></script><script src="/diary-expenses.js" defer></script>' + html.slice(i);
+      const out = i < 0 ? html : html.slice(0, i) + '<script src="/diary-projects.js" defer></script><script src="/diary-check.js" defer></script><script src="/diary-attendance.js" defer></script><script src="/diary-expenses.js" defer></script>' + html.slice(i);
       res.set('Cache-Control', 'no-cache').type('html').send(out);
     });
   });
