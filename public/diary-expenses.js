@@ -30,7 +30,7 @@
     var site = siteOf(it.siteId); if (!site) return '';
     var projs = state.projects || [];
     var p = projs.filter(function (x) { return site.ledgerProjectId && x.id === site.ledgerProjectId; })[0];
-    if (!p) { var m = projs.filter(function (x) { return norm(x.name) === norm(site.name); }); if (m.length === 1) p = m[0]; }
+    // A same-name contract is not an approved site assignment.
     return p ? p.id : '';
   }
 
@@ -115,7 +115,7 @@
         id: uid('t'), date: it.date, project: pid, type: 'Expense', category: cat, party: null,
         desc: T[lang()].ref + ' - ' + (it.note || T[lang()]['c_' + it.category]) + (it.markedByName ? ' (' + it.markedByName + ')' : ''),
         amount: it.amount, gst: 0, mode: PAY_MODES[0], status: 'भुगतान हो गया', ref: 'D-' + id.slice(0, 8),
-        createdBy: (typeof currentUser !== 'undefined' && currentUser) ? currentUser.email : null, diaryTxnId: id, diarySite: site ? site.name : null
+        createdBy: (typeof currentUser !== 'undefined' && currentUser) ? currentUser.email : null, diaryTxnId: id, diarySite: site ? site.name : null, diarySiteId: it.siteId
       };
       state.transactions.push(tx);
       var saved = false;

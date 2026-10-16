@@ -3,7 +3,8 @@ const crypto = require('crypto');
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 function validateSite(s) {
   if (!s || !UUID.test(s.id) || typeof s.name !== 'string' || !s.name.trim() || s.name.length > 240) throw Object.assign(new Error('invalid_site'), { status: 400 });
-  return { id:s.id, name:s.name.trim(), location:String(s.location || '').slice(0,500), ledgerProjectId:s.ledgerProjectId || null };
+  if(s.requestedProjectId!=null && (typeof s.requestedProjectId!=='string'||!s.requestedProjectId||s.requestedProjectId.length>100))throw Object.assign(new Error('invalid_contract'),{status:400});
+  return { id:s.id, name:s.name.trim(), location:String(s.location || '').slice(0,500), ledgerProjectId:s.ledgerProjectId || null, suggestedProjectId:s.requestedProjectId || null };
 }
 function authorizeKey(got) {
   const want=process.env.INTERNAL_KEY || '';
@@ -13,17 +14,20 @@ async function init(pool) {
   await pool.query(`CREATE TABLE IF NOT EXISTS diary_project_requests (
     site_id UUID PRIMARY KEY, site_name TEXT NOT NULL, location TEXT NOT NULL DEFAULT '',
     status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','approved')),
-    project_id TEXT UNIQUE, approved_by TEXT, approved_at TIMESTAMPTZ,
+    project_id TEXT, approved_by TEXT, approved_at TIMESTAMPTZ,
     diary_ack BOOLEAN NOT NULL DEFAULT false, last_error TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
   )`);
+  await pool.query('ALTER TABLE diary_project_requests DROP CONSTRAINT IF EXISTS diary_project_requests_project_id_key');
+  await pool.query('ALTER TABLE diary_project_requests ADD COLUMN IF NOT EXISTS suggested_project_id TEXT');
+  await pool.query('CREATE INDEX IF NOT EXISTS diary_project_requests_project_idx ON diary_project_requests(project_id)');
 }
 async function propose(pool, raw) {
   const s=validateSite(raw);
-  // Existing explicit links are imported only after confirming the target project exists.
-  const {rows}=await pool.query(`INSERT INTO diary_project_requests(site_id,site_name,location)
-    VALUES($1,$2,$3) ON CONFLICT(site_id) DO UPDATE SET site_name=EXCLUDED.site_name,
-    location=EXCLUDED.location,updated_at=now() RETURNING *`,[s.id,s.name,s.location]);
+  // Suggestions and legacy links never approve a site or enter the books.
+  const {rows}=await pool.query(`INSERT INTO diary_project_requests(site_id,site_name,location,suggested_project_id)
+    VALUES($1,$2,$3,$4) ON CONFLICT(site_id) DO UPDATE SET site_name=EXCLUDED.site_name,
+    location=EXCLUDED.location,suggested_project_id=EXCLUDED.suggested_project_id,updated_at=now() RETURNING *`,[s.id,s.name,s.location,s.suggestedProjectId]);
   return rows[0];
 }
 function mount(app,pool,requireAuth) {
@@ -91,6 +95,7 @@ function mount(app,pool,requireAuth) {
       const q=await client.query('SELECT * FROM diary_project_requests WHERE site_id=$1 FOR UPDATE',[req.params.siteId]);
       if(!q.rows[0])throw Object.assign(new Error('site_not_found'),{status:404});
       let row=q.rows[0];
+      if(row.status==='approved' && mode==='existing' && projectId!==row.project_id)throw Object.assign(new Error('site_already_linked: moving a site requires separate review'),{status:409});
       if(row.status!=='approved') {
 if(sourceSite.ledgerProjectId && (mode!=='existing'||projectId!==sourceSite.ledgerProjectId))throw Object.assign(new Error('site_already_linked: choose its existing project'),{status:409});
 
@@ -105,24 +110,25 @@ if(sourceSite.ledgerProjectId && (mode!=='existing'||projectId!==sourceSite.ledg
           state.projects.push(target);
         }
         if(!target)throw Object.assign(new Error('project_not_found'),{status:400});
-        const assigned=await client.query('SELECT site_id FROM diary_project_requests WHERE project_id=$1',[target.id]);
-        if(assigned.rows.length)throw Object.assign(new Error('project_already_linked'),{status:409});
         await client.query(`UPDATE ledger_state SET data=$1,revision=revision+1,last_edited_by=$2,last_edited_by_name=$3,last_edited_at=now() WHERE id=1`,[state,req.user.email,req.user.name || req.user.email]);
         const r=await client.query(`UPDATE diary_project_requests SET status='approved',project_id=$2,approved_by=$3,approved_at=now(),diary_ack=false WHERE site_id=$1 RETURNING *`,[row.site_id,target.id,req.user.email]);
         row=r.rows[0];
       }
       await client.query('COMMIT');committed=true;client.release();client=null;
       const diaryLinked=await acknowledge(row);
-      res.json({ok:true,projectId:row.project_id,diaryLinked,message:diaryLinked?'Project linked. Attendance is available under this project.':'Project approved. Diary link is still syncing; do not approve again.'});
+      res.json({ok:true,projectId:row.project_id,diaryLinked,message:diaryLinked?'Site linked to contract. Attendance remains labelled by site; contract money is unchanged.':'Project approved. Diary link is still syncing; do not approve again.'});
     }catch(e){if(client){if(!committed)await client.query('ROLLBACK');client.release();}fail(res,e);}
   });
   app.get('/api/projects/:projectId/diary-attendance',requireAuth,async(req,res)=>{
     try{
       const q=await pool.query("SELECT site_id FROM diary_project_requests WHERE project_id=$1 AND status='approved'",[req.params.projectId]);
-      if(!q.rows[0])return res.status(404).json({error:'project_not_linked'});
+      if(!q.rows.length)return res.status(404).json({error:'project_not_linked'});
+      let ids=q.rows.map(r=>r.site_id);
+      if(req.query.siteId){if(!ids.includes(req.query.siteId))return res.status(404).json({error:'site_not_in_contract'});ids=[req.query.siteId];}
       const params=new URLSearchParams();for(const k of ['from','to'])if(/^\d{4}-\d{2}-\d{2}$/.test(req.query[k]||''))params.set(k,req.query[k]);
       const j=await upstream('/api/internal/attendance?'+params);
-      res.set('Cache-Control','no-store').json({ok:true,site:(j.sites || []).find(s=>s.id===q.rows[0].site_id),days:(j.days || []).filter(d=>d.siteId===q.rows[0].site_id)});
+      const sites=(j.sites || []).filter(s=>ids.includes(s.id));
+      res.set('Cache-Control','no-store').json({ok:true,projectId:req.params.projectId,site:sites.length===1?sites[0]:null,sites,days:(j.days || []).filter(d=>ids.includes(d.siteId))});
     }catch(e){fail(res,e);}
   });
   app.get('/diary-projects.js',(req,res)=>res.type('js').set('Cache-Control','no-cache').sendFile(require('path').join(__dirname,'public','diary-projects.js')));

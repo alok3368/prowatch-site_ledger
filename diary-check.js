@@ -54,7 +54,9 @@ module.exports = function mount(app, pool, requireAuth) {
       const from = re.test(req.query.from || '') ? req.query.from : '1970-01-01';
       const to = re.test(req.query.to || '') ? req.query.to : '2999-12-31';
       const state = await loadState();
+      const links=(await pool.query("SELECT site_id,project_id FROM diary_project_requests WHERE status='approved'")).rows;
       res.json({
+        sites:links.map(r=>({id:r.site_id,projectId:r.project_id})),
         projects: (state.projects || []).map(p => ({ id: p.id, name: p.name, status: p.status })),
         attendance: attendanceByProject(state, from, to),
       });
@@ -107,18 +109,11 @@ module.exports = function mount(app, pool, requireAuth) {
         if (dd.has(today) || ![...dd].some(x => x >= addDays(today, -7))) return;
         flags.push({ level: 'warn', type: 'missed_entry', site: site.name, date: today, text: `${site.name}: no Site Diary entry today${lastEntry(site.id) ? ' (' + lastEntry(site.id).slice(2) + ')' : ''}.` });
       };
+      const links=(await pool.query("SELECT site_id,project_id FROM diary_project_requests WHERE status='approved'")).rows;
       const linked = new Set();
       for (const site of diary.sites) {
-        let proj = projects.find(p => site.ledgerProjectId && p.id === site.ledgerProjectId);
-        if (!proj) {
-          const m = projects.filter(p => norm(p.name) === norm(site.name));
-          if (m.length > 1) {
-            flags.push({ level: 'info', type: 'ambiguous_link', site: site.name, text: `Diary site "${site.name}" matches ${m.length} Ledger projects with the same name. Link it to one (or rename one) so it can be cross-checked.` });
-            checkMissed(site, false);
-            continue;
-          }
-          proj = m[0];
-        }
+        const membership=links.find(r=>r.site_id===site.id);
+        let proj = projects.find(p => membership && p.id === membership.project_id);
         const dd = diaryDays[site.id] || new Set();
         if (!proj) {
           flags.push({ level: 'info', type: 'unlinked_site', site: site.name, text: `Diary site "${site.name}" is not linked to a Ledger project, so it is not cross-checked.` });
@@ -126,6 +121,12 @@ module.exports = function mount(app, pool, requireAuth) {
           continue;
         }
         linked.add(proj.id);
+        const siblings=links.filter(r=>r.project_id===proj.id);
+        if(siblings.length>1){
+          if(!flags.some(f=>f.type==='contract_attendance_scope'&&f.projectId===proj.id))flags.push({level:'info',type:'contract_attendance_scope',projectId:proj.id,site:proj.name,text:`${proj.name}: Ledger attendance is contract-level across ${siblings.length} sites. Site totals are not inferred; use Diary's site-labelled proofs.`});
+          checkMissed(site,false);
+          continue;
+        }
         const ad = attDays[proj.id] || new Set();
         for (let i = 7; i >= 0; i--) {
           const d = addDays(today, -i);
@@ -164,7 +165,7 @@ module.exports = function mount(app, pool, requireAuth) {
   });
 
   require('./diary-attendance')(app, requireAuth); // read-only Diary attendance panel (photo, time, location)
-  require('./diary-expenses')(app, requireAuth); // supervisor money entries, pending until approved in the Ledger
+  require('./diary-expenses')(app, requireAuth, pool); // supervisor money entries, pending until approved in the Ledger
   app.get('/diary-check.js', (req, res) => res.type('js').set('Cache-Control', 'no-cache').sendFile(path.join(__dirname, 'public', 'diary-check-banner.js')));
 
   // App shell with the banner script added, without editing site-ledger.html

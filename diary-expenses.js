@@ -7,7 +7,7 @@
 // app's own save, so the Ledger's normal revision check applies.
 const path = require('path');
 
-module.exports = function mount(app, requireAuth) {
+module.exports = function mount(app, requireAuth, pool) {
   const DIARY_URL = () => (process.env.DIARY_URL || 'https://prowatch-site-diary.onrender.com').replace(/\/$/, '');
   const UUID = /^[0-9a-f-]{36}$/i;
   const H = () => ({ 'x-internal-key': process.env.INTERNAL_KEY });
@@ -20,7 +20,9 @@ module.exports = function mount(app, requireAuth) {
       const r = await fetch(`${DIARY_URL()}/api/internal/transactions?${q}`, { headers: H(), signal: AbortSignal.timeout(45000) });
       if (!r.ok) return res.json({ ok: false, error: 'diary http ' + r.status });
       const j = await r.json();
-      res.set('Cache-Control', 'no-store').json({ ok: true, sites: j.sites || [], items: j.items || [] });
+      const links=(await pool.query("SELECT site_id,project_id FROM diary_project_requests WHERE status='approved'")).rows;
+      const sites=(j.sites||[]).map(s=>({...s,ledgerProjectId:links.find(r=>r.site_id===s.id)?.project_id||null}));
+      res.set('Cache-Control', 'no-store').json({ ok: true, sites, items: j.items || [] });
     } catch (e) { res.json({ ok: false, error: e.message }); }
   });
 
