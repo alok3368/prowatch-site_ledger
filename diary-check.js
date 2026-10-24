@@ -73,15 +73,13 @@ module.exports = function mount(app, pool, requireAuth) {
       const state = await loadState();
       let diary;
       try {
-        if (!process.env.INTERNAL_KEY) throw new Error('INTERNAL_KEY not set');
-        const r = await fetch(`${DIARY_URL()}/api/internal/diary?from=${from}&to=${today}`, {
-          headers: { 'x-internal-key': process.env.INTERNAL_KEY },
-          signal: AbortSignal.timeout(45000),
-        });
-        if (!r.ok) throw new Error('diary http ' + r.status);
-        diary = await r.json();
+        diary = await require('./diary-read').readDiary(
+          `${DIARY_URL()}/api/internal/diary?from=${from}&to=${today}`,
+          process.env.INTERNAL_KEY
+        );
       } catch (e) {
-        return res.json({ ok: false, today, flags: [{ level: 'warn', type: 'unavailable', text: 'Site Diary check could not run (' + e.message + ').' }] });
+        res.set('Cache-Control', 'no-store');
+        return res.status(req.path === '/api/internal/diary-flags' ? 503 : 200).json({ ok: false, today, flags: [{ level: 'warn', type: 'unavailable', text: 'Site Diary check could not run (' + e.message + ').' }] });
       }
       const projects = state.projects || [];
       const att = attendanceByProject(state, from, today);
@@ -178,3 +176,4 @@ module.exports = function mount(app, pool, requireAuth) {
     });
   });
 };
+
